@@ -7,4 +7,5 @@ and succulent seafood!
 This and more await you on Sharkickstartanker Sharkentifitanker!
 Come relax and let us refresh your body and spirit.
 
+Proposal tasks:
 https://github.com/MarcM0/SharkStarter/projects/1
