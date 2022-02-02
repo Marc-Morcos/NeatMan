@@ -1,4 +1,4 @@
-# SharkStarter
+## SharkStarter
 Welcome to the sun-drenched tropical paradise of Sharkickstartanker Sharkentifitanker!
 We're so pleased to welcome you to our beautiful home!
 Come enjoy a natural wonder-land to which we've added
@@ -8,7 +8,7 @@ This and more await you on Sharkickstartanker Sharkentifitanker!
 Come relax and let us refresh your body and spirit.
 
 
-Useful links:
+#Useful links:
 
 MapGen: https://shaunlebron.github.io/pacman-mazegen/
 
