@@ -17,7 +17,7 @@ Neat library documentation:
 https://neat-python.readthedocs.io/en/latest/
 
 Base Game: 
-https://discord.com/channels/797944138606575626/797944138606575629/938452333153644574
+https://github.com/moritree/PY-MAN
 
 Proposal tasks:
 https://github.com/MarcM0/NeatMan/projects/1
