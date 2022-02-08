@@ -1,4 +1,4 @@
-# NeatMan #
+# NEAT-MAN #
 Welcome to the sun-drenched tropical paradise of NEAT-MAN!
 We're so pleased to welcome you to our beautiful home!
 Come enjoy a natural wonder-land to which we've added
