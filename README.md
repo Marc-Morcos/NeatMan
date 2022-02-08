@@ -1,10 +1,10 @@
 # NeatMan #
-Welcome to the sun-drenched tropical paradise of Sharkickstartanker Sharkentifitanker!
+Welcome to the sun-drenched tropical paradise of NEAT-MAN!
 We're so pleased to welcome you to our beautiful home!
 Come enjoy a natural wonder-land to which we've added
 world's finest resort facilities, a spectacular amusement park,
 and succulent seafood!
-This and more await you on Sharkickstartanker Sharkentifitanker!
+This and more await you on NEAT-MAN!
 Come relax and let us refresh your body and spirit.
 
 
