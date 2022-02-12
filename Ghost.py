@@ -4,6 +4,8 @@ import random
 from operator import *
 import math
 
+theGhostHousePosx = 14
+theGhostHousePosy = 13
 
 def draw_ghosts():
     for ghost in Ghost.instances:
@@ -43,13 +45,13 @@ class GhostFactory:
         self.maze = maze
 
         self.blinky = Ghost(self.maze, self.display, self.player, self.main,
-                            9, 7, (255, 80, 80), [16, 2], "shadow", self)
+                            theGhostHousePosx, theGhostHousePosy-2, (255, 80, 80), [16, 2], "shadow", self)
         self.pinky = Ghost(self.maze, self.display, self.player, self.main,
-                           8, 9, (255, 100, 150), [2, 2], "speedy", self)
+                           theGhostHousePosx-1, theGhostHousePosy, (255, 100, 150), [2, 2], "speedy", self)
         self.inky = Ghost(self.maze, self.display, self.player, self.main,
-                          9, 9, (100, 255, 255), [16, 18], "bashful", self)
+                          theGhostHousePosx, theGhostHousePosy, (100, 255, 255), [16, 18], "bashful", self)
         self.clyde = Ghost(self.maze, self.display, self.player, self.main,
-                           10, 9, (255, 200, 000), [2, 18], "pokey", self)
+                           theGhostHousePosx+1, theGhostHousePosy, (255, 200, 000), [2, 18], "pokey", self)
 
         self.blinky.mode = "normal"
         self.pinky.mode = "normal"
@@ -236,10 +238,10 @@ class Ghost:
                 # set target position based on current behaviour
                 if self.mode == "normal":
                     # Immediately exit house
-                    if self.array_coord == [9, 9]:
-                        target_coord = [9, 7]
-                    elif self.array_coord in([9, 8], [9, 7]) and self.move_dir == self.DIR["UP"]:
-                        target_coord = [8, 7]
+                    if self.array_coord == [theGhostHousePosx, theGhostHousePosy]:
+                        target_coord = [theGhostHousePosx, theGhostHousePosy-2]
+                    elif self.array_coord in([theGhostHousePosx, theGhostHousePosy-1], [theGhostHousePosx, theGhostHousePosy-2]) and self.move_dir == self.DIR["UP"]:
+                        target_coord = [theGhostHousePosx-1, theGhostHousePosy-2]
                     # Scatter
                     elif (self.main.tick_counter / 60) % (self.chase_time + self.scatter_time) < self.scatter_time:
                         target_coord = self.scatter_coord
@@ -256,7 +258,7 @@ class Ghost:
                             target_coord = self.factory.inky_target()
                 # if dead, move back to ghost house
                 elif self.mode == "dead":
-                    target_coord = [9, 9]
+                    target_coord = [theGhostHousePosx, theGhostHousePosy]
 
                 # move towards target, only attempt a turn at an intersection
                 if step < self.x % self.block_size < self.block_size - step \
@@ -300,7 +302,7 @@ class Ghost:
                     self.x = -self.size
 
             # respawn if way found back to house
-            if self.mode == "dead" and self.array_coord == [9, 9]:
+            if self.mode == "dead" and self.array_coord == [theGhostHousePosx, theGhostHousePosy]:
                 self.mode = "normal"
 
             self.turn_timer += 1

@@ -35,7 +35,7 @@ def createMap(mapArray):
             
             #power up
             elif char == 'o':
-                #todo
+                #TODO
                 mapArray[row][col] = 0
 
             #ghost door
@@ -51,8 +51,14 @@ def createMap(mapArray):
 
 
     #cleanup
+    #shrink ghost area
+    for i in range(10,17):
+        mapArray[14][i] = 1
+        mapArray[15][i] = 1
 
-    #return power pellet coordinates:
+    #TODO
+
+    #return power pellet coordinates: #TODO
     #return powerUpCoordinates
 
 
