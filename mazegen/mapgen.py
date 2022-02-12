@@ -8,11 +8,11 @@ var = Scope( JS_BUILTINS )
 set_global_object(var)
 
 # Code follows:
-var.registers(['rgbToHsv', 'tallRows', 'DIR_RIGHT', 'genRandom', 'tileSize', 'setDirFromEnum', 'drawTiles', 'LEFT', 'randomElement', 'rows', 'getEnumFromDir', 'reset', 'cells', 'hslToRgb', 'DIR_UP', 'rgbToHsl', 'getTiles', 'DOWN', 'hsvToRgb', 'narrowCols', 'mapgen', 'rgbString', 'Map', 'DIR_LEFT', 'getRandomInt', 'UP', 'drawCells', 'cols', 'shuffle', 'DIR_DOWN', 'randomColor', 'RIGHT'])
+var.registers(['rgbToHsv', 'mapgen', 'RIGHT', 'reset', 'tallRows', 'DIR_UP', 'getTiles', 'drawCells', 'DIR_LEFT', 'cells', 'drawTiles', 'DIR_DOWN', 'shuffle', 'randomElement', 'rows', 'hsvToRgb', 'hslToRgb', 'UP', 'DOWN', 'narrowCols', 'tileSize', 'rgbString', 'DIR_RIGHT', 'randomColor', 'cols', 'rgbToHsl', 'Map', 'setDirFromEnum', 'getRandomInt', 'getEnumFromDir', 'genRandom', 'LEFT'])
 @Js
 def PyJsHoisted_rgbToHsl_(r, g, b, this, arguments, var=var):
     var = Scope({'r':r, 'g':g, 'b':b, 'this':this, 'arguments':arguments}, var)
-    var.registers(['s', 'h', 'max', 'b', 'min', 'd', 'r', 'g', 'l'])
+    var.registers(['d', 'b', 'h', 'g', 'r', 'l', 's', 'min', 'max'])
     PyJsComma(PyJsComma(var.put('r', Js(255.0), '/'),var.put('g', Js(255.0), '/')),var.put('b', Js(255.0), '/'))
     var.put('max', var.get('Math').callprop('max', var.get('r'), var.get('g'), var.get('b')))
     var.put('min', var.get('Math').callprop('min', var.get('r'), var.get('g'), var.get('b')))
@@ -46,7 +46,7 @@ var.put('rgbToHsl', PyJsHoisted_rgbToHsl_)
 @Js
 def PyJsHoisted_hslToRgb_(h, s, l, this, arguments, var=var):
     var = Scope({'h':h, 's':s, 'l':l, 'this':this, 'arguments':arguments}, var)
-    var.registers(['l', 's', 'hue2rgb', 'h', 'b', 'g', 'r', 'q', 'p'])
+    var.registers(['b', 'q', 'h', 'g', 'r', 'l', 's', 'p', 'hue2rgb'])
     @Js
     def PyJsHoisted_hue2rgb_(p, q, t, this, arguments, var=var):
         var = Scope({'p':p, 'q':q, 't':t, 'this':this, 'arguments':arguments}, var)
@@ -83,7 +83,7 @@ var.put('hslToRgb', PyJsHoisted_hslToRgb_)
 @Js
 def PyJsHoisted_rgbToHsv_(r, g, b, this, arguments, var=var):
     var = Scope({'r':r, 'g':g, 'b':b, 'this':this, 'arguments':arguments}, var)
-    var.registers(['s', 'h', 'max', 'b', 'min', 'v', 'd', 'r', 'g'])
+    var.registers(['d', 'v', 'b', 'h', 'g', 'r', 's', 'min', 'max'])
     PyJsComma(PyJsComma(var.put('r', (var.get('r')/Js(255.0))),var.put('g', (var.get('g')/Js(255.0)))),var.put('b', (var.get('b')/Js(255.0))))
     var.put('max', var.get('Math').callprop('max', var.get('r'), var.get('g'), var.get('b')))
     var.put('min', var.get('Math').callprop('min', var.get('r'), var.get('g'), var.get('b')))
@@ -117,7 +117,7 @@ var.put('rgbToHsv', PyJsHoisted_rgbToHsv_)
 @Js
 def PyJsHoisted_hsvToRgb_(h, s, v, this, arguments, var=var):
     var = Scope({'h':h, 's':s, 'v':v, 'this':this, 'arguments':arguments}, var)
-    var.registers(['s', 'h', 'b', 'p', 'f', 'g', 'r', 't', 'v', 'q', 'i'])
+    var.registers(['f', 'v', 'b', 'q', 'h', 'g', 't', 'r', 's', 'p', 'i'])
     pass
     var.put('i', var.get('Math').callprop('floor', (var.get('h')*Js(6.0))))
     var.put('f', ((var.get('h')*Js(6.0))-var.get('i')))
@@ -162,7 +162,7 @@ var.put('hsvToRgb', PyJsHoisted_hsvToRgb_)
 @Js
 def PyJsHoisted_rgbString_(rgb, this, arguments, var=var):
     var = Scope({'rgb':rgb, 'this':this, 'arguments':arguments}, var)
-    var.registers(['rgb', 'b', 'g', 'r'])
+    var.registers(['b', 'r', 'g', 'rgb'])
     var.put('r', var.get('Math').callprop('floor', var.get('rgb').get('0')))
     var.put('g', var.get('Math').callprop('floor', var.get('rgb').get('1')))
     var.put('b', var.get('Math').callprop('floor', var.get('rgb').get('2')))
@@ -217,7 +217,7 @@ var.put('tileSize', Js(8.0))
 @Js
 def PyJs_anonymous_2_(numCols, numRows, tiles, this, arguments, var=var):
     var = Scope({'numCols':numCols, 'numRows':numRows, 'tiles':tiles, 'this':this, 'arguments':arguments}, var)
-    var.registers(['tiles', 'numCols', 'numRows'])
+    var.registers(['numCols', 'numRows', 'tiles'])
     var.get(u"this").put('numCols', var.get('numCols'))
     var.get(u"this").put('numRows', var.get('numRows'))
     var.get(u"this").put('numTiles', (var.get('numCols')*var.get('numRows')))
@@ -238,7 +238,7 @@ var.get('Map').get('prototype').put('resetCurrent', PyJs_anonymous_3_)
 @Js
 def PyJs_anonymous_4_(this, arguments, var=var):
     var = Scope({'this':this, 'arguments':arguments}, var)
-    var.registers(['edges', 'toIndex', 'makePath', 'x', 'y', 'that', 'i', 'visited'])
+    var.registers(['toIndex', 'visited', 'y', 'x', 'that', 'edges', 'makePath', 'i'])
     var.put('that', var.get(u"this"))
     var.get(u"this").put('paths', Js([]))
     var.put('visited', Js({}))
@@ -271,7 +271,7 @@ def PyJs_anonymous_4_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_7_(tx, ty, this, arguments, var=var):
         var = Scope({'tx':tx, 'ty':ty, 'this':this, 'arguments':arguments}, var)
-        var.registers(['ty', 'pad', 'turnAround', 'getStartPoint', 'dirEnum', 'lastPoint', 'init_tx', 'init_ty', 'path', 'dir', 'tx', 'point', 'init_dirEnum', 'turn'])
+        var.registers(['turnAround', 'path', 'turn', 'dirEnum', 'ty', 'point', 'tx', 'init_dirEnum', 'lastPoint', 'dir', 'pad', 'init_ty', 'getStartPoint', 'init_tx'])
         var.put('dir', Js({}))
         pass
         if var.get('edges').contains(var.get('toIndex')((var.get('tx')+Js(1.0)), var.get('ty'))):
@@ -296,7 +296,7 @@ def PyJs_anonymous_4_(this, arguments, var=var):
         @Js
         def PyJs_anonymous_8_(tx, ty, dirEnum, this, arguments, var=var):
             var = Scope({'tx':tx, 'ty':ty, 'dirEnum':dirEnum, 'this':this, 'arguments':arguments}, var)
-            var.registers(['ty', 'py', 's', 'a', 'dirEnum', 'px', 'c', 'dir', 'tx'])
+            var.registers(['px', 'a', 'dirEnum', 'py', 'ty', 'c', 'tx', 'dir', 's'])
             var.put('dir', Js({}))
             var.get('setDirFromEnum')(var.get('dir'), var.get('dirEnum'))
             if var.get('edges').contains(var.get('toIndex')((var.get('tx')+var.get('dir').get('y')), (var.get('ty')-var.get('dir').get('x')))).neg():
@@ -404,7 +404,7 @@ var.get('Map').get('prototype').put('isFloorTile', PyJs_anonymous_13_)
 @Js
 def PyJs_anonymous_14_(ctx, left, top, print, this, arguments, var=var):
     var = Scope({'ctx':ctx, 'left':left, 'top':top, 'print':print, 'this':this, 'arguments':arguments}, var)
-    var.registers(['j', 'print', 'top', 'tile', 'ctx', 'pelletSize', 'energizerSize', 'x', 't', 'path', 'y', 'i', 'left'])
+    var.registers(['energizerSize', 'path', 'y', 'pelletSize', 'ctx', 'tile', 't', 'j', 'x', 'left', 'top', 'print', 'i'])
     var.get('ctx').callprop('save')
     var.get('ctx').callprop('translate', Js(0.5), Js(0.5))
     var.get('ctx').callprop('translate', var.get('left'), var.get('top'))
@@ -489,7 +489,7 @@ var.get('Map').get('prototype').put('draw', PyJs_anonymous_14_)
 @Js
 def PyJs_anonymous_15_(ctx, left, top, this, arguments, var=var):
     var = Scope({'ctx':ctx, 'left':left, 'top':top, 'this':this, 'arguments':arguments}, var)
-    var.registers(['j', 'print', 'top', 'tile', 'ctx', 'x', 'y', 'i', 'left'])
+    var.registers(['y', 'ctx', 'tile', 'j', 'x', 'left', 'top', 'print', 'i'])
     var.put('print', Js(True))
     var.get('ctx').callprop('save')
     var.get('ctx').callprop('translate', Js(0.5), Js(0.5))
@@ -561,7 +561,7 @@ var.put('getRandomInt', PyJs_anonymous_16_)
 @Js
 def PyJs_anonymous_17_(list, this, arguments, var=var):
     var = Scope({'list':list, 'this':this, 'arguments':arguments}, var)
-    var.registers(['j', 'temp', 'list', 'len', 'i'])
+    var.registers(['len', 'temp', 'list', 'j', 'i'])
     var.put('len', var.get('list').get('length'))
     pass
     pass
@@ -644,7 +644,7 @@ var.put('reset', PyJs_anonymous_19_)
 @Js
 def PyJs_anonymous_20_(this, arguments, var=var):
     var = Scope({'this':this, 'arguments':arguments}, var)
-    var.registers(['getOpenCells', 'isDesirable', 'connectCell', 'reassignGroup', 'joinWalls', 'createTunnels', 'genCount', 'setUpScaleCoords', 'getLeftMostEmptyCells', 'cellIsCrossCenter', 'isOpenCell', 'chooseNarrowCols', 'gen', 'setResizeCandidates', 'chooseTallRows'])
+    var.registers(['chooseNarrowCols', 'isOpenCell', 'setUpScaleCoords', 'gen', 'cellIsCrossCenter', 'isDesirable', 'joinWalls', 'getLeftMostEmptyCells', 'connectCell', 'chooseTallRows', 'createTunnels', 'genCount', 'setResizeCandidates', 'getOpenCells', 'reassignGroup'])
     @Js
     def PyJs_anonymous_21_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
@@ -674,7 +674,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_22_(cell, i, prevDir, size, this, arguments, var=var):
         var = Scope({'cell':cell, 'i':i, 'prevDir':prevDir, 'size':size, 'this':this, 'arguments':arguments}, var)
-        var.registers(['cell', 'i', 'prevDir', 'size'])
+        var.registers(['cell', 'prevDir', 'size', 'i'])
         if ((((var.get('cell').get('y')==Js(6.0)) and (var.get('cell').get('x')==Js(0.0))) and (var.get('i')==var.get('DOWN'))) or (((var.get('cell').get('y')==Js(7.0)) and (var.get('cell').get('x')==Js(0.0))) and (var.get('i')==var.get('UP')))):
             return Js(False)
         if ((var.get('size')==Js(2.0)) and ((var.get('i')==var.get('prevDir')) or (((var.get('i')+Js(2.0))%Js(4.0))==var.get('prevDir')))):
@@ -690,7 +690,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_23_(cell, prevDir, size, this, arguments, var=var):
         var = Scope({'cell':cell, 'prevDir':prevDir, 'size':size, 'this':this, 'arguments':arguments}, var)
-        var.registers(['cell', 'prevDir', 'openCells', 'numOpenCells', 'size'])
+        var.registers(['cell', 'numOpenCells', 'size', 'openCells', 'prevDir'])
         var.put('openCells', Js([]))
         var.put('numOpenCells', Js(0.0))
         #for JS loop
@@ -718,7 +718,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_25_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['singleCount', 'newCell', 'numFilled', 'stop', 'probStopGrowingAtSize', 'size', 'probExtendAtSize3or4', 'probTopAndBotSingleCellJoin', 'i', 'longPieces', 'cell', 'result', 'firstCell', 'openCells', 'dirs', 'maxLongPieces', 'dirsLength', 'dir', 'numOpenCells', 'fillCell', 'numGroups', 'c', 'probExtendAtSize2'])
+        var.registers(['probTopAndBotSingleCellJoin', 'singleCount', 'maxLongPieces', 'openCells', 'c', 'longPieces', 'numFilled', 'numOpenCells', 'probExtendAtSize3or4', 'fillCell', 'dirsLength', 'dir', 'i', 'numGroups', 'newCell', 'dirs', 'firstCell', 'cell', 'size', 'probStopGrowingAtSize', 'stop', 'result', 'probExtendAtSize2'])
         pass
         pass
         pass
@@ -856,7 +856,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_27_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['q2', 'c2', 'x', 'y', 'c', 'q', 'i'])
+        var.registers(['c2', 'y', 'q2', 'q', 'c', 'x', 'i'])
         pass
         pass
         pass
@@ -893,11 +893,11 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_29_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['c', 'canShrinkWidth', 'x'])
+        var.registers(['c', 'x', 'canShrinkWidth'])
         @Js
         def PyJs_anonymous_30_(x, y, this, arguments, var=var):
             var = Scope({'x':x, 'y':y, 'this':this, 'arguments':arguments}, var)
-            var.registers(['candidates', 'numCandidates', 'x0', 'c2', 'x', 'y', 'c', 'i'])
+            var.registers(['candidates', 'c2', 'y', 'x0', 'numCandidates', 'c', 'x', 'i'])
             if (var.get('y')==(var.get('rows')-Js(1.0))):
                 return Js(True)
             pass
@@ -960,11 +960,11 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_31_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['c', 'canRaiseHeight', 'y'])
+        var.registers(['c', 'y', 'canRaiseHeight'])
         @Js
         def PyJs_anonymous_32_(x, y, this, arguments, var=var):
             var = Scope({'x':x, 'y':y, 'this':this, 'arguments':arguments}, var)
-            var.registers(['candidates', 'numCandidates', 'y0', 'c2', 'x', 'y', 'c', 'i'])
+            var.registers(['candidates', 'c2', 'y', 'numCandidates', 'c', 'x', 'y0', 'i'])
             if (var.get('x')==(var.get('cols')-Js(1.0))):
                 return Js(True)
             pass
@@ -1028,7 +1028,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_33_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['isVert', 'x', 'g', 'isHori', 'y', 'c'])
+        var.registers(['y', 'g', 'isVert', 'c', 'x', 'isHori'])
         var.put('c', var.get('cells').get('4'))
         if (var.get('c').get('connect').get(var.get('UP')) or var.get('c').get('connect').get(var.get('RIGHT'))):
             return Js(False)
@@ -1038,7 +1038,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
         @Js
         def PyJs_anonymous_34_(x, y, this, arguments, var=var):
             var = Scope({'x':x, 'y':y, 'this':this, 'arguments':arguments}, var)
-            var.registers(['q2', 'q1', 'x', 'y'])
+            var.registers(['q1', 'y', 'q2', 'x'])
             var.put('q1', var.get('cells').get((var.get('x')+(var.get('y')*var.get('cols')))).get('connect'))
             var.put('q2', var.get('cells').get(((var.get('x')+Js(1.0))+(var.get('y')*var.get('cols')))).get('connect'))
             return (((((((var.get('q1').get(var.get('UP')).neg() and var.get('q1').get(var.get('DOWN')).neg()) and ((var.get('x')==Js(0.0)) or var.get('q1').get(var.get('LEFT')).neg())) and var.get('q1').get(var.get('RIGHT'))) and var.get('q2').get(var.get('UP')).neg()) and var.get('q2').get(var.get('DOWN')).neg()) and var.get('q2').get(var.get('LEFT'))) and var.get('q2').get(var.get('RIGHT')).neg())
@@ -1047,7 +1047,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
         @Js
         def PyJs_anonymous_35_(x, y, this, arguments, var=var):
             var = Scope({'x':x, 'y':y, 'this':this, 'arguments':arguments}, var)
-            var.registers(['q2', 'q1', 'x', 'y'])
+            var.registers(['q1', 'y', 'q2', 'x'])
             var.put('q1', var.get('cells').get((var.get('x')+(var.get('y')*var.get('cols')))).get('connect'))
             var.put('q2', var.get('cells').get((var.get('x')+((var.get('y')+Js(1.0))*var.get('cols')))).get('connect'))
             if (var.get('x')==(var.get('cols')-Js(1.0))):
@@ -1116,7 +1116,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_37_(oldg, newg, this, arguments, var=var):
         var = Scope({'oldg':oldg, 'newg':newg, 'this':this, 'arguments':arguments}, var)
-        var.registers(['c', 'i', 'oldg', 'newg'])
+        var.registers(['c', 'newg', 'oldg', 'i'])
         pass
         pass
         #for JS loop
@@ -1133,7 +1133,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_38_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['downDead', 'numTunnelsDesired', 'voidTunnelCells', 'singleDeadEndCells', 'topy', 'doubleDeadEndCells', 'topSingleDeadEndCells', 'numTunnelsCreated', 'y', 'botEdgeTunnelCells', 'len', 'selectSingleDeadEnd', 'botVoidTunnelCells', 'i', 'botSingleDeadEndCells', 'topEdgeTunnelCells', 'topVoidTunnelCells', 'offset', 'edgeTunnelCells', 'replaceGroup', 'c', 'exit', 'upDead'])
+        var.registers(['len', 'offset', 'c', 'replaceGroup', 'voidTunnelCells', 'topSingleDeadEndCells', 'topEdgeTunnelCells', 'upDead', 'topVoidTunnelCells', 'numTunnelsCreated', 'botVoidTunnelCells', 'i', 'botSingleDeadEndCells', 'selectSingleDeadEnd', 'singleDeadEndCells', 'exit', 'botEdgeTunnelCells', 'numTunnelsDesired', 'y', 'downDead', 'edgeTunnelCells', 'topy', 'doubleDeadEndCells'])
         var.put('singleDeadEndCells', Js([]))
         var.put('topSingleDeadEndCells', Js([]))
         var.put('botSingleDeadEndCells', Js([]))
@@ -1198,7 +1198,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
                                         var.get('doubleDeadEndCells').callprop('push', var.get('c'))
             finally:
                     (var.put('y',Js(var.get('y').to_number())+Js(1))-Js(1))
-        var.put('numTunnelsDesired', (Js(2.0) if (var.get('Math').callprop('random')<=Js(0.45)) else Js(1.0)))
+        var.put('numTunnelsDesired', Js(1.0))
         pass
         @Js
         def PyJs_anonymous_39_(c, this, arguments, var=var):
@@ -1276,7 +1276,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
         @Js
         def PyJs_anonymous_40_(oldg, newg, this, arguments, var=var):
             var = Scope({'oldg':oldg, 'newg':newg, 'this':this, 'arguments':arguments}, var)
-            var.registers(['c', 'i', 'oldg', 'newg'])
+            var.registers(['c', 'newg', 'oldg', 'i'])
             pass
             #for JS loop
             var.put('i', Js(0.0))
@@ -1306,7 +1306,7 @@ def PyJs_anonymous_20_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_41_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['c', 'c2', 'x', 'y'])
+        var.registers(['c', 'x', 'c2', 'y'])
         pass
         pass
         #for JS loop
@@ -1371,7 +1371,7 @@ var.put('genRandom', PyJs_anonymous_20_)
 @Js
 def PyJs_anonymous_42_(this, arguments, var=var):
     var = Scope({'this':this, 'arguments':arguments}, var)
-    var.registers(['tiles', 'x', 'getTileCell', 'tileCells', 'range', 'cl', 'eraseUntilIntersection', 'subrows', 'y0', 'h', 'midcols', 'y', 'setTile', 'i', 'j', 'getTile', 'x0', 'fullcols', 'cu', 'subcols', 'w', 'setTileCell', 'getBotEnergizerRange', 'c', 'getTopEnergizerRange'])
+    var.registers(['subcols', 'getBotEnergizerRange', 'w', 'subrows', 'c', 'cu', 'getTopEnergizerRange', 'midcols', 'tiles', 'eraseUntilIntersection', 'y0', 'getTileCell', 'setTile', 'x', 'tileCells', 'i', 'range', 'j', 'cl', 'setTileCell', 'y', 'x0', 'getTile', 'h', 'fullcols'])
     var.put('tiles', Js([]))
     var.put('tileCells', Js([]))
     var.put('subrows', (((var.get('rows')*Js(3.0))+Js(1.0))+Js(3.0)))
@@ -1512,7 +1512,7 @@ def PyJs_anonymous_42_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_48_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['maxy', 'y', 'x', 'miny'])
+        var.registers(['x', 'maxy', 'y', 'miny'])
         pass
         var.put('maxy', (var.get('subrows')/Js(2.0)))
         var.put('x', (var.get('subcols')-Js(2.0)))
@@ -1542,7 +1542,7 @@ def PyJs_anonymous_42_(this, arguments, var=var):
     @Js
     def PyJs_anonymous_49_(this, arguments, var=var):
         var = Scope({'this':this, 'arguments':arguments}, var)
-        var.registers(['maxy', 'y', 'x', 'miny'])
+        var.registers(['x', 'maxy', 'y', 'miny'])
         var.put('miny', (var.get('subrows')/Js(2.0)))
         pass
         var.put('x', (var.get('subcols')-Js(2.0)))
@@ -1657,7 +1657,7 @@ var.put('randomColor', PyJs_anonymous_51_)
 @Js
 def PyJs_anonymous_52_(ctx, left, top, size, title, options, this, arguments, var=var):
     var = Scope({'ctx':ctx, 'left':left, 'top':top, 'size':size, 'title':title, 'options':options, 'this':this, 'arguments':arguments}, var)
-    var.registers(['arrowsize', 'top', 'ctx', 'options', 'x', 'title', 'y', 'c', 'i', 'size', 'left'])
+    var.registers(['y', 'title', 'ctx', 'size', 'options', 'c', 'x', 'arrowsize', 'left', 'top', 'i'])
     var.get('ctx').callprop('save')
     var.get('ctx').callprop('translate', var.get('left'), var.get('top'))
     var.get('ctx').put('font', ((Js('bold ')+(var.get('size')/Js(3.0)))+Js('px sans-serif')))
@@ -1794,7 +1794,7 @@ var.put('drawCells', PyJs_anonymous_52_)
 @Js
 def PyJs_anonymous_53_(ctx, left, top, size, this, arguments, var=var):
     var = Scope({'ctx':ctx, 'left':left, 'top':top, 'size':size, 'this':this, 'arguments':arguments}, var)
-    var.registers(['subcols', 'subrows', 'top', 'ctx', 'tiles', 'fullcols', 'color', 'x', 'y', 'subsize', 'i', 'size', 'left'])
+    var.registers(['subcols', 'subsize', 'y', 'color', 'subrows', 'ctx', 'size', 'fullcols', 'x', 'left', 'tiles', 'top', 'i'])
     var.get('ctx').callprop('save')
     var.get('ctx').callprop('translate', var.get('left'), var.get('top'))
     var.put('subsize', (var.get('size')/Js(3.0)))

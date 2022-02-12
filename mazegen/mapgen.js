@@ -1305,7 +1305,7 @@ var genRandom = function() {
         }
 
         // choose tunnels from candidates
-        var numTunnelsDesired = Math.random() <= 0.45 ? 2 : 1;
+        var numTunnelsDesired = 1;
         var c;
         var selectSingleDeadEnd = function(c) {
             c.connect[RIGHT] = true;
