@@ -12,7 +12,7 @@ Come relax and let us refresh your body and spirit.
 MapGen: 
 https://shaunlebron.github.io/pacman-mazegen/
 
-Base Game: 
+PY-MAN (Base Game): 
 https://github.com/moritree/PY-MAN
 
 ### Other Useful Links: ###
