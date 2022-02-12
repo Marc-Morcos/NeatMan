@@ -9,7 +9,7 @@ class Maze:
         self.display = display
         self.block_size = main.block_size
         self.offset = main.offset
-        self.powerUpLocations = [(1,2),(17,15),(1,15),(17,2)]
+        self.powerUpLocations = [(1,2),(17,15),(1,15),(17,2)] #default, these get overwritten by the mapgen
 
         # draw maze
         self.maze_array = [[0] * main.maze_width for i in range(main.maze_height)]  # [y][x]
