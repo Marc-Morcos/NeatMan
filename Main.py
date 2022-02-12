@@ -77,7 +77,7 @@ class Main:
 
         # spawn maze and player
         maze = Maze.Maze(display_surf, self)
-        player = PacMan.PacMan(9, 11, display_surf, maze, self)
+        player = PacMan.PacMan(14, 17, display_surf, maze, self)
 
         # generate all coins and power ups
         item_factory = Items.ItemFactory(maze, self.block_size, display_surf, player, self)
