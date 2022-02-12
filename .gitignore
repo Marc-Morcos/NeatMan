@@ -1,6 +1,5 @@
 mazegen/__pycache__/walls.cpython-39.pyc
 __pycache__/Ghost.cpython-39.pyc
-.gitignore
 __pycache__/Maze.cpython-39.pyc
 __pycache__/Items.cpython-39.pyc
 __pycache__/PacMan.cpython-39.pyc
