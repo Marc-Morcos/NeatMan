@@ -12,7 +12,7 @@ Come relax and let us refresh your body and spirit.
 MapGen: 
 https://shaunlebron.github.io/pacman-mazegen/
 
-JS2PY used to translate MapGen from JS to Python:
+Js2Py used to translate MapGen from JS to Python:
 https://github.com/PiotrDabkowski/Js2Py
 
 PY-MAN (Base Game): 
