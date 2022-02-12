@@ -403,7 +403,7 @@ class Ghost:
                     self.main.game_state = "respawn"
                     self.main.lives -= 1
                     self.main.temp_counter = 0
-                    self.x = 9 * self.block_size + self.size / 2
-                    self.y = 9 * self.block_size + self.size / 2
+                    self.x = theGhostHousePosx * self.block_size + self.size / 2
+                    self.y = theGhostHousePosy * self.block_size + self.size / 2
                 else:
                     self.main.game_state = "lose"

@@ -4,7 +4,7 @@ from mazegen.mapgen import mapgen
     #1 = wall
     #2 = ghost door
     #3 = empty space
-    #4 seems to be pellet block but is seperate for some reason
+    #4 seems to be pellet block but is seperate for some reason, i think ghosts cant cross this block
 
 #I also edited the mapgen js so we always get 1 tunnel instead of 2
 #TODO test if random tunnels crash the game
@@ -54,7 +54,11 @@ def createMap(mapArray):
     #shrink ghost area
     for i in range(10,17):
         mapArray[14][i] = 1
-        mapArray[15][i] = 1
+    mapArray[12][13] = 1
+    mapArray[13][11] = 1
+    mapArray[13][16] = 1
+    mapArray[13][12] = 1
+    mapArray[13][12] = 1
 
     #TODO
 

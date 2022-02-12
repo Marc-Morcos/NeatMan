@@ -1,6 +1,7 @@
 import pygame
 import Ghost
 from mazegen.mapGenClean import createMap
+from Ghost import theGhostHousePosx,theGhostHousePosy
 
 class Maze:
     def __init__(self, display, main):
@@ -36,7 +37,7 @@ class Maze:
     def can_move(self, entity, dir):
         allowed = [0, 3, 4]
         if isinstance(entity, Ghost.Ghost):
-            if (entity.mode == "normal" and 9 <= entity.array_coord[0] <= 11 and 8 <= entity.array_coord[1] <= 11) \
+            if (entity.mode == "normal" and theGhostHousePosx <= entity.array_coord[0] <= theGhostHousePosx+2 and theGhostHousePosy-1 <= entity.array_coord[1] <= theGhostHousePosy+2) \
                     or entity.mode == "dead":
                 allowed = [0, 2, 3]
             elif dir == entity.DIR["UP"]:
