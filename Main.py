@@ -11,8 +11,8 @@ class Main:
         self.block_size = 30
         self.offset = self.block_size * 2
 
-        self.maze_width = 19
-        self.maze_height = 21
+        self.maze_width = 28
+        self.maze_height = 31
 
         self.lives = 3;
 
