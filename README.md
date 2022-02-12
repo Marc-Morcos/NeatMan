@@ -23,5 +23,8 @@ https://github.com/moritree/PY-MAN
 Neat library documentation: 
 https://neat-python.readthedocs.io/en/latest/
 
+Code tasks:
+https://github.com/MarcM0/NeatMan/projects/2
+
 Proposal tasks:
 https://github.com/MarcM0/NeatMan/projects/1
