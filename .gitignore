@@ -1,11 +1,3 @@
-mazegen/__pycache__/walls.cpython-39.pyc
-__pycache__/Ghost.cpython-39.pyc
-__pycache__/Maze.cpython-39.pyc
-__pycache__/Items.cpython-39.pyc
-__pycache__/PacMan.cpython-39.pyc
-mazegen/__pycache__/mapgen.cpython-39.pyc
-mazegen/__pycache__/mapGenClean.cpython-39.pyc
-mazegen/tempCodeRunnerFile.js
-mazegen/tempCodeRunnerFile.py
+*.cpython-39.pyc
+*/tempCodeRunnerFile.py
 tempCodeRunnerFile.py
-mazegen/mapGenClean.py
