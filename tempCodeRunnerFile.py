@@ -1,1 +1,1 @@
-display_surf
+self

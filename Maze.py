@@ -9,13 +9,13 @@ class Maze:
         self.display = display
         self.block_size = main.block_size
         self.offset = main.offset
+        self.powerUpLocations = [(1,2),(17,15),(1,15),(17,2)]
 
         # draw maze
         self.maze_array = [[0] * main.maze_width for i in range(main.maze_height)]  # [y][x]
         
         if main.maze_width == 28 and main.maze_height == 31:
-            powerUpLocations = createMap(self.maze_array)
-            #todo use poweruplocations
+            self.powerUpLocations = createMap(self.maze_array)
 
     def draw(self):
         # draw maze

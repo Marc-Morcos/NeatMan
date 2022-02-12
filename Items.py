@@ -16,10 +16,9 @@ class ItemFactory:
         self.make_coins()
 
     def make_powerups(self):
-        x = [1, 17, 1, 17]
-        y = [2, 15, 15, 2]
-        for i in range(len(x)):
-            PowerUp(x[i], y[i], self.block_size, self.display)
+        powerUpLocations = self.maze.powerUpLocations
+        for location in self.maze.powerUpLocations:
+            PowerUp(location[0], location[1], self.block_size, self.display)
 
     def make_coins(self):
         for i in range(0, len(self.array)):

@@ -7,7 +7,6 @@ from mazegen.mapgen import mapgen
     #4 seems to be pellet block but is seperate for some reason, i think ghosts cant cross this block
 
 #I also edited the mapgen js so we always get 1 tunnel instead of 2
-#TODO test if random tunnels crash the game
 
 #creates a converted and cleaned up random map with 28 columns and 31 rows (overwrites mapArray)
 #also returns power pellet coordinates
@@ -15,6 +14,8 @@ def createMap(mapArray):
 
     #initial map
     tiles = mapgen.mapgen().tiles.lstrip("_").rstrip("_")
+
+    powerUpCoordinates = []
 
     #convert to readable format
     for row in range(31):
@@ -35,7 +36,7 @@ def createMap(mapArray):
             
             #power up
             elif char == 'o':
-                #TODO
+                powerUpCoordinates.append((col,row))
                 mapArray[row][col] = 0
 
             #ghost door
@@ -51,7 +52,7 @@ def createMap(mapArray):
 
 
     #cleanup
-    #shrink ghost area
+    #fix up ghost area
     for i in range(10,17):
         mapArray[14][i] = 1
     mapArray[12][13] = 1
@@ -60,10 +61,8 @@ def createMap(mapArray):
     mapArray[13][12] = 1
     mapArray[13][12] = 1
 
-    #TODO
-
-    #return power pellet coordinates: #TODO
-    #return powerUpCoordinates
+    #return power pellet coordinates
+    return powerUpCoordinates
 
 
 
