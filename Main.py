@@ -4,7 +4,7 @@ import Maze
 import PacMan
 import Items
 import Ghost
-
+scaling_factor = 0.75 #factor by which we scale dimensions of game window
 
 class Main:
     def __init__(self):
@@ -55,8 +55,8 @@ class Main:
             Ghost.move_all()
             Ghost.check_collisions()
 
-    def draw(self, display, maze, player, item_factory):
-        pygame.draw.rect(display, (0, 0, 0), (0, 0, self.display_width, self.display_height))
+    def draw(self, surface, maze, player, item_factory,window):
+        pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
 
         maze.draw()
         item_factory.draw_all()
@@ -64,15 +64,21 @@ class Main:
         Ghost.draw_ghosts()
 
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
-        game_font.render_to(display, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
+        game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 20)
-        game_font.render_to(display, (300, 15), str(self.lives) + " LIVES", (255, 255, 255))
+        game_font.render_to(surface, (300, 15), str(self.lives) + " LIVES", (255, 255, 255))
+
+        #scaling code from https://stackoverflow.com/questions/43196126/how-do-you-scale-a-design-resolution-to-other-resolutions-with-pygame
+        frame = pygame.transform.scale(surface, (self.display_width*scaling_factor, self.display_height*scaling_factor))
+        window.blit(frame, frame.get_rect())
+        pygame.display.flip()
 
     def run(self):
         # initialize
         pygame.init()
         pygame.display.set_caption("PY-MAN")
-        display_surf = pygame.display.set_mode((self.display_width, self.display_height))
+        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
+        display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
         # spawn maze and player
@@ -93,7 +99,7 @@ class Main:
                 # main game loop
                 self.events(player)
                 self.loop(player, item_factory, ghost_factory)
-                self.draw(display_surf, maze, player, item_factory)
+                self.draw(display_surf, maze, player, item_factory,display)
 
                 # check win condition
                 if self.coins >= self.total_coins:
