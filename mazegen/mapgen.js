@@ -1,3 +1,6 @@
+//This javascript code is mostly from this repo https://shaunlebron.github.io/pacman-mazegen/
+
+
 // source: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
 
 /**
