@@ -83,7 +83,7 @@ def createMap(mapArray):
     #1 = wall
     #2 = ghost door
     #3 = empty space
-    #4 seems to be pellet block but is seperate for some reason
+    #4 seems to be pellet block but is seperate for some reason, i think ghosts cant cross this block
 
             # self.maze_array[0]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
             # self.maze_array[1]  = [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1]
