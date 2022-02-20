@@ -58,6 +58,8 @@ def createMap(mapArray):
 
     #cleanup
     #fix up ghost area
+    #todo get rid of the tuples because multiple things can be in same spot 
+    #and map array is no longer valid to feed into model
     for i in range(10,17):
         mapArray[14][i] = 1
         wall_locs.append((i, 14))
