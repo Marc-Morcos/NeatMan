@@ -15,7 +15,20 @@ def createMap(mapArray):
     #initial map
     tiles = mapgen.mapgen().tiles.lstrip("_").rstrip("_")
 
-    powerUpCoordinates = []
+    wall_locs = []
+    pellet_locs = []
+    power_pellet_locs = []
+    ghost_door_locs = []
+
+    #cleanup
+    #fix up ghost area
+    for i in range(10,17):
+        mapArray[14][i] = '|'
+    mapArray[12][13] = '|'
+    mapArray[13][11] = '|'
+    mapArray[13][16] = '|'
+    mapArray[13][12] = '|'
+    mapArray[13][12] = '|'
 
     #convert to readable format
     for row in range(31):
@@ -24,10 +37,12 @@ def createMap(mapArray):
 
             #wall
             if char == '|':
+                wall_locs.append((col, row))
                 mapArray[row][col] = 1
             
             #pellet
             elif char == '.' or char == ' ':
+                pellet_locs.append((col, row))
                 mapArray[row][col] = 0
             
             #empty space
@@ -36,11 +51,12 @@ def createMap(mapArray):
             
             #power up
             elif char == 'o':
-                powerUpCoordinates.append((col,row))
-                mapArray[row][col] = 0
+                power_pellet_locs.append((col, row))
+                mapArray[row][col] = 4
 
             #ghost door
             elif char == '-':
+                ghost_door_locs.append((col, row))
                 mapArray[row][col] = 2
                 
             else:
@@ -50,19 +66,8 @@ def createMap(mapArray):
                 for tempRow in temp:
                     print(tempRow)
 
-
-    #cleanup
-    #fix up ghost area
-    for i in range(10,17):
-        mapArray[14][i] = 1
-    mapArray[12][13] = 1
-    mapArray[13][11] = 1
-    mapArray[13][16] = 1
-    mapArray[13][12] = 1
-    mapArray[13][12] = 1
-
     #return power pellet coordinates
-    return powerUpCoordinates
+    return wall_locs, pellet_locs, power_pellet_locs, ghost_door_locs
 
 
 

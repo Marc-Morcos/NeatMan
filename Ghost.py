@@ -3,97 +3,18 @@ import pygame
 import random
 from operator import *
 import math
-
-theGhostHousePosx = 14
-theGhostHousePosy = 13
-
-def draw_ghosts():
-    for ghost in Ghost.instances:
-        ghost.draw()
-
-
-def check_collisions():
-    for ghost in Ghost.instances:
-        ghost.collide()
-
-
-def move_all():
-    for ghost in Ghost.instances:
-        ghost.move()
-
-
-def turn_blue():
-    for ghost in Ghost.instances:
-        if ghost.mode != "dead":
-            ghost.blue = True
-            ghost.blue_timer = 0
-
-
-def end_blue():
-    for ghost in Ghost.instances:
-        ghost.blue = False
-
-
-class GhostFactory:
-    def __init__(self, maze, display, player, main):
-        self.array = maze.maze_array
-        self.block_size = main.block_size
-
-        self.display = display
-        self.player = player
-        self.main = main
-        self.maze = maze
-
-        self.blinky = Ghost(self.maze, self.display, self.player, self.main,
-                            theGhostHousePosx, theGhostHousePosy-2, (255, 80, 80), [theGhostHousePosx+7, theGhostHousePosy-7], "shadow", self)
-        self.pinky = Ghost(self.maze, self.display, self.player, self.main,
-                           theGhostHousePosx-1, theGhostHousePosy, (255, 100, 150), [theGhostHousePosx-7, theGhostHousePosy-7], "speedy", self)
-        self.inky = Ghost(self.maze, self.display, self.player, self.main,
-                          theGhostHousePosx, theGhostHousePosy, (100, 255, 255), [theGhostHousePosx+7, theGhostHousePosy+9], "bashful", self)
-        self.clyde = Ghost(self.maze, self.display, self.player, self.main,
-                           theGhostHousePosx+1, theGhostHousePosy, (255, 200, 000), [theGhostHousePosx-7, theGhostHousePosy+9], "pokey", self)
-
-        self.blinky.mode = "normal"
-        self.pinky.mode = "normal"
-        self.inky_flag = False
-        self.clyde_flag = False
-
-    def activation(self):
-        # activate inky once 30 coins have been collected
-        if self.inky.mode != "normal" and self.main.coins > 30 and self.inky_flag == False:
-            self.inky.mode = "normal"
-            self.inky_flag = True
-        # activate clyde once 1/3 of total coins have been collected
-        if self.clyde.mode != "normal" and self.main.coins > len(Items.Coin.instances) / 3 and self.clyde_flag == False:
-            self.clyde.mode = "normal"
-            self.clyde_flag = True
-
-    def inky_target(self):
-        target_coord = \
-            [self.player.array_coord[0] + self.player.COORD_DIR[self.player.move_dir][0] * 2,
-             self.player.array_coord[1] + self.player.COORD_DIR[self.player.move_dir][1] * 2]
-        vect = list(map(sub, target_coord, self.blinky.array_coord))
-        return list(map(add, target_coord, vect))
-
+from Constants import *
 
 class Ghost:
     instances = []
 
-    def __init__(self, maze, display, player, main, x, y, color, scatter_coord, personality, factory):
-        # OBJECTS
-        self.display = display
-        self.player = player
-        self.main = main
-        self.maze = maze
-        self.factory = factory
-
+    def __init__(self, x, y, color, scatter_coord, personality):
         # CONSTANTS
-        self.block_size = main.block_size
-        self.offset = main.offset
+        self.offset = block_size * 2
         self.size = 24
         self.base_color = color
-        self.step_len = self.block_size / 16  # normal movement speed
-        self.slow_step = self.block_size / 24  # movement speed when turned blue
+        self.step_len = block_size / 16  # normal movement speed
+        self.slow_step = block_size / 24  # movement speed when turned blue
         self.step = self.step_len
         self.personality = personality
         self.scatter_time = 5
@@ -108,8 +29,8 @@ class Ghost:
 
         # LOCATION
         self.array_coord = [x, y]
-        self.x = x * self.block_size + self.block_size / 2  # px
-        self.y = y * self.block_size + self.block_size / 2  # px
+        self.x = x * block_size + block_size / 2  # px
+        self.y = y * block_size + block_size / 2  # px
 
         # SETUP VARS
         self.mode = "house"
@@ -125,7 +46,7 @@ class Ghost:
 
         Ghost.instances.append(self)
 
-    def move(self):
+    def move(self, player, maze, display_width, tick_counter, blinky_coord):
         def find_distance(a_pos, b_pos):
             a = pow(abs(a_pos[0] - b_pos[0]), 2)
             b = pow(abs(a_pos[1] - b_pos[1]), 2)
@@ -136,14 +57,14 @@ class Ghost:
             next_pos = list(map(add, self.array_coord, self.COORD_DIR[facing]))
             dir_min = find_distance(next_pos, target_pos)
             # check left turn
-            if self.maze.can_move(self, left_turn(facing)):
+            if maze.can_move(self, left_turn(facing)):
                 next_pos = list(map(add, self.array_coord, self.COORD_DIR[left_turn(facing)]))
                 next_dir = find_distance(next_pos, target_pos)
                 if next_dir < dir_min:
                     dir_min = next_dir
                     return_dir = left_turn(facing)
             # check right turn
-            if self.maze.can_move(self, right_turn(facing)):
+            if maze.can_move(self, right_turn(facing)):
                 next_pos = list(map(add, self.array_coord, self.COORD_DIR[right_turn(facing)]))
                 next_dir = find_distance(next_pos, target_pos)
                 if next_dir < dir_min:
@@ -159,7 +80,7 @@ class Ghost:
         # Set step length based on current state
         step = self.step_len
         if self.blue:
-            if self.blue_timer >= self.player.power_time * self.main.fps:
+            if self.blue_timer >= player.power_time:
                 self.blue = False
             else:
                 self.blue_timer += 1
@@ -170,14 +91,14 @@ class Ghost:
 
         if self.mode == "normal" or self.mode == "dead":
             # Update current position in array
-            self.array_coord = [int(self.x / self.block_size), int(self.y / self.block_size)]
+            self.array_coord = [int(self.x / block_size), int(self.y / block_size)]
 
             # Only try changing direction if within bounds of maze array
-            if self.block_size < self.x < self.main.display_width - self.block_size:
-                my_row = int(self.y / self.block_size)
-                my_col = int(self.x / self.block_size)
-                player_row = int(self.player.y / self.block_size)
-                player_col = int(self.player.x / self.block_size)
+            if block_size < self.x < display_width - block_size:
+                my_row = int(self.y / block_size)
+                my_col = int(self.x / block_size)
+                player_row = int(player.y / block_size)
+                player_col = int(player.x / block_size)
                 player_dir = 0
 
                 # FRIGHTENED MODE
@@ -194,27 +115,27 @@ class Ghost:
                             if my_col > player_col:
                                 player_dir = self.DIR["LEFT"]
                                 for i in range(0, my_col - player_col):
-                                    if self.maze.maze_array[my_row][i + player_col] == 1:
+                                    if maze.maze_array[my_row][i + player_col] == 1:
                                         wall = True
                             elif player_col == my_col:
                                 wall = True
                             else:
                                 player_dir = self.DIR["RIGHT"]
                                 for i in range(0, player_col - my_col):
-                                    if self.maze.maze_array[my_row][i + my_col] == 1:
+                                    if maze.maze_array[my_row][i + my_col] == 1:
                                         wall = True
                         elif my_col == player_col:
                             if my_row > player_row:
                                 player_dir = self.DIR["UP"]
                                 for i in range(0, my_row - player_row):
-                                    if self.maze.maze_array[i + player_row][my_col] == 1:
+                                    if maze.maze_array[i + player_row][my_col] == 1:
                                         wall = True
                             elif player_row == my_row:
                                 wall = True
                             else:
                                 player_dir = self.DIR["DOWN"]
                                 for i in range(0, player_row - my_row):
-                                    if self.maze.maze_array[i + my_row][my_col] == 1:
+                                    if maze.maze_array[i + my_row][my_col] == 1:
                                         wall = True
                         if not wall:
                             see_player = True
@@ -225,7 +146,7 @@ class Ghost:
                         # If it is able to continue in the direction it is facing it will
                         # do so, so long as it does not go towards the player
                         if see_player:
-                            if self.look_dir == player_dir or not self.maze.can_move(self, self.look_dir):
+                            if self.look_dir == player_dir or not maze.can_move(self, self.look_dir):
                                 self.look_dir = random.choice([left_turn(left_turn(player_dir)),
                                                                left_turn(player_dir), right_turn(player_dir)])
                                 self.turn_timer = 0
@@ -238,52 +159,56 @@ class Ghost:
                 # set target position based on current behaviour
                 if self.mode == "normal":
                     # Immediately exit house
-                    if self.array_coord == [theGhostHousePosx, theGhostHousePosy]:
-                        target_coord = [theGhostHousePosx, theGhostHousePosy-2]
-                    elif self.array_coord in([theGhostHousePosx, theGhostHousePosy-1], [theGhostHousePosx, theGhostHousePosy-2]) and self.move_dir == self.DIR["UP"]:
-                        target_coord = [theGhostHousePosx-1, theGhostHousePosy-2]
+                    if self.array_coord == [house_x, house_y]:
+                        target_coord = [house_x, house_y-2]
+                    elif self.array_coord in([house_x, house_y-1], [house_x, house_y-2]) and self.move_dir == self.DIR["UP"]:
+                        target_coord = [house_x-1, house_y-2]
                     # Scatter
-                    elif (self.main.tick_counter / 60) % (self.chase_time + self.scatter_time) < self.scatter_time:
+                    elif (tick_counter / 60) % (self.chase_time + self.scatter_time) < self.scatter_time:
                         target_coord = self.scatter_coord
                     # Chase Pac-Man
                     else:
-                        target_coord = self.player.array_coord
+                        target_coord = player.array_coord
                         if self.personality == "speedy":
                             target_coord = \
-                                [self.player.array_coord[0] + self.player.COORD_DIR[self.player.move_dir][0] * 2,
-                                 self.player.array_coord[1] + self.player.COORD_DIR[self.player.move_dir][1] * 2]
-                        if self.personality == "pokey" and find_distance(self.array_coord, self.player.array_coord) < 3:
+                                [player.array_coord[0] + player.COORD_DIR[player.move_dir][0] * 2,
+                                 player.array_coord[1] + player.COORD_DIR[player.move_dir][1] * 2]
+                        if self.personality == "pokey" and find_distance(self.array_coord, player.array_coord) < 3:
                             target_coord = self.scatter_coord
                         if self.personality == "bashful":
-                            target_coord = self.factory.inky_target()
+                            target_coord = \
+                                [player.array_coord[0] + player.COORD_DIR[player.move_dir][0] * 2,
+                                player.array_coord[1] + player.COORD_DIR[player.move_dir][1] * 2]
+                            vect = list(map(sub, target_coord, blinky_coord))
+                            target_coord = list(map(add, target_coord, vect))
                 # if dead, move back to ghost house
                 elif self.mode == "dead":
-                    target_coord = [theGhostHousePosx, theGhostHousePosy]
+                    target_coord = [house_x, house_y]
 
                 # move towards target, only attempt a turn at an intersection
-                if step < self.x % self.block_size < self.block_size - step \
-                        and step < self.y % self.block_size < self.block_size - step and self.turn_timer > 2:
-                    if self.maze.can_move(self, left_turn(self.look_dir)) \
-                            or self.maze.can_move(self, right_turn(self.look_dir)):
+                if step < self.x % block_size < block_size - step \
+                        and step < self.y % block_size < block_size - step and self.turn_timer > 2:
+                    if maze.can_move(self, left_turn(self.look_dir)) \
+                            or maze.can_move(self, right_turn(self.look_dir)):
                         self.look_dir = find_closest(self.look_dir, target_coord)
                         self.turn_timer = 0
-                    if not self.maze.can_move(self, self.look_dir):
+                    if not maze.can_move(self, self.look_dir):
                         self.look_dir = random.choice([left_turn(self.move_dir), right_turn(self.move_dir)])
                         self.turn_timer = 0
 
                 # change move direction to match look direction if possible
                 if self.look_dir != self.move_dir:
-                    if self.maze.can_move(self, self.look_dir):
+                    if maze.can_move(self, self.look_dir):
                         self.move_dir = self.look_dir
                     # if in a dead end, flip direction
-                    if not (self.maze.can_move(self, self.move_dir)) \
-                            and not (self.maze.can_move(self, left_turn(self.move_dir))) \
-                            and not (self.maze.can_move(self, right_turn(self.move_dir))):
+                    if not (maze.can_move(self, self.move_dir)) \
+                            and not (maze.can_move(self, left_turn(self.move_dir))) \
+                            and not (maze.can_move(self, right_turn(self.move_dir))):
                         self.look_dir = left_turn(left_turn(self.move_dir))
                         self.move_dir = self.look_dir
 
                 # do movement
-                if self.maze.can_move(self, self.move_dir):
+                if maze.can_move(self, self.move_dir):
                     self.x += step * self.COORD_DIR[self.move_dir][0]
                     self.y += step * self.COORD_DIR[self.move_dir][1]
 
@@ -291,18 +216,18 @@ class Ghost:
             else:
                 if self.move_dir == self.DIR["LEFT"]:
                     self.x -= self.step_len
-                    self.maze.center(self, "y", self.y)
+                    maze.center(self, "y", self.y)
                 if self.move_dir == self.DIR["RIGHT"]:
                     self.x += self.step_len
-                    self.maze.center(self, "y", self.y)
+                    maze.center(self, "y", self.y)
                 # screen wrap
                 if self.x < -self.size:
-                    self.x = self.main.display_width
-                if self.x > self.size + self.main.display_width:
+                    self.x = display_width
+                if self.x > self.size + display_width:
                     self.x = -self.size
 
             # respawn if way found back to house
-            if self.mode == "dead" and self.array_coord == [theGhostHousePosx, theGhostHousePosy]:
+            if self.mode == "dead" and self.array_coord == [house_x, house_y]:
                 self.mode = "normal"
 
             self.turn_timer += 1
@@ -312,30 +237,30 @@ class Ghost:
             if self.look_dir == self.DIR["DOWN"] or self.look_dir == self.DIR["UP"]:
                 self.look_dir = random.choice([self.DIR["LEFT"], self.DIR["RIGHT"]])
                 self.move_dir = self.look_dir
-            if not (self.maze.can_move(self, self.move_dir)):
+            if not (maze.can_move(self, self.move_dir)):
                 self.look_dir = left_turn(left_turn(self.move_dir))
                 self.move_dir = self.look_dir
             self.x += step * self.COORD_DIR[self.move_dir][0]
 
-    def draw(self):
+    def draw(self, display, player, fps, tick_counter):
         def draw_body(col):
-            pygame.draw.ellipse(self.display, col, (self.x - self.size / 2, self.y + self.offset - self.size / 2,
+            pygame.draw.ellipse(display, col, (self.x - self.size / 2, self.y + self.offset - self.size / 2,
                                                     self.size, self.size * 0.95))
-            pygame.draw.rect(self.display, col, (self.x - self.size / 2, self.y + self.offset,
+            pygame.draw.rect(display, col, (self.x - self.size / 2, self.y + self.offset,
                                                  self.size, self.size / 4))
 
             # alternate wobble shape
-            if 0 < self.main.tick_counter % 20 < 10:
-                pygame.draw.ellipse(self.display, col, (
+            if 0 < tick_counter % 20 < 10:
+                pygame.draw.ellipse(display, col, (
                     self.x - self.size / 2, self.y + self.size / 6 + self.offset - 1, self.size / 3, self.size / 3))
-                pygame.draw.ellipse(self.display, col, (
+                pygame.draw.ellipse(display, col, (
                     self.x - self.size / 6, self.y + self.size / 6 + self.offset - 1, self.size / 3, self.size / 3))
-                pygame.draw.ellipse(self.display, col, (
+                pygame.draw.ellipse(display, col, (
                 self.x + self.size / 6, self.y + self.size / 6 + self.offset - 1, self.size / 3, self.size / 3))
             else:
-                pygame.draw.ellipse(self.display, col, (
+                pygame.draw.ellipse(display, col, (
                     self.x - self.size / 6 * 2, self.y + self.size / 6 + self.offset - 1, self.size / 3, self.size / 3))
-                pygame.draw.ellipse(self.display, col, (
+                pygame.draw.ellipse(display, col, (
                     self.x, self.y + self.size / 6 + self.offset - 1, self.size / 3, self.size / 3))
 
         def draw_eyes(move_dir):
@@ -357,24 +282,24 @@ class Ghost:
                 y_off = 1
 
             # eye whites
-            pygame.draw.ellipse(self.display, (255, 255, 255),
+            pygame.draw.ellipse(display, (255, 255, 255),
                                 (self.x - eye_width - (eye_separation / 2) + x_off, y_pos + y_off,
                                  eye_width, eye_height))
-            pygame.draw.ellipse(self.display, (255, 255, 255),
+            pygame.draw.ellipse(display, (255, 255, 255),
                                 (self.x + (eye_separation / 2) + x_off, y_pos + y_off,
                                  eye_width, eye_height))
 
             # eye pupils
-            pygame.draw.circle(self.display, (0, 0, 0), (round(self.x - eye_width / 2 - eye_separation / 2 + x_off * 2),
+            pygame.draw.circle(display, (0, 0, 0), (round(self.x - eye_width / 2 - eye_separation / 2 + x_off * 2),
                                round(y_pos + eye_height / 2 + y_off * 2)), round(pupil_diam / 2))
-            pygame.draw.circle(self.display, (0, 0, 0), (round(self.x + eye_width / 2 + eye_separation / 2 + x_off * 2),
+            pygame.draw.circle(display, (0, 0, 0), (round(self.x + eye_width / 2 + eye_separation / 2 + x_off * 2),
                                round(y_pos + eye_height / 2 + y_off * 2)), round(pupil_diam / 2))
 
         if self.mode != "dead":
-            if self.blue and self.player.powered_up:
+            if self.blue and player.powered_up:
                 # blink blue and white in the last 2 seconds of power up time
                 if 0 < self.blue_timer % 40 < 20 \
-                        and self.blue_timer + (2 * self.main.fps) >= self.player.power_time * self.main.fps:
+                        and self.blue_timer + (2 * fps) >= player.power_time:
                     color = (200, 200, 255)  # very light blue
                 else:
                     color = (50, 50, 200)  # dark blue
@@ -386,24 +311,9 @@ class Ghost:
         else:
             draw_eyes(self.move_dir)
 
-    def collide(self):
-        dist_x = abs(self.x - self.player.x)
-        dist_y = abs(self.y - self.player.y)
+    def collide(self, player):
+        dist_x = abs(self.x - player.x)
+        dist_y = abs(self.y - player.y)
         touch_distance = self.size / 2
 
-        if dist_x < touch_distance and dist_y < touch_distance and self.mode != "dead":
-            if self.blue:
-                self.mode = "dead"
-                self.blue = False
-                self.blue_timer = 0
-                self.respawn_timer = 0
-                self.main.score += 10
-            elif not self.blue:
-                if self.main.lives > 0:
-                    self.main.game_state = "respawn"
-                    self.main.lives -= 1
-                    self.main.temp_counter = 0
-                    self.x = theGhostHousePosx * self.block_size + self.size / 2
-                    self.y = theGhostHousePosy * self.block_size + self.size / 2
-                else:
-                    self.main.game_state = "lose"
+        return dist_x < touch_distance and dist_y < touch_distance and self.mode != "dead"
