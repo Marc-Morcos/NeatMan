@@ -17,7 +17,7 @@ def tilesLoc(row,col):
 def createMap(mapArray):
 
     #initial map
-    tiles = mapgen.mapgen().tiles.lstrip("_").rstrip("_")
+    tiles = mapgen.mapgen().tiles.lstrip("_").rstrip("_") #generate map and do some quick cleanup
     tiles = list(tiles)
 
     wall_locs = []
