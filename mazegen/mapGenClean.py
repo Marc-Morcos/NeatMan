@@ -20,16 +20,6 @@ def createMap(mapArray):
     power_pellet_locs = []
     ghost_door_locs = []
 
-    #cleanup
-    #fix up ghost area
-    for i in range(10,17):
-        mapArray[14][i] = '|'
-    mapArray[12][13] = '|'
-    mapArray[13][11] = '|'
-    mapArray[13][16] = '|'
-    mapArray[13][12] = '|'
-    mapArray[13][12] = '|'
-
     #convert to readable format
     for row in range(31):
         for col in range(28):
@@ -65,6 +55,20 @@ def createMap(mapArray):
                 temp = [(tiles[i:i+28]) for i in range(0, len(tiles), 28)]
                 for tempRow in temp:
                     print(tempRow)
+
+    #cleanup
+    #fix up ghost area
+    for i in range(10,17):
+        mapArray[14][i] = 1
+        wall_locs.append((i, 14))
+    mapArray[12][13] = 1
+    wall_locs.append((13, 12))
+    mapArray[13][11] = 1
+    wall_locs.append((11, 13))
+    mapArray[13][16] = 1
+    wall_locs.append((16, 13))
+    mapArray[13][12] = 1
+    wall_locs.append((12, 13))
 
     #return power pellet coordinates
     return wall_locs, pellet_locs, power_pellet_locs, ghost_door_locs
