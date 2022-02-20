@@ -1,3 +1,4 @@
+#code translated from javascript to python for mapgen
 __all__ = ['mapgen']
 
 # Don't look below, you will not understand this Python code :) I don't.
