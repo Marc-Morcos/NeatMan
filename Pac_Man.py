@@ -25,6 +25,7 @@ class Pac_Man:
         self.powered_up = False
         self.timer = 0
         self.power_time = 0
+        self.ghosts_eaten = 0
 
     def power_up(self, time):
         self.powered_up = True
@@ -36,6 +37,7 @@ class Pac_Man:
             # end power up at end of timer
             if self.timer >= self.power_time:
                 self.powered_up = False
+                self.ghosts_eaten = 0
                 return False
             else:
                 self.timer += 1

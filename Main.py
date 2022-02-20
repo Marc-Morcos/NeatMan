@@ -15,6 +15,7 @@ class Main:
         self.maze_height = 31
 
         self.lives = 2
+        self.last_life_score = 0
 
         self.display_width = self.maze_width * block_size
         self.display_height = self.maze_height * block_size + offset
@@ -28,9 +29,11 @@ class Main:
         self.collected_pellets = 0
         self.pellets = []
         self.power_pellets = []
+        self.num_fruit = 0
         self.running = True
 
         self.game_state = "run"
+        self.level = 0
 
     def events(self, player):
         for event in pygame.event.get():
@@ -68,18 +71,18 @@ class Main:
             for pellet in self.pellets:
                 if pellet.collide(self.player):
                     self.collected_pellets += 1
-                    self.score += 10
+                    self.score += pellet_score
 
             for power_pellet in self.power_pellets:
                 if power_pellet.collide(self.player):
-                    self.score += 50
+                    self.score += power_pellet_score
                     self.player.power_up(8 * self.fps)
 
             for ghost in self.ghosts.values():
                 ghost.move(self.player, self.maze, self.display_width, self.tick_counter, self.ghosts["blinky"].array_coord)
                 if ghost.collide(self.player):
                     if ghost.blue:
-                        self.score += 200
+                        self.score += ghost_scores[self.player.ghosts_eaten]
                     else:
                         if self.lives > 0:
                             self.game_state = "respawn"
@@ -87,6 +90,27 @@ class Main:
                             self.temp_counter = 0
                         else:
                             self.game_state = "lose"
+
+            # Update fruit
+            self.fruit.update()
+
+            # Give fruit
+            if self.num_fruit == 0 and self.collected_pellets >= len(self.pellets) / 3:
+                print("spawned fruit #1")
+                self.fruit.time = fruit_time * self.fps
+                self.fruit.here = True
+                self.num_fruit += 1
+            elif self.num_fruit == 1 and self.collected_pellets >= len(self.pellets) * 2/3:
+                print("spawned fruit #2")
+                self.fruit.time = fruit_time * self.fps
+                self.fruit.here = True
+                self.num_fruit += 1
+
+            self.score += self.fruit.collide(self.player)
+
+            if self.score - self.last_life_score >= life_points:
+                self.lives += 1
+                self.last_life_score += life_points
 
     def draw(self, surface, window):
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
@@ -113,10 +137,14 @@ class Main:
         for ghost in self.ghosts.values():
             ghost.draw(surface, self.player, self.fps, self.tick_counter)
 
+        self.display_fruit.draw(surface)
+        self.fruit.draw(surface)
+
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
         game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 20)
-        game_font.render_to(surface, (300, 15), str(self.lives) + " LIVES", (255, 255, 255))
+        game_font.render_to(surface, (400, 15), str(self.lives) + " LIVES", (255, 255, 255))
+        game_font.render_to(surface, (600, 15), "FRUIT: ", (255, 255, 255))
 
         #scaling code from https://stackoverflow.com/questions/43196126/how-do-you-scale-a-design-resolution-to-other-resolutions-with-pygame
         frame = pygame.transform.scale(surface, (self.display_width*scaling_factor, self.display_height*scaling_factor))
@@ -154,6 +182,10 @@ class Main:
         self.ghosts["blinky"].mode = "normal"
         self.ghosts["pinky"].mode = "normal"
 
+        # spawn fruit
+        self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
+        self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
+
         # running game loop
         while self.running:
             if self.game_state in ("run", "respawn"):
@@ -165,7 +197,29 @@ class Main:
 
                 # check win condition
                 if self.collected_pellets >= len(self.pellets):
-                    self.game_state = "win"
+                    self.level += 1
+                    self.collected_pellets = 0
+
+                    self.player = Pac_Man(spawn_x, spawn_y)
+
+                    # generate all pellets and power pellets
+                    self.power_pellets = []
+                    for loc in self.maze.power_pellet_locs:
+                        self.power_pellets.append(PowerPellet(loc[0], loc[1]))
+                    self.pellets = []
+                    for loc in self.maze.pellet_locs:
+                        self.pellets.append(Pellet(loc[0], loc[1]))
+
+                    self.ghosts = {}
+
+                    # spawn ghosts
+                    self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
+                    self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
+                    self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
+                    self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
+
+                    self.ghosts["blinky"].mode = "normal"
+                    self.ghosts["pinky"].mode = "normal"
 
                 pygame.display.update()
                 self.fps_clock.tick(self.fps)

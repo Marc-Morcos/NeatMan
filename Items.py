@@ -3,16 +3,15 @@ from Constants import *
 
 class Pellet:
     def __init__(self, x, y):
-        self.x = x * block_size + block_size / 2
-        self.y = y * block_size + block_size / 2
-        self.offset = block_size*2
+        self.x = x * block_size + half_block_size
+        self.y = y * block_size + half_block_size
 
         self.here = True
 
     def draw(self, display):
         if self.here:
             half = pellet_size/2
-            pygame.draw.ellipse(display, (255, 255, 255), (self.x - half, self.y - half + self.offset,
+            pygame.draw.ellipse(display, (255, 255, 255), (self.x - half, self.y - half + offset,
                                                                 pellet_size, pellet_size))
 
     def collide(self, player):
@@ -28,14 +27,13 @@ class Pellet:
 
 class PowerPellet:
     def __init__(self, x, y):
-        self.x = x * block_size + block_size / 2
-        self.y = y * block_size + block_size / 2
+        self.x = x * block_size + half_block_size
+        self.y = y * block_size + half_block_size
 
         self.here = True
 
     def draw(self, display):
         if self.here:
-            offset = block_size*2
             half = power_pellet_size/2
             pygame.draw.ellipse(display, (255, 255, 255), (self.x - half, self.y - half + offset,
                                                                 power_pellet_size, power_pellet_size))
@@ -49,3 +47,36 @@ class PowerPellet:
             return True
 
         return False
+
+class Fruit:
+    def __init__(self, x, y, score, image, here):
+        self.x = x * block_size + half_block_size
+        self.y = y * block_size + half_block_size
+
+        self.score = score
+        self.image = image
+
+        self.time = 0
+        self.here = here
+
+    def update(self):
+        if self.here:
+            self.time -= 1
+
+            if self.time == 0:
+                self.here = False
+
+    def draw(self, display):
+        if self.here:
+            display.blit(self.image, (self.x - half_block_size, self.y - half_block_size + offset))
+
+    def collide(self, player):
+        if self.here:
+            dist_x = abs(self.x - player.x)
+            dist_y = abs(self.y - player.y)
+
+            if dist_x < half_block_size and dist_y < half_block_size:
+                self.here = False
+                return self.score
+
+        return 0
