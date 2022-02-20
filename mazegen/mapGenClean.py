@@ -6,6 +6,10 @@ from mazegen.mapgen import mapgen
     #3 = empty space
     #4 seems to be pellet block but is seperate for some reason, i think ghosts cant cross this block
 
+
+def tilesLoc(row,col):
+    return row*28+col
+
 #I also edited the mapgen js so we always get 1 tunnel instead of 2
 
 #creates a converted and cleaned up random map with 28 columns and 31 rows (overwrites mapArray)
@@ -14,16 +18,26 @@ def createMap(mapArray):
 
     #initial map
     tiles = mapgen.mapgen().tiles.lstrip("_").rstrip("_")
+    tiles = list(tiles)
 
     wall_locs = []
     pellet_locs = []
     power_pellet_locs = []
     ghost_door_locs = []
 
+    #cleanup
+    #fix up ghost area
+    for i in range(10,17):
+        tiles[tilesLoc(14,i)] = '|'
+    tiles[tilesLoc(12,13)] ='|'
+    tiles[tilesLoc(13,11)] ='|'
+    tiles[tilesLoc(13,16)] = '|'
+    tiles[tilesLoc(13,12)] ='|'
+
     #convert to readable format
     for row in range(31):
         for col in range(28):
-            char = tiles[row*28+col]
+            char = tiles[tilesLoc(row,col)]
 
             #wall
             if char == '|':
@@ -55,24 +69,6 @@ def createMap(mapArray):
                 temp = [(tiles[i:i+28]) for i in range(0, len(tiles), 28)]
                 for tempRow in temp:
                     print(tempRow)
-
-    #cleanup
-    #fix up ghost area
-    #todo get rid of the tuples because multiple things can be in same spot 
-    #and map array is no longer valid to feed into model
-    for i in range(10,17):
-        mapArray[14][i] = 1
-        wall_locs.append((i, 14))
-        mapArray[15][i] = 1
-        wall_locs.append((i, 15))
-    mapArray[12][13] = 1
-    wall_locs.append((13, 12))
-    mapArray[13][11] = 1
-    wall_locs.append((11, 13))
-    mapArray[13][16] = 1
-    wall_locs.append((16, 13))
-    mapArray[13][12] = 1
-    wall_locs.append((12, 13))
 
     #return power pellet coordinates
     return wall_locs, pellet_locs, power_pellet_locs, ghost_door_locs
