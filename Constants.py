@@ -10,6 +10,7 @@ spawn_y = 17
 pellet_score = 10
 power_pellet_score = 50
 ghost_scores = [200, 400, 800, 1600]
+# Fruit images from https://static.wikia.nocookie.net/pacman/images/2/25/Fruits_Points.png/revision/latest?cb=20210921001546
 fruit_images = ["cherry.png", "strawberry.png", "orange.png", "apple.png", "melon.png", "starship.png", "bell.png", "key.png"]
 fruit_scores = [100, 300, 500, 700, 1000, 2000, 3000, 5000]
 fruit_time = 10

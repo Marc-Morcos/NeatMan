@@ -54,15 +54,15 @@ class Main:
     def loop(self):
         if self.game_state == "run":
             # activate inky once 30 coins have been collected
-            if self.ghosts["inky"].mode != "normal" and self.collected_pellets > 30:
+            if self.ghosts["inky"].mode == "house" and self.collected_pellets > 30:
                 self.ghosts["inky"].mode = "normal"
             # activate clyde once 1/3 of total coins have been collected
-            if self.ghosts["clyde"].mode != "normal" and self.collected_pellets > len(self.pellets) / 3:
+            if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
             self.player.move(self.maze, self.display_width)
 
-            if self.player.powered_up and self.player.update_power_up():
+            if self.player.update_power_up():
                 for ghost in self.ghosts.values():
                     if ghost.mode != "dead" and not ghost.blue:
                         ghost.blue = True
@@ -81,11 +81,13 @@ class Main:
             for ghost in self.ghosts.values():
                 ghost.move(self.player, self.maze, self.display_width, self.tick_counter, self.ghosts["blinky"].array_coord)
                 if ghost.collide(self.player):
-                    if ghost.blue:
+                    if ghost.blue and ghost.mode != "dead":
+                        ghost.mode = "dead"
                         self.score += ghost_scores[self.player.ghosts_eaten]
                     else:
                         if self.lives > 0:
                             self.game_state = "respawn"
+                            self.fruit.here = False
                             self.lives -= 1
                             self.temp_counter = 0
                         else:
@@ -96,12 +98,10 @@ class Main:
 
             # Give fruit
             if self.num_fruit == 0 and self.collected_pellets >= len(self.pellets) / 3:
-                print("spawned fruit #1")
                 self.fruit.time = fruit_time * self.fps
                 self.fruit.here = True
                 self.num_fruit += 1
             elif self.num_fruit == 1 and self.collected_pellets >= len(self.pellets) * 2/3:
-                print("spawned fruit #2")
                 self.fruit.time = fruit_time * self.fps
                 self.fruit.here = True
                 self.num_fruit += 1
@@ -116,6 +116,9 @@ class Main:
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
 
         self.maze.draw(surface)
+
+        self.display_fruit.draw(surface)
+        self.fruit.draw(surface)
 
         for power_pellet in self.power_pellets:
             power_pellet.draw(surface)
@@ -136,9 +139,6 @@ class Main:
         
         for ghost in self.ghosts.values():
             ghost.draw(surface, self.player, self.fps, self.tick_counter)
-
-        self.display_fruit.draw(surface)
-        self.fruit.draw(surface)
 
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
         game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
@@ -220,6 +220,11 @@ class Main:
 
                     self.ghosts["blinky"].mode = "normal"
                     self.ghosts["pinky"].mode = "normal"
+
+                    # spawn fruit
+                    self.num_fruit = 0
+                    self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
+                    self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
                 pygame.display.update()
                 self.fps_clock.tick(self.fps)

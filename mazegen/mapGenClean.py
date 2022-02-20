@@ -61,6 +61,8 @@ def createMap(mapArray):
     for i in range(10,17):
         mapArray[14][i] = 1
         wall_locs.append((i, 14))
+        mapArray[15][i] = 1
+        wall_locs.append((i, 15))
     mapArray[12][13] = 1
     wall_locs.append((13, 12))
     mapArray[13][11] = 1

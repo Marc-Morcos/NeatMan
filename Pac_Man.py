@@ -42,7 +42,9 @@ class Pac_Man:
             else:
                 self.timer += 1
 
-        return True
+            return True
+
+        return False
 
     def move(self, maze, display_width):
         step = self.step_len
