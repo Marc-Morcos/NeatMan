@@ -230,6 +230,7 @@ class Main:
 
                 pygame.display.flip()
                 self.fps_clock.tick(self.fps)
+                #print(self.fps_clock.get_fps()) #shows fps, use for testing
                 self.tick_counter += 1
 
             # end game at win/lose
