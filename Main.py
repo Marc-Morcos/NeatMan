@@ -7,7 +7,9 @@ from Pac_Man import Pac_Man
 from Items import *
 from Ghost import Ghost
 from Constants import *
+from pygame.locals import *
 scaling_factor = 0.75 #factor by which we scale dimensions of game window
+
 
 class Main:
     def __init__(self):
@@ -20,7 +22,7 @@ class Main:
         self.display_width = self.maze_width * block_size
         self.display_height = self.maze_height * block_size + offset
 
-        self.fps = 60
+        self.fps = 600
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -155,7 +157,8 @@ class Main:
         # initialize
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
-        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
+        flags = DOUBLEBUF
+        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor),flags)
         display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
@@ -183,8 +186,8 @@ class Main:
         self.ghosts["pinky"].mode = "normal"
 
         # spawn fruit
-        self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
-        self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
+        self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), True)
+        self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
         # running game loop
         while self.running:
