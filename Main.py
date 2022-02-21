@@ -11,7 +11,7 @@ from pygame.locals import *
 from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = humanPlayer #options: dummy, humanPlayer
+pacmanController = dummy #options: dummy, humanPlayer
 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
@@ -124,8 +124,13 @@ class Main:
 
     def draw(self, surface, window):
         if(fastMode and (self.tick_counter%neatFrameShow != 0)):
-            if self.game_state == "respawn" and self.temp_counter < 36:
+            if self.game_state == "respawn":
+                if self.temp_counter < 36:
                     self.temp_counter += 1
+                else:
+                    self.game_state = "run"
+                    self.player.x = spawn_x * block_size + block_size / 2
+                    self.player.y = spawn_y * block_size + block_size / 2
             return
 
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
