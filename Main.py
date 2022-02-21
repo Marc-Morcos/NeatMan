@@ -228,7 +228,7 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                pygame.display.update()
+                pygame.display.flip()
                 self.fps_clock.tick(self.fps)
                 self.tick_counter += 1
 
