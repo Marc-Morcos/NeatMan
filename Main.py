@@ -10,6 +10,10 @@ from Constants import *
 from pygame.locals import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
+def dummy():
+    return 0
+
+
 
 class Main:
     def __init__(self):
@@ -69,7 +73,7 @@ class Main:
                     if ghost.mode != "dead" and not ghost.blue:
                         ghost.blue = True
                         ghost.blue_timer = 0
-            
+
             for pellet in self.pellets:
                 if pellet.collide(self.player):
                     self.collected_pellets += 1
@@ -138,7 +142,7 @@ class Main:
                 self.player.x = spawn_x * block_size + block_size / 2
                 self.player.y = spawn_y * block_size + block_size / 2
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
-        
+
         for ghost in self.ghosts.values():
             ghost.draw(surface, self.player, self.fps, self.tick_counter)
 
@@ -163,7 +167,7 @@ class Main:
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y)
+        self.player = Pac_Man(spawn_x, spawn_y, dummy)
 
         # generate all pellets and power pellets
         self.power_pellets = []

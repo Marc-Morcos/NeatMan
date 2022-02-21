@@ -4,7 +4,8 @@ import math
 from Constants import *
 
 class Pac_Man:
-    def __init__(self, x, y):
+    def __init__(self, x, y, movementFunction):
+        self.movementFunction = movementFunction
         # Constants
         self.size = 26
         self.step_len = block_size / 15
@@ -47,6 +48,7 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width):
+        self.look_dir = self.movementFunction()
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
