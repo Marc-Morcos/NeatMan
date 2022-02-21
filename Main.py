@@ -11,7 +11,7 @@ from pygame.locals import *
 from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = dummy
+pacmanController = humanPlayer #options: dummy, humanPlayer
 
 neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
