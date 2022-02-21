@@ -13,9 +13,9 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 pacmanController = humanPlayer #options: dummy, humanPlayer
 
-neatMode = False #No longer human playable, used for training
+neatMode = True #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
-showFPS = False #shows fps, use for testing, prints clutter and slow down program
+showFPS = True #shows fps, use for testing, prints clutter and slow down program
 
 
 class Main:
@@ -243,7 +243,7 @@ class Main:
 
                 if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): 
                     pygame.display.flip()
-                    if(showFPS): print(self.fps_clock.get_fps()) 
+                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
                 self.fps_clock.tick(self.fps)
                 self.tick_counter += 1
 
