@@ -13,8 +13,8 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 pacmanController = humanPlayer #options: dummy, humanPlayer
 
-neatMode = False #No longer human playable, used for training
-neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
+fastMode = False #No longer human playable, used for training
+neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
 
@@ -30,7 +30,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
-        if(neatMode): self.fps = 999999999999999
+        if(fastMode): self.fps = 999999999999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -123,7 +123,7 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
-        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
+        if(fastMode and (self.tick_counter%neatFrameShow != 0)):
             if self.game_state == "respawn" and self.temp_counter < 36:
                     self.temp_counter += 1
             return
@@ -240,7 +240,7 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): 
+                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
                     pygame.display.flip()
                     if(showFPS): print("fps:",self.fps_clock.get_fps()) 
                 self.fps_clock.tick(self.fps)
