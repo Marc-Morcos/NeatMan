@@ -13,7 +13,7 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 pacmanController = humanPlayer #options: dummy, humanPlayer
 
-fastMode = False #No longer human playable, used for training
+fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
