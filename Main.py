@@ -30,7 +30,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
-        if(fastMode): self.fps = 999999999999999
+        if(fastMode): self.fps = 999999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
