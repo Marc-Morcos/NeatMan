@@ -22,7 +22,6 @@ class Ghost:
 
         # MOVEMENT
         self.scatter_coord = scatter_coord
-        self.DIR = {"RIGHT": 0, "DOWN": 1, "LEFT": 2, "UP": 3}
         self.COORD_DIR = {0: [1, 0], 1: [0, 1], 2: [-1, 0], 3: [0, -1]}
         self.look_dir = 3
         self.move_dir = 3
@@ -113,27 +112,27 @@ class Ghost:
                             wall = True
                         elif my_row == player_row:
                             if my_col > player_col:
-                                player_dir = self.DIR["LEFT"]
+                                player_dir = LEFT
                                 for i in range(0, my_col - player_col):
                                     if maze.maze_array[my_row][i + player_col] == 1:
                                         wall = True
                             elif player_col == my_col:
                                 wall = True
                             else:
-                                player_dir = self.DIR["RIGHT"]
+                                player_dir = RIGHT
                                 for i in range(0, player_col - my_col):
                                     if maze.maze_array[my_row][i + my_col] == 1:
                                         wall = True
                         elif my_col == player_col:
                             if my_row > player_row:
-                                player_dir = self.DIR["UP"]
+                                player_dir = UP
                                 for i in range(0, my_row - player_row):
                                     if maze.maze_array[i + player_row][my_col] == 1:
                                         wall = True
                             elif player_row == my_row:
                                 wall = True
                             else:
-                                player_dir = self.DIR["DOWN"]
+                                player_dir = DOWN
                                 for i in range(0, player_row - my_row):
                                     if maze.maze_array[i + my_row][my_col] == 1:
                                         wall = True
@@ -161,7 +160,7 @@ class Ghost:
                     # Immediately exit house
                     if self.array_coord == [house_x, house_y]:
                         target_coord = [house_x, house_y-2]
-                    elif self.array_coord in([house_x, house_y-1], [house_x, house_y-2]) and self.move_dir == self.DIR["UP"]:
+                    elif self.array_coord in([house_x, house_y-1], [house_x, house_y-2]) and self.move_dir == UP:
                         target_coord = [house_x-1, house_y-2]
                     # Scatter
                     elif (tick_counter / 60) % (self.chase_time + self.scatter_time) < self.scatter_time:
@@ -214,10 +213,10 @@ class Ghost:
 
             # If outside maze, keep moving forwards until wrapped to the other side of the screen
             else:
-                if self.move_dir == self.DIR["LEFT"]:
+                if self.move_dir == LEFT:
                     self.x -= self.step_len
                     maze.center(self, "y", self.y)
-                if self.move_dir == self.DIR["RIGHT"]:
+                if self.move_dir == RIGHT:
                     self.x += self.step_len
                     maze.center(self, "y", self.y)
                 # screen wrap
@@ -234,8 +233,8 @@ class Ghost:
 
         # Ghost stays in the house and paces left and right
         elif self.mode == "house":
-            if self.look_dir == self.DIR["DOWN"] or self.look_dir == self.DIR["UP"]:
-                self.look_dir = random.choice([self.DIR["LEFT"], self.DIR["RIGHT"]])
+            if self.look_dir == DOWN or self.look_dir == UP:
+                self.look_dir = random.choice([LEFT, RIGHT])
                 self.move_dir = self.look_dir
             if not (maze.can_move(self, self.move_dir)):
                 self.look_dir = left_turn(left_turn(self.move_dir))
@@ -272,13 +271,13 @@ class Ghost:
 
             x_off = 0
             y_off = 0
-            if move_dir == self.DIR["RIGHT"]:
+            if move_dir == RIGHT:
                 x_off = 1
-            elif move_dir == self.DIR["LEFT"]:
+            elif move_dir == LEFT:
                 x_off = -1
-            elif move_dir == self.DIR["UP"]:
+            elif move_dir == UP:
                 y_off = -1
-            elif move_dir == self.DIR["DOWN"]:
+            elif move_dir == DOWN:
                 y_off = 1
 
             # eye whites

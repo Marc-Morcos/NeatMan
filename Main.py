@@ -8,7 +8,11 @@ from Items import *
 from Ghost import Ghost
 from Constants import *
 from pygame.locals import *
+from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
+
+pacmanController = dummy
+
 neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, I think prints slow it down
@@ -45,13 +49,13 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    setattr(player, "look_dir", player.DIR["UP"])
+                    player.humanInput = UP
                 if event.key == pygame.K_DOWN:
-                    setattr(player, "look_dir", player.DIR["DOWN"])
+                    player.humanInput = DOWN
                 if event.key == pygame.K_LEFT:
-                    setattr(player, "look_dir", player.DIR["LEFT"])
+                    player.humanInput = LEFT
                 if event.key == pygame.K_RIGHT:
-                    setattr(player, "look_dir", player.DIR["RIGHT"])
+                    player.humanInput = RIGHT
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -66,14 +70,14 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(self.maze, self.display_width)
+            self.player.move(self.maze, self.display_width, self.ghosts, self.power_pellets, self.power_pellets, self.fruit)
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
                     if ghost.mode != "dead" and not ghost.blue:
                         ghost.blue = True
                         ghost.blue_timer = 0
-            
+
             for pellet in self.pellets:
                 if pellet.collide(self.player):
                     self.collected_pellets += 1
@@ -147,7 +151,7 @@ class Main:
                 self.player.x = spawn_x * block_size + block_size / 2
                 self.player.y = spawn_y * block_size + block_size / 2
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
-        
+
         for ghost in self.ghosts.values():
             ghost.draw(surface, self.player, self.tick_counter)
 
@@ -172,7 +176,7 @@ class Main:
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y)
+        self.player = Pac_Man(spawn_x, spawn_y, pacmanController)
 
         # generate all pellets and power pellets
         self.power_pellets = []

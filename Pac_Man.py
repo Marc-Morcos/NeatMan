@@ -4,17 +4,18 @@ import math
 from Constants import *
 
 class Pac_Man:
-    def __init__(self, x, y):
+    def __init__(self, x, y, movementFunction):
         # Constants
         self.size = 26
         self.step_len = block_size / 15
         self.step = self.step_len
 
         # Movement directions
-        self.DIR = {"RIGHT": 0, "DOWN": 1, "LEFT": 2, "UP": 3}
+        self.movementFunction = movementFunction
         self.COORD_DIR = {0: [1, 0], 1: [0, 1], 2: [-1, 0], 3: [0, -1]}
-        self.look_dir = 3
-        self.move_dir = 3
+        self.look_dir = DOWN
+        self.humanInput = DOWN
+        self.move_dir = DOWN
 
         # Location in pixels
         self.array_coord = [x, y]
@@ -46,7 +47,8 @@ class Pac_Man:
 
         return False
 
-    def move(self, maze, display_width):
+    def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
+        self.look_dir = self.movementFunction(self, maze, ghosts, pellets, power_pellets, fruit)
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
@@ -66,9 +68,9 @@ class Pac_Man:
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
         else:
             maze.center(self, "y", self.y)
-            if self.move_dir == self.DIR["LEFT"]:
+            if self.move_dir == LEFT:
                 self.x -= step
-            if self.move_dir == self.DIR["RIGHT"]:
+            if self.move_dir == RIGHT:
                 self.x += step
             # Screen wrap
             if self.x < -self.size:
