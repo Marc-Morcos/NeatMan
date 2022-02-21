@@ -241,7 +241,7 @@ class Ghost:
                 self.move_dir = self.look_dir
             self.x += step * self.COORD_DIR[self.move_dir][0]
 
-    def draw(self, display, player, fps, tick_counter):
+    def draw(self, display, player, tick_counter):
         def draw_body(col):
             pygame.draw.ellipse(display, col, (self.x - self.size / 2, self.y + self.offset - self.size / 2,
                                                     self.size, self.size * 0.95))
@@ -298,7 +298,7 @@ class Ghost:
             if self.blue and player.powered_up:
                 # blink blue and white in the last 2 seconds of power up time
                 if 0 < self.blue_timer % 40 < 20 \
-                        and self.blue_timer + (2 * fps) >= player.power_time:
+                        and self.blue_timer + (2 * 60) >= player.power_time:
                     color = (200, 200, 255)  # very light blue
                 else:
                     color = (50, 50, 200)  # dark blue

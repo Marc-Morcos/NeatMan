@@ -10,7 +10,13 @@ from Constants import *
 from pygame.locals import *
 from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
+
 pacmanController = dummy
+
+neatMode = False #No longer human playable, used for training
+neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
+showFPS = False #shows fps, use for testing, I think prints slow it down
+
 
 class Main:
     def __init__(self):
@@ -24,6 +30,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
+        if(neatMode): self.fps = 99999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -79,7 +86,7 @@ class Main:
             for power_pellet in self.power_pellets:
                 if power_pellet.collide(self.player):
                     self.score += power_pellet_score
-                    self.player.power_up(8 * self.fps)
+                    self.player.power_up(8 * 60)
 
             for ghost in self.ghosts.values():
                 ghost.move(self.player, self.maze, self.display_width, self.tick_counter, self.ghosts["blinky"].array_coord)
@@ -101,11 +108,11 @@ class Main:
 
             # Give fruit
             if self.num_fruit == 0 and self.collected_pellets >= len(self.pellets) / 3:
-                self.fruit.time = fruit_time * self.fps
+                self.fruit.time = fruit_time * 60
                 self.fruit.here = True
                 self.num_fruit += 1
             elif self.num_fruit == 1 and self.collected_pellets >= len(self.pellets) * 2/3:
-                self.fruit.time = fruit_time * self.fps
+                self.fruit.time = fruit_time * 60
                 self.fruit.here = True
                 self.num_fruit += 1
 
@@ -116,6 +123,11 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
+        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
+            if self.game_state == "respawn" and self.temp_counter < 36:
+                    self.temp_counter += 1
+            return
+
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
 
         self.maze.draw(surface)
@@ -141,7 +153,7 @@ class Main:
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
 
         for ghost in self.ghosts.values():
-            ghost.draw(surface, self.player, self.fps, self.tick_counter)
+            ghost.draw(surface, self.player, self.tick_counter)
 
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
         game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
@@ -229,15 +241,18 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                pygame.display.update()
+                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): pygame.display.flip()
                 self.fps_clock.tick(self.fps)
+                if(showFPS): print(self.fps_clock.get_fps()) 
                 self.tick_counter += 1
 
             # end game at win/lose
             elif self.game_state == "win":
                 self.running = False
+                print("score:",self.score)
             elif self.game_state == "lose":
                 self.running = False
+                print("score:",self.score)
 
 
 if __name__ == "__main__":
