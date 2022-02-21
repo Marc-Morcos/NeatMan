@@ -15,3 +15,9 @@ fruit_images = ["cherry.png", "strawberry.png", "orange.png", "apple.png", "melo
 fruit_scores = [100, 300, 500, 700, 1000, 2000, 3000, 5000]
 fruit_time = 10
 life_points = 10000
+
+#movement constants
+RIGHT = 0
+DOWN = 1
+LEFT = 2
+UP = 3

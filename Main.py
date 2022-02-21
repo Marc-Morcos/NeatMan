@@ -8,12 +8,9 @@ from Items import *
 from Ghost import Ghost
 from Constants import *
 from pygame.locals import *
+from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
-
-def dummy():
-    return 0
-
-
+pacmanController = dummy
 
 class Main:
     def __init__(self):
@@ -45,13 +42,13 @@ class Main:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
-                    setattr(player, "look_dir", player.DIR["UP"])
+                    player.humanInput = UP
                 if event.key == pygame.K_DOWN:
-                    setattr(player, "look_dir", player.DIR["DOWN"])
+                    player.humanInput = DOWN
                 if event.key == pygame.K_LEFT:
-                    setattr(player, "look_dir", player.DIR["LEFT"])
+                    player.humanInput = LEFT
                 if event.key == pygame.K_RIGHT:
-                    setattr(player, "look_dir", player.DIR["RIGHT"])
+                    player.humanInput = RIGHT
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -66,7 +63,7 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(self.maze, self.display_width)
+            self.player.move(self.maze, self.display_width, self.ghosts, self.power_pellets, self.power_pellets, self.fruit)
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
@@ -167,7 +164,7 @@ class Main:
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y, dummy)
+        self.player = Pac_Man(spawn_x, spawn_y, pacmanController)
 
         # generate all pellets and power pellets
         self.power_pellets = []

@@ -9,7 +9,7 @@ class Maze:
 
         # draw maze
         self.maze_array = [[0] * maze_width for i in range(maze_height)]  # [y][x]
-        
+
         if maze_width == 28 and maze_height == 31:
             self.wall_locs, self.pellet_locs, self.power_pellet_locs, self.ghost_door_locs = createMap(self.maze_array)
 
@@ -30,22 +30,22 @@ class Maze:
             if (entity.mode == "normal" and house_x <= entity.array_coord[0] <= house_x+2 and house_y-1 <= entity.array_coord[1] <= house_y+2) \
                     or entity.mode == "dead":
                 allowed = [0, 2, 3]
-            elif dir == entity.DIR["UP"]:
+            elif dir == UP:
                 allowed = [0, 3]
 
-        if dir == entity.DIR["UP"] or dir == entity.DIR["DOWN"]:
+        if dir == UP or dir == DOWN:
             x_plus = int((entity.x + block_size / 2 - entity.step) / block_size)
             x_minus = int((entity.x - block_size / 2 + entity.step) / block_size)
             tmp_y = int((entity.y - block_size / 2 - entity.step) / block_size)
-            if dir == entity.DIR["DOWN"]:
+            if dir == DOWN:
                 tmp_y = int((entity.y + block_size / 2 + entity.step) / block_size)
             if self.maze_array[tmp_y][x_plus] in allowed and self.maze_array[tmp_y][x_minus] in allowed:
                 return True
-        elif dir == entity.DIR["LEFT"] or dir == entity.DIR["RIGHT"]:
+        elif dir == LEFT or dir == RIGHT:
             y_plus = int((entity.y + block_size / 2 - entity.step) / block_size)
             y_minus = int((entity.y - block_size / 2 + entity.step) / block_size)
             tmp_x = int((entity.x - block_size / 2 - entity.step) / block_size)
-            if dir == entity.DIR["RIGHT"]:
+            if dir == RIGHT:
                 tmp_x = int((entity.x + block_size / 2 + entity.step) / block_size)
             if self.maze_array[y_plus][tmp_x] in allowed and self.maze_array[y_minus][tmp_x] in allowed:
                 return True
