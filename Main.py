@@ -169,8 +169,7 @@ class Main:
         # initialize
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
-        flags = DOUBLEBUF
-        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor),flags)
+        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
         display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
