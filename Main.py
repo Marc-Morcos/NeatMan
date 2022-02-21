@@ -15,7 +15,7 @@ pacmanController = humanPlayer #options: dummy, humanPlayer
 
 neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
-showFPS = False #shows fps, use for testing, I think prints slow it down
+showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
 
 class Main:
@@ -241,9 +241,10 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): pygame.display.flip()
+                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): 
+                    pygame.display.flip()
+                    if(showFPS): print(self.fps_clock.get_fps()) 
                 self.fps_clock.tick(self.fps)
-                if(showFPS): print(self.fps_clock.get_fps()) 
                 self.tick_counter += 1
 
             # end game at win/lose
