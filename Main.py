@@ -9,6 +9,9 @@ from Ghost import Ghost
 from Constants import *
 from pygame.locals import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
+neatMode = False #No longer human playable, used for training
+neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
+showFPS = False #shows fps, use for testing, I think prints slow it down
 
 
 class Main:
@@ -23,6 +26,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
+        if(neatMode): self.fps = 99999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -115,6 +119,11 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
+        if(neatMode and self.tick_counter%neatFrameShow != 0):
+            if self.game_state == "respawn" and self.temp_counter < 36:
+                    self.temp_counter += 1
+            return
+
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
 
         self.maze.draw(surface)
@@ -228,16 +237,18 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                pygame.display.flip()
+                if(not neatMode or self.tick_counter%neatFrameShow == 0): pygame.display.flip()
                 self.fps_clock.tick(self.fps)
-                #print(self.fps_clock.get_fps()) #shows fps, use for testing
+                if(showFPS): print(self.fps_clock.get_fps()) 
                 self.tick_counter += 1
 
             # end game at win/lose
             elif self.game_state == "win":
                 self.running = False
+                print("score:",self.score)
             elif self.game_state == "lose":
                 self.running = False
+                print("score:",self.score)
 
 
 if __name__ == "__main__":
