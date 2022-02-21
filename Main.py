@@ -13,9 +13,9 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 pacmanController = humanPlayer #options: dummy, humanPlayer
 
-neatMode = True #No longer human playable, used for training
+neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
-showFPS = True #shows fps, use for testing, prints clutter and slow down program
+showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
 
 class Main:
