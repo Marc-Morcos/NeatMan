@@ -119,7 +119,7 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
-        if(neatMode and self.tick_counter%neatFrameShow != 0):
+        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
             if self.game_state == "respawn" and self.temp_counter < 36:
                     self.temp_counter += 1
             return
@@ -237,7 +237,7 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                if(not neatMode or self.tick_counter%neatFrameShow == 0): pygame.display.flip()
+                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): pygame.display.flip()
                 self.fps_clock.tick(self.fps)
                 if(showFPS): print(self.fps_clock.get_fps()) 
                 self.tick_counter += 1
