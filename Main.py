@@ -78,7 +78,7 @@ class Main:
             for power_pellet in self.power_pellets:
                 if power_pellet.collide(self.player):
                     self.score += power_pellet_score
-                    self.player.power_up(8 * self.fps)
+                    self.player.power_up(8 * 60)
 
             for ghost in self.ghosts.values():
                 ghost.move(self.player, self.maze, self.display_width, self.tick_counter, self.ghosts["blinky"].array_coord)
@@ -100,11 +100,11 @@ class Main:
 
             # Give fruit
             if self.num_fruit == 0 and self.collected_pellets >= len(self.pellets) / 3:
-                self.fruit.time = fruit_time * self.fps
+                self.fruit.time = fruit_time * 60
                 self.fruit.here = True
                 self.num_fruit += 1
             elif self.num_fruit == 1 and self.collected_pellets >= len(self.pellets) * 2/3:
-                self.fruit.time = fruit_time * self.fps
+                self.fruit.time = fruit_time * 60
                 self.fruit.here = True
                 self.num_fruit += 1
 
@@ -140,7 +140,7 @@ class Main:
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
         
         for ghost in self.ghosts.values():
-            ghost.draw(surface, self.player, self.fps, self.tick_counter)
+            ghost.draw(surface, self.player, self.tick_counter)
 
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
         game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
