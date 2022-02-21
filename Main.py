@@ -8,7 +8,7 @@ from Items import *
 from Ghost import Ghost
 from Constants import *
 from pygame.locals import *
-scaling_factor = 0.75 #factor by which we scale dimensions of game window
+scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 
 class Main:
@@ -22,7 +22,7 @@ class Main:
         self.display_width = self.maze_width * block_size
         self.display_height = self.maze_height * block_size + offset
 
-        self.fps = 600
+        self.fps = 60
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -151,7 +151,6 @@ class Main:
         #scaling code from https://stackoverflow.com/questions/43196126/how-do-you-scale-a-design-resolution-to-other-resolutions-with-pygame
         frame = pygame.transform.scale(surface, (self.display_width*scaling_factor, self.display_height*scaling_factor))
         window.blit(frame, frame.get_rect())
-        pygame.display.flip()
 
     def run(self):
         # initialize
