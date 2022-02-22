@@ -46,18 +46,22 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
     possible_dirs = set([RIGHT, LEFT, UP, DOWN])
 
     for ghost in ghosts.values():
-        if ghost.mode == "normal":
+        dist = abs(ghost.x - pac_man.x) + abs(ghost.y - pac_man.y)
+
+        if ghost.mode == "normal" and dist < avoid_distance:
+            print("{}, {}".format(ghost.x - pac_man.x, ghost.y - pac_man.y))
+
             # Remove directions that are near an active ghost
-            if 0 < ghost.x - pac_man.x < avoid_distance:
+            if 0 < ghost.x - pac_man.x:
                possible_dirs -= set([RIGHT])
 
-            if 0 < pac_man.x - ghost.x < avoid_distance:
+            if 0 < pac_man.x - ghost.x:
                 possible_dirs -= set([LEFT])
 
-            if 0 < ghost.y - pac_man.y < avoid_distance:
+            if 0 < ghost.y - pac_man.y:
                possible_dirs -= set([DOWN])
 
-            if 0 < pac_man.y - ghost.y < avoid_distance:
+            if 0 < pac_man.y - ghost.y:
                 possible_dirs -= set([UP])
 
     # Remove directions that are a wall
