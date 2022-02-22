@@ -22,6 +22,7 @@ class Main:
     def __init__(self):
         self.maze_width = MapSizeX
         self.maze_height = MapSizeY
+        self.current_generation = 1
 
         self.lives = 2
         self.last_life_score = 0
