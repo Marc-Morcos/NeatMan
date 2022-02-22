@@ -86,7 +86,7 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
 def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     avoid_distance = 60
     possible_dirs = set([RIGHT, LEFT, UP, DOWN])
-    
+
     for ghost in ghosts.values():
         dist = abs(ghost.x - pac_man.x) + abs(ghost.y - pac_man.y)
 
@@ -104,9 +104,9 @@ def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
             if 0 < pac_man.y - ghost.y:
                 possible_dirs -= set([UP])
 
-    
+
     # Remove directions that are a wall
-    
+
 
     '''
     if not maze.can_move(pac_man, RIGHT):
@@ -121,7 +121,7 @@ def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     if not maze.can_move(pac_man, DOWN):
         possible_dirs -= set([DOWN])
     '''
-    
+
     if not pac_man.target or not pac_man.target.here:
         pac_man.target = pellets[0]
         min_dist = 100000000
@@ -139,8 +139,7 @@ def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
 
         #print("Pac-Man: {}, {}  Target: {}, {}  Dist: {}".format(pac_man.x, pac_man.y, pac_man.target.x, pac_man.target.y, dist))
 
-    
-    '''
+
     if not maze.can_move(pac_man, pac_man.move_dir):
         if pac_man.try_move_dir == pac_man.move_dir:
             pac_man.try_move_dir = (pac_man.move_dir + random.choice((-1, 1))) % 4
@@ -151,20 +150,14 @@ def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
         return pac_man.move_dir
     else:
         pac_man.try_move_dir = pac_man.move_dir
-    '''
 
-    # Select a random direction out of the possible directions
-    if possible_dirs:
-        dir_weights = [pac_man.target.x - pac_man.x, pac_man.x - pac_man.target.x, pac_man.target.y - pac_man.y, pac_man.y - pac_man.target.y]
-        while not sum(dir_weights):
-            dir = dir_weights.index(max(dir_weights))
-            if dir in possible_dirs:
-                return dir
-            else:
-                dir_weights[dir] = 0
-        else:
-            return random.sample(possible_dirs, 1)
-    return pac_man.move_dir
+    # if in a dead end, flip direction
+    if not (maze.can_move(pac_man, pac_man.try_move_dir)) \
+            and not (maze.can_move(pac_man, left_turn(pac_man.try_move_dir))) \
+            and not (maze.can_move(pac_man, right_turn(pac_man.try_move_dir))):
+        pac_man.try_move_dir = (pac_man.try_move_dir+2) % 4
+
+    return pac_man.try_move_dir
 
 
 #broken do not use
