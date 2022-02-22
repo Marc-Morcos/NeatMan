@@ -11,7 +11,7 @@ from pygame.locals import *
 from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = humanPlayer #options: dummy, humanPlayer
+pacmanController = avoid_ghost_dummy #options: dummy, humanPlayer
 
 class Main:
     def __init__(self):
