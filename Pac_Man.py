@@ -28,6 +28,9 @@ class Pac_Man:
         self.power_time = 0
         self.ghosts_eaten = 0
 
+        # Neural network
+        self.net = None
+
     def power_up(self, time):
         self.powered_up = True
         self.power_time = time

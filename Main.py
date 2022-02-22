@@ -172,7 +172,7 @@ class Main:
     #if hard is false, we are just moving to a new level
     #if hard is true, its a true reset
     def reset(self, hard = False, newMap = False):
-
+        net = self.player.net
         #hard reset  
         if(hard):
             self.lives = 2
@@ -191,6 +191,7 @@ class Main:
         self.temp_counter = 0
 
         self.player = Pac_Man(spawn_x, spawn_y,pacmanController)
+        self.player.net = net
 
         # generate all pellets and power pellets
         self.power_pellets = []

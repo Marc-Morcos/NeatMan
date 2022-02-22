@@ -1,4 +1,4 @@
-#NEAT configuration
+#NbAT configuration
 #code format from https://github.com/codewmax/neat-chrome-dinosaur/blob/master/config.txt
 #these are essentially our hyperparameters (see documentation https://neat-python.readthedocs.io/en/latest/config_file.html)
 
@@ -10,9 +10,10 @@ reset_on_extinction   = False
 
 [DefaultGenome]
 # node activation options
-activation_default      = relu
+# we need a probabilistic output, and we don't use gradients so we should use tanh or sigmoid
+activation_default      = tanh 
 activation_mutate_rate  = 0.0
-activation_options      = relu
+activation_options      = tanh
 
 # node aggregation options
 aggregation_default     = sum
