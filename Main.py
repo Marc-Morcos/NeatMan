@@ -18,7 +18,7 @@ pacmanController = humanPlayer #options: dummy, humanPlayer, neat
 
 if(neatMode): 
     pacmanController = modelNeat
-    #fastMode = True
+    fastMode = True
 
 class Main:
     def __init__(self):
@@ -222,12 +222,12 @@ class Main:
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
     #main loop of the game
-    def game_loop(self, fitness = None):
+    def game_loop(self, genome_ = None):
         while self.running:
             if self.game_state in ("run", "respawn"):
                 
                 #update fitness
-                if(neatMode): fitness = self.score
+                if(neatMode): genome_.fitness = self.score
 
                 # main game loop
                 self.events(self.player)
@@ -251,7 +251,11 @@ class Main:
                 self.game_state = "run"
             elif self.game_state == "lose":
                 self.running = False
-                if(neatMode): fitness = self.score #update fitness
+                if(neatMode): 
+                    genome_.fitness = self.score #update fitness
+                    self.running = True
+                    self.game_state = "run"
+                    return
                 print("score:",self.score)
 
     def run(self):
@@ -293,7 +297,7 @@ class Main:
         if (not neatMode): self.game_loop()
 
         #initialize neat stuff
-        if neatMode: neatInit(self.game_loop,self.player) 
+        if neatMode: neatInit(self.game_loop,self.player,self.reset) 
 
 
 if __name__ == "__main__":

@@ -17,10 +17,10 @@ fruit_time = 10
 life_points = 10000
 
 #Quick Toggles
-neatMode = False
+neatMode = True
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
-showFPS = False #shows fps, use for testing, prints clutter and slow down program
+showFPS = True #shows fps, use for testing, prints clutter and slow down program
 
 neatConfigPath = "neatConfig.text"
 #hyperparameters (more hyperparams in config.text)

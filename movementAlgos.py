@@ -38,9 +38,11 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     #interpret net output 
     max = outputs[0]
+    max_id = 0
     for output_id in range(len(outputs)):
         if outputs[output_id] > max:
             max = outputs[output_id]
+            max_id = output_id
 
-    return max
+    return max_id
     
