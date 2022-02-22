@@ -25,13 +25,13 @@ def avoid_ghost_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
             # Remove directions that are near an active ghost
             if 0 < ghost.x - pac_man.x < avoid_distance:
                possible_dirs -= set([RIGHT])
-            
+
             if 0 < pac_man.x - ghost.x < avoid_distance:
                 possible_dirs -= set([LEFT])
 
             if 0 < ghost.y - pac_man.y < avoid_distance:
                possible_dirs -= set([DOWN])
-            
+
             if 0 < pac_man.y - ghost.y < avoid_distance:
                 possible_dirs -= set([UP])
 
@@ -50,30 +50,33 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
             # Remove directions that are near an active ghost
             if 0 < ghost.x - pac_man.x < avoid_distance:
                possible_dirs -= set([RIGHT])
-            
+
             if 0 < pac_man.x - ghost.x < avoid_distance:
                 possible_dirs -= set([LEFT])
 
             if 0 < ghost.y - pac_man.y < avoid_distance:
                possible_dirs -= set([DOWN])
-            
+
             if 0 < pac_man.y - ghost.y < avoid_distance:
                 possible_dirs -= set([UP])
 
     # Remove directions that are a wall
-    if maze.maze_array[pac_man.array_coord[0]+1, pac_man.array_coord[1]] == 1:
-        possible_dirs -= set([LEFT])
-
-    if maze.maze_array[pac_man.array_coord[0]-1, pac_man.array_coord[1]] == 1:
+    if not maze.can_move(pac_man, RIGHT):
         possible_dirs -= set([RIGHT])
 
-    if maze.maze_array[pac_man.array_coord[0], pac_man.array_coord[1]+1] == 1:
-        possible_dirs -= set([DOWN])
-    
-    if maze.maze_array[pac_man.array_coord[0], pac_man.array_coord[1]-1] == 1:
+    if not maze.can_move(pac_man, LEFT):
+        possible_dirs -= set([LEFT])
+
+    if not maze.can_move(pac_man, UP):
         possible_dirs -= set([UP])
+
+    if not maze.can_move(pac_man, DOWN):
+        possible_dirs -= set([DOWN])
 
     # Select a random direction out of the possible directions
     if possible_dirs:
-        return random.sample(possible_dirs, 1)[0]
+        print(possible_dirs)
+        next = random.sample(possible_dirs, 1)[0]
+        print(next)
+        return next
     return pac_man.move_dir

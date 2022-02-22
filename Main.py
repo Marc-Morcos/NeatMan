@@ -11,7 +11,12 @@ from pygame.locals import *
 from movementAlgos import *
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = avoid_ghost_dummy #options: dummy, humanPlayer
+pacmanController = avoid_ghost_and_walls_dummy
+
+neatMode = False #No longer human playable, used for training
+neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
+showFPS = False #shows fps, use for testing, I think prints slow it down
+
 
 class Main:
     def __init__(self):
@@ -25,7 +30,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
-        if(fastMode): self.fps = 999999999
+        if(neatMode): self.fps = 99999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -118,14 +123,9 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
-        if(fastMode and (self.tick_counter%neatFrameShow != 0)):
-            if self.game_state == "respawn":
-                if self.temp_counter < 36:
+        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
+            if self.game_state == "respawn" and self.temp_counter < 36:
                     self.temp_counter += 1
-                else:
-                    self.game_state = "run"
-                    self.player.x = spawn_x * block_size + block_size / 2
-                    self.player.y = spawn_y * block_size + block_size / 2
             return
 
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
@@ -169,7 +169,8 @@ class Main:
         # initialize
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
-        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
+        flags = DOUBLEBUF
+        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor),flags)
         display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
@@ -240,10 +241,9 @@ class Main:
                     self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
                     self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
-                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
-                    pygame.display.flip()
-                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
+                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): pygame.display.flip()
                 self.fps_clock.tick(self.fps)
+                if(showFPS): print(self.fps_clock.get_fps())
                 self.tick_counter += 1
 
             # end game at win/lose
