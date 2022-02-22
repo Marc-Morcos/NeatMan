@@ -51,8 +51,6 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
         dist = abs(ghost.x - pac_man.x) + abs(ghost.y - pac_man.y)
 
         if ghost.mode == "normal" and dist < avoid_distance:
-            print("{}, {}".format(ghost.x - pac_man.x, ghost.y - pac_man.y))
-
             # Remove directions that are near an active ghost
             if 0 < ghost.x - pac_man.x:
                possible_dirs -= set([RIGHT])
@@ -81,13 +79,92 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
 
     # Select a random direction out of the possible directions
     if possible_dirs:
-        print(possible_dirs)
-        next = random.sample(possible_dirs, 1)[0]
-        print(next)
-        return next
+        return random.sample(possible_dirs, 1)[0]
     return pac_man.move_dir
 
+#avoid ghosts and walls with target pellet
+def avoid_gw_w_tp_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+    avoid_distance = 60
+    possible_dirs = set([RIGHT, LEFT, UP, DOWN])
+    
+    for ghost in ghosts.values():
+        dist = abs(ghost.x - pac_man.x) + abs(ghost.y - pac_man.y)
 
+        if ghost.mode == "normal" and dist < avoid_distance:
+            # Remove directions that are near an active ghost
+            if 0 < ghost.x - pac_man.x:
+               possible_dirs -= set([RIGHT])
+
+            if 0 < pac_man.x - ghost.x:
+                possible_dirs -= set([LEFT])
+
+            if 0 < ghost.y - pac_man.y:
+               possible_dirs -= set([DOWN])
+
+            if 0 < pac_man.y - ghost.y:
+                possible_dirs -= set([UP])
+
+    
+    # Remove directions that are a wall
+    
+
+    '''
+    if not maze.can_move(pac_man, RIGHT):
+        possible_dirs -= set([RIGHT])
+
+    if not maze.can_move(pac_man, LEFT):
+        possible_dirs -= set([LEFT])
+
+    if not maze.can_move(pac_man, UP):
+        possible_dirs -= set([UP])
+
+    if not maze.can_move(pac_man, DOWN):
+        possible_dirs -= set([DOWN])
+    '''
+    
+    if not pac_man.target or not pac_man.target.here:
+        pac_man.target = pellets[0]
+        min_dist = 100000000
+
+        for pellet in pellets:
+            if pellet.here:
+                #print("Target: {}, {}   Pellet: {}, {}".format(target.x, target.y, pellet.x, pellet.y))
+                dist = abs(pellet.x - pac_man.x) + abs(pellet.y - pac_man.y)
+
+                if dist < min_dist:
+                    pac_man.target = pellet
+                    min_dist = dist
+
+        pac_man.target.colour = (255, 0, 0)
+
+        #print("Pac-Man: {}, {}  Target: {}, {}  Dist: {}".format(pac_man.x, pac_man.y, pac_man.target.x, pac_man.target.y, dist))
+
+    
+    '''
+    if not maze.can_move(pac_man, pac_man.move_dir):
+        if pac_man.try_move_dir == pac_man.move_dir:
+            pac_man.try_move_dir = (pac_man.move_dir + random.choice((-1, 1))) % 4
+        if pac_man.try_move_dir in possible_dirs:
+            return pac_man.try_move_dir
+        elif possible_dirs:
+            return random.sample(possible_dirs, 1)
+        return pac_man.move_dir
+    else:
+        pac_man.try_move_dir = pac_man.move_dir
+    '''
+
+    # Select a random direction out of the possible directions
+    if possible_dirs:
+        dir_weights = [pac_man.target.x - pac_man.x, pac_man.x - pac_man.target.x, pac_man.target.y - pac_man.y, pac_man.y - pac_man.target.y]
+        while not sum(dir_weights):
+            dir = dir_weights.index(max(dir_weights))
+            if dir in possible_dirs:
+                return dir
+            else:
+                dir_weights[dir] = 0
+        else:
+            return random.sample(possible_dirs, 1)
+    return pac_man.move_dir
 
 
 #broken do not use

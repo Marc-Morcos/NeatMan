@@ -16,6 +16,7 @@ class Pac_Man:
         self.look_dir = DOWN
         self.humanInput = DOWN
         self.move_dir = DOWN
+        self.try_move_dir = DOWN
 
         # Location in pixels
         self.array_coord = [x, y]
@@ -27,6 +28,8 @@ class Pac_Man:
         self.timer = 0
         self.power_time = 0
         self.ghosts_eaten = 0
+
+        self.target = 0
 
         #some wonkiness to make the target code work
         self.display_width=0

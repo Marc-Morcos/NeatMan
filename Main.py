@@ -14,7 +14,7 @@ import neat
 
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = target_pellet
+pacmanController = avoid_gw_w_tp_dummy
 
 neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
@@ -73,7 +73,7 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(self.maze, self.display_width, self.ghosts, self.power_pellets, self.power_pellets, self.fruit)
+            self.player.move(self.maze, self.display_width, self.ghosts, self.pellets, self.power_pellets, self.fruit)
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
@@ -99,6 +99,8 @@ class Main:
                         self.score += ghost_scores[self.player.ghosts_eaten]
                     else:
                         if self.lives > 0:
+                            self.player.target.colour = (255, 255, 255)
+                            self.player.target = 0
                             self.game_state = "respawn"
                             self.fruit.here = False
                             self.lives -= 1
