@@ -250,44 +250,11 @@ class Main:
 
                 # check win condition
                 if self.collected_pellets >= len(self.pellets):
-<<<<<<< HEAD
-                    self.level += 1
-                    self.collected_pellets = 0
-
-                    self.player = Pac_Man(spawn_x, spawn_y)
-
-                    # generate all pellets and power pellets
-                    self.power_pellets = []
-                    for loc in self.maze.power_pellet_locs:
-                        self.power_pellets.append(PowerPellet(loc[0], loc[1]))
-                    self.pellets = []
-                    for loc in self.maze.pellet_locs:
-                        self.pellets.append(Pellet(loc[0], loc[1]))
-
-                    self.ghosts = {}
-
-                    # spawn ghosts
-                    self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
-                    self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
-                    self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
-                    self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
-
-                    self.ghosts["blinky"].mode = "normal"
-                    self.ghosts["pinky"].mode = "normal"
-
-                    # spawn fruit
-                    self.num_fruit = 0
-                    self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
-                    self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
-
-                if((not neatMode) or (self.tick_counter%neatFrameShow == 0)): pygame.display.flip()
-=======
                     self.game_state = "win"
                     
                 if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
                     pygame.display.flip()
                     if(showFPS): print("fps:",self.fps_clock.get_fps()) 
->>>>>>> c349edf8c0a2757dc091879cd2a8c6d9559965c9
                 self.fps_clock.tick(self.fps)
                 if(showFPS): print(self.fps_clock.get_fps())
                 self.tick_counter += 1
