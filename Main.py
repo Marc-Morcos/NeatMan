@@ -12,8 +12,6 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-scaling_factor = 0.7 #factor by which we scale dimensions of game window
-
 pacmanController = humanPlayer #options: dummy, humanPlayer, neat
 
 if(neatMode): 
@@ -22,8 +20,8 @@ if(neatMode):
 
 class Main:
     def __init__(self):
-        self.maze_width = 28
-        self.maze_height = 31
+        self.maze_width = MapSizeX
+        self.maze_height = MapSizeY
 
         self.lives = 2
         self.last_life_score = 0
@@ -72,7 +70,7 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(self.maze, self.display_width, self.ghosts, self.power_pellets, self.power_pellets, self.fruit)
+            self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit)
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
@@ -222,13 +220,9 @@ class Main:
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
     #main loop of the game
-    def game_loop(self, genome_ = None):
+    def game_loop(self):
         while self.running:
             if self.game_state in ("run", "respawn"):
-                
-                #update fitness
-                if(neatMode): genome_.fitness = self.score
-
                 # main game loop
                 self.events(self.player)
                 self.loop()
@@ -252,10 +246,9 @@ class Main:
             elif self.game_state == "lose":
                 self.running = False
                 if(neatMode): 
-                    genome_.fitness = self.score #update fitness
                     self.running = True
                     self.game_state = "run"
-                    return
+                    return self.score #update fitness
                 print("score:",self.score)
 
     def run(self):
@@ -297,7 +290,7 @@ class Main:
         if (not neatMode): self.game_loop()
 
         #initialize neat stuff
-        if neatMode: neatInit(self.game_loop,self.player,self.reset) 
+        if neatMode: neatInit(self) 
 
 
 if __name__ == "__main__":

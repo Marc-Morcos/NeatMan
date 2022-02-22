@@ -3,6 +3,7 @@ from Constants import *
 
 class Pellet:
     def __init__(self, x, y):
+        self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 
@@ -27,6 +28,7 @@ class Pellet:
 
 class PowerPellet:
     def __init__(self, x, y):
+        self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 
@@ -50,6 +52,7 @@ class PowerPellet:
 
 class Fruit:
     def __init__(self, x, y, score, image, here):
+        self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 

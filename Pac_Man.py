@@ -51,7 +51,7 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
-        self.look_dir = self.movementFunction(self, maze, ghosts, pellets, power_pellets, fruit)
+        self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]

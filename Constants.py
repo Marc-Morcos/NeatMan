@@ -16,6 +16,11 @@ fruit_scores = [100, 300, 500, 700, 1000, 2000, 3000, 5000]
 fruit_time = 10
 life_points = 10000
 
+#Video settings
+MapSizeX = 28
+MapSizeY = 31
+scaling_factor = 0.7 #factor by which we scale dimensions of game window
+
 #Quick Toggles
 neatMode = True
 fastMode = False #No longer human playable, increases speed of game to absolute limits

@@ -5,22 +5,21 @@ import neat
 from Constants import *
 
 #run a generation of pacmen
-def eval_Pacman(genomes, config, gameLoop = None,pacman = None, reset = None):
+def eval_Pacman(genomes, config, main = None):
     
     for genome_id, genome in genomes:
-        pacman.net = neat.nn.FeedForwardNetwork.create(genome, config)
-        genome.fitness = 0
-        gameLoop(genome_ = genome)
-        reset(hard = True, newMap = False) #reset for next pac in generation
+        main.player.net = neat.nn.FeedForwardNetwork.create(genome, config)
+        genome.fitness = main.game_loop()
+        main.reset(hard = True, newMap = False) #reset for next pac in generation
         print("fitness:",genome.fitness)
 
     #generate a new map and reset for next generation
-    reset(hard = True, newMap = True)
+    main.reset(hard = True, newMap = True)
 
     return
 
 #initializes neat stuff
-def neatInit(game_loop,pac_man,reset_):
+def neatInit(main):
     config = neat.config.Config(
         neat.DefaultGenome,
         neat.DefaultReproduction,
@@ -32,7 +31,7 @@ def neatInit(game_loop,pac_man,reset_):
     population = neat.Population(config)
 
     #we want to pass extra stuff into eval_pacman
-    newLoop = partial(eval_Pacman,gameLoop=game_loop,pacman=pac_man,reset = reset_)
+    newLoop = partial(eval_Pacman,main=main)
 
     population.run(newLoop, NeatNumGenerations)
     return population

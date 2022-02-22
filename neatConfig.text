@@ -1,4 +1,4 @@
-#NbAT configuration
+#NEAT configuration
 #code format from https://github.com/codewmax/neat-chrome-dinosaur/blob/master/config.txt
 #these are essentially our hyperparameters (see documentation https://neat-python.readthedocs.io/en/latest/config_file.html)
 
@@ -52,7 +52,7 @@ node_delete_prob        = 0.2
 #The num hidden is the number of hidden nodes to START, it will add more later as needed anyways
 #if u change it, u might also need to change the "initial_connection" variable
 num_hidden              = 0
-num_inputs              = 912
+num_inputs              = 887
 num_outputs             = 4
 
 # node response options
