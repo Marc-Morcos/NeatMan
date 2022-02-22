@@ -28,6 +28,9 @@ class Pac_Man:
         self.power_time = 0
         self.ghosts_eaten = 0
 
+        #some wonkiness to make the target code work
+        self.display_width=0
+
     def power_up(self, time):
         self.powered_up = True
         self.power_time = time
@@ -92,7 +95,8 @@ class Pac_Man:
 
         pygame.draw.polygon(display, (255, 255, 0), pointlist)
 
-    def draw_while_running(self, display, display_width, maze, tick_counter):
+    def draw_while_running(self, display, display_width , maze, tick_counter):
+        self.display_width = display_width
         if (not block_size/2 < self.x < display_width - block_size/2 - self.size) \
                 or maze.can_move(self, self.move_dir):
             if tick_counter % 18 < 9:

@@ -3,6 +3,8 @@ from Maze import Maze
 from Items import *
 from Ghost import Ghost
 from Constants import *
+from operator import *
+import math
 from Pac_Man import Pac_Man
 
 #random moves -> no smart
@@ -11,7 +13,7 @@ def dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
         return random.randint(0,4)
     return pac_man.move_dir
 
-#human controlled pacman
+#human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     return pac_man.humanInput
 
@@ -84,3 +86,225 @@ def avoid_ghost_and_walls_dummy(pac_man, maze, ghosts, pellets, power_pellets, f
         print(next)
         return next
     return pac_man.move_dir
+
+
+
+
+#broken do not use
+def target_pellet_withGhostAi(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+
+
+    #code adapted from the ghost ai
+    def find_distance(a_pos, b_pos):
+        a = pow(abs(a_pos[0] - b_pos[0]), 2)
+        b = pow(abs(a_pos[1] - b_pos[1]), 2)
+        return math.sqrt(a + b)
+
+    def find_closest(facing, target_pos):
+        return_dir = facing
+        next_pos = list(map(add, pac_man.array_coord, pac_man.COORD_DIR[facing]))
+        dir_min = find_distance(next_pos, target_pos)
+        # check left turn
+        if maze.can_move(pac_man, left_turn(facing)):
+            next_pos = list(map(add, pac_man.array_coord, pac_man.COORD_DIR[left_turn(facing)]))
+            next_dir = find_distance(next_pos, target_pos)
+            if next_dir < dir_min:
+                dir_min = next_dir
+                return_dir = left_turn(facing)
+        # check right turn
+        if maze.can_move(pac_man, right_turn(facing)):
+            next_pos = list(map(add, pac_man.array_coord, pac_man.COORD_DIR[right_turn(facing)]))
+            next_dir = find_distance(next_pos, target_pos)
+            if next_dir < dir_min:
+                return_dir = right_turn(facing)
+        return return_dir
+
+    def left_turn(facing):
+        return abs((facing - 1) % 4)
+
+    def right_turn(facing):
+        return abs((facing + 1) % 4)
+
+
+
+    #finds safe directions
+    possible_dirs = set([RIGHT, LEFT, UP, DOWN])
+    # Only try changing direction if within bounds of maze array
+    if block_size < pac_man.x < pac_man.display_width - block_size:
+        pac_man_row = int(pac_man.y / block_size)
+        pac_man_col = int(pac_man.x / block_size)
+
+        # Check whether the ghosts are visible from this player's perspective
+        # If they are on the same row or column, check all tiles in between
+        # If there are no walls, the ghost can see the player
+        see_ghost= False
+        for ghost in ghosts.values():
+            wall = True
+            ghost_dir = DOWN
+            ghost_row = int(ghost.y / block_size)
+            ghost_col = int(ghost.x / block_size)
+            if pac_man_row == ghost_row or ghost_col == pac_man_col:
+                wall = False  # flag for whether there is an obstruction between ghost and player
+                if pac_man_col == ghost_col and pac_man_row == ghost_row:
+                    wall = True
+                elif pac_man_row == ghost_row:
+                    if pac_man_col > ghost_col:
+                        ghost_dir = LEFT
+                        for i in range(0, pac_man_col - ghost_col):
+                            if maze.maze_array[pac_man_row][i + ghost_col] == 1:
+                                wall = True
+                    elif ghost_col == pac_man_col:
+                        wall = True
+                    else:
+                        ghost_dir = RIGHT
+                        for i in range(0, ghost_col - pac_man_col):
+                            if maze.maze_array[pac_man_row][i + pac_man_col] == 1:
+                                wall = True
+                elif pac_man_col == ghost_col:
+                    if pac_man_row > ghost_row:
+                        ghost_dir = UP
+                        for i in range(0, pac_man_row - ghost_row):
+                            if maze.maze_array[i + ghost_row][pac_man_col] == 1:
+                                wall = True
+                    elif ghost_row == pac_man_row:
+                        wall = True
+                    else:
+                        ghost_dir = DOWN
+                        for i in range(0, ghost_row - pac_man_row):
+                            if maze.maze_array[i + pac_man_row][pac_man_col] == 1:
+                                wall = True
+            if not wall:
+                see_ghost = True
+                possible_dirs -= set([ghost_dir])
+
+        # Remove directions that are a wall
+        if not maze.can_move(pac_man, RIGHT):
+            possible_dirs -= set([RIGHT])
+
+        if not maze.can_move(pac_man, LEFT):
+            possible_dirs -= set([LEFT])
+
+        if not maze.can_move(pac_man, UP):
+            possible_dirs -= set([UP])
+
+        if not maze.can_move(pac_man, DOWN):
+            possible_dirs -= set([DOWN])
+
+        #generate target
+        if(possible_dirs):
+            next_dir = random.sample(possible_dirs, 1)[0]
+        else:
+            next_dir = DOWN
+        target_coord = [0,0]
+
+        # move towards target, only attempt a turn at an intersection
+        if pac_man.step < pac_man.x % block_size < block_size - pac_man.step \
+                and pac_man.step < pac_man.y % block_size < block_size - pac_man.step:
+            if maze.can_move(pac_man, left_turn(next_dir)) \
+                    or maze.can_move(pac_man, right_turn(next_dir)):
+                next_dir = find_closest(next_dir, target_coord)
+            if not maze.can_move(pac_man, next_dir):
+                next_dir = random.choice([left_turn(next_dir), right_turn(next_dir)])
+
+        # if in a dead end, flip direction
+        if not (maze.can_move(pac_man, next_dir)) \
+                and not (maze.can_move(pac_man, left_turn(next_dir))) \
+                and not (maze.can_move(pac_man, right_turn(next_dir))):
+            next_dir = left_turn(left_turn(next_dir))
+
+
+        #print(possible_dirs)
+        return next_dir
+
+"""
+                # Only attempt turn if more than 1 tick since last turn
+                if self.turn_timer > 2:
+                    # Run away from the player if it is visible
+                    # If it is able to continue in the direction it is facing it will
+                    # do so, so long as it does not go towards the player
+                    if see_player:
+                        if self.look_dir == player_dir or not maze.can_move(self, self.look_dir):
+                            self.look_dir = random.choice([left_turn(left_turn(player_dir)),
+                                                           left_turn(player_dir), right_turn(player_dir)])
+                            self.turn_timer = 0
+                    # if player not visible, pick a random movement direction
+                    else:
+                        self.look_dir = random.choice([self.move_dir, left_turn(self.move_dir),
+                                                       right_turn(self.move_dir)])
+                        self.turn_timer = 0
+
+
+            # set target position based on current behaviour
+            if self.mode == "normal":
+                # Immediately exit house
+                if self.array_coord == [house_x, house_y]:
+                    target_coord = [house_x, house_y-2]
+                elif self.array_coord in([house_x, house_y-1], [house_x, house_y-2]) and self.move_dir == UP:
+                    target_coord = [house_x-1, house_y-2]
+                # Scatter
+                elif (tick_counter / 60) % (self.chase_time + self.scatter_time) < self.scatter_time:
+                    target_coord = self.scatter_coord
+                # Chase Pac-Man
+                else:
+
+            # if dead, move back to ghost house
+            elif self.mode == "dead":
+                target_coord = [house_x, house_y]
+
+            # move towards target, only attempt a turn at an intersection
+            if step < self.x % block_size < block_size - step \
+                    and step < self.y % block_size < block_size - step and self.turn_timer > 2:
+                if maze.can_move(self, left_turn(self.look_dir)) \
+                        or maze.can_move(self, right_turn(self.look_dir)):
+                    self.look_dir = find_closest(self.look_dir, target_coord)
+                    self.turn_timer = 0
+                if not maze.can_move(self, self.look_dir):
+                    self.look_dir = random.choice([left_turn(self.move_dir), right_turn(self.move_dir)])
+                    self.turn_timer = 0
+
+            # change move direction to match look direction if possible
+            if self.look_dir != self.move_dir:
+                if maze.can_move(self, self.look_dir):
+                    self.move_dir = self.look_dir
+                # if in a dead end, flip direction
+                if not (maze.can_move(self, self.move_dir)) \
+                        and not (maze.can_move(self, left_turn(self.move_dir))) \
+                        and not (maze.can_move(self, right_turn(self.move_dir))):
+                    self.look_dir = left_turn(left_turn(self.move_dir))
+                    self.move_dir = self.look_dir
+
+            # do movement
+            if maze.can_move(self, self.move_dir):
+                self.x += step * self.COORD_DIR[self.move_dir][0]
+                self.y += step * self.COORD_DIR[self.move_dir][1]
+
+        # If outside maze, keep moving forwards until wrapped to the other side of the screen
+        else:
+            if self.move_dir == LEFT:
+                self.x -= self.step_len
+                maze.center(self, "y", self.y)
+            if self.move_dir == RIGHT:
+                self.x += self.step_len
+                maze.center(self, "y", self.y)
+            # screen wrap
+            if self.x < -self.size:
+                self.x = display_width
+            if self.x > self.size + display_width:
+                self.x = -self.size
+
+        # respawn if way found back to house
+        if self.mode == "dead" and self.array_coord == [house_x, house_y]:
+            self.mode = "normal"
+
+        self.turn_timer += 1
+
+    # Ghost stays in the house and paces left and right
+    elif self.mode == "house":
+        if self.look_dir == DOWN or self.look_dir == UP:
+            self.look_dir = random.choice([LEFT, RIGHT])
+            self.move_dir = self.look_dir
+        if not (maze.can_move(self, self.move_dir)):
+            self.look_dir = left_turn(left_turn(self.move_dir))
+            self.move_dir = self.look_dir
+        self.x += step * self.COORD_DIR[self.move_dir][0]
+        """

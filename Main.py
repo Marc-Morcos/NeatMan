@@ -14,7 +14,7 @@ import neat
 
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
-pacmanController = avoid_ghost_and_walls_dummy
+pacmanController = target_pellet
 
 neatMode = False #No longer human playable, used for training
 neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
@@ -106,7 +106,7 @@ class Main:
                         else:
                             self.game_state = "lose"
 
-            # Update fruit
+            # Update fruitdisplayWidth
             self.fruit.update()
 
             # Give fruit
@@ -200,9 +200,9 @@ class Main:
 
 
     def run(self):
-        
+
         #initialize neat stuff
-        if neatMode: neatInit() 
+        if neatMode: neatInit()
 
         # initialize
         pygame.init()
@@ -251,10 +251,10 @@ class Main:
                 # check win condition
                 if self.collected_pellets >= len(self.pellets):
                     self.game_state = "win"
-                    
-                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
+
+                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)):
                     pygame.display.flip()
-                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
+                    if(showFPS): print("fps:",self.fps_clock.get_fps())
                 self.fps_clock.tick(self.fps)
                 if(showFPS): print(self.fps_clock.get_fps())
                 self.tick_counter += 1
