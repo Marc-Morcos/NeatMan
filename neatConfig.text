@@ -49,8 +49,9 @@ node_add_prob           = 0.2
 node_delete_prob        = 0.2
 
 # network parameters
-#todo change these
-num_hidden              = 0 
+#The num hidden is the number of hidden nodes to START, it will add more later as needed anyways
+#if u change it, u might also need to change the "initial_connection" variable
+num_hidden              = 0
 num_inputs              = 912
 num_outputs             = 4
 
