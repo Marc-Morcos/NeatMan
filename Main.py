@@ -168,9 +168,27 @@ class Main:
         frame = pygame.transform.scale(surface, (self.display_width*scaling_factor, self.display_height*scaling_factor))
         window.blit(frame, frame.get_rect())
 
-    def reset(self):
-        self.level += 1
+    #resets the game
+    #if hard is false, we are just moving to a new level
+    #if hard is true, its a true reset
+    def reset(self, hard = False, newMap = False):
+
+        #hard reset  
+        if(hard):
+            self.lives = 2
+            self.last_life_score = 0
+            self.score = 0
+            self.level = 0         
+        #soft reset
+        else:
+            self.level += 1
+        
+        #make a new map
+        if newMap:
+            self.maze = Maze(self.maze_width, self.maze_height) #regen maze
+
         self.collected_pellets = 0
+        self.temp_counter = 0
 
         self.player = Pac_Man(spawn_x, spawn_y,pacmanController)
 
@@ -259,7 +277,7 @@ class Main:
 
             # What to do when we win/lose
             elif self.game_state == "win":
-                self.reset()
+                self.reset(newMap=True)
                 print("won level, moving on, score:",self.score)
                 self.game_state = "run"
             elif self.game_state == "lose":
