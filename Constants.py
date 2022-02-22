@@ -28,8 +28,12 @@ neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
 neatConfigPath = "neatConfig.text"
+
 #hyperparameters (more hyperparams in config.text)
-NeatNumGenerations = 50
+neatHyperparams = {"NeatNumGenerations":99999, 
+                  "NumGenB4MapSwitch":1,
+                  "NumGenB4Checkpoint":1
+                  }
 
 #movement constants
 RIGHT = 0
