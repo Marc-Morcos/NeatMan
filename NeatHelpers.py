@@ -1,19 +1,21 @@
 #our neat implementation is based on this tutorial https://www.youtube.com/watch?v=CKFCIzPSBjE&ab_channel=CodeBucket
 #and this repo https://github.com/codewmax/neat-chrome-dinosaur/blob/master/main.py
+from functools import partial
 import neat
 from Constants import *
 
-def eval_Pacman(genomes, config):
+#run a generation of pacmen
+def eval_Pacman(genomes, config, gameLoop = None,pacman = None):
     
     for genome_id, genome in genomes:
-        net = neat.nn.FeedForwardNetwork.create(genome, config)
+        pacman.net = neat.nn.FeedForwardNetwork.create(genome, config)
         genome.fitness = 0
-    
+        gameLoop(fitness = genome.fitness)
 
     return
 
 #initializes neat stuff
-def neatInit():
+def neatInit(game_loop,pac_man):
     config = neat.config.Config(
         neat.DefaultGenome,
         neat.DefaultReproduction,
@@ -23,5 +25,9 @@ def neatInit():
     )
 
     population = neat.Population(config)
-    population.run(eval_Pacman, NeatNumGenerations)
+
+    #we want to pass extra stuff into eval_pacman
+    newLoop = partial(eval_Pacman,gameLoop=game_loop,pacman=pac_man)
+
+    population.run(newLoop, NeatNumGenerations)
     return population
