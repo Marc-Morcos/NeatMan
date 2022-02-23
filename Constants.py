@@ -38,9 +38,9 @@ LoadTrainingCheckpointPath = None
 neatConfigPath = "neatConfig.text"
 
 #hyperparameters (more hyperparams in config.text)
-neatHyperparams = {"NeatNumGenerations":99999, 
+neatHyperparams = {"NeatNumGenerations":1700, 
                   "NumGenB4MapSwitch":1,
-                  "NumGenB4Checkpoint":500,
+                  "NumGenB4Checkpoint":100,
                   "PopulationCheckpointName": "Checkpoints/NeatBoiPopulation",
                   "modelName": "NeatBoi"
                   }
