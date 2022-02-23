@@ -2,4 +2,6 @@
 */tempCodeRunnerFile.py
 tempCodeRunnerFile.py
 *.cpython-310.pyc
+*.cpython-38.pyc
+*.pyc
 Checkpoints/*
