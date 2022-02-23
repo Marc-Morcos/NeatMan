@@ -101,7 +101,6 @@ class Main:
                         self.score += ghost_scores[self.player.ghosts_eaten]
                     else:
                         if self.lives > 0:
-                            self.player.target.colour = (255, 255, 255)
                             self.player.target = 0
                             self.game_state = "respawn"
                             self.fruit.here = False
