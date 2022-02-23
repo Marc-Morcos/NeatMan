@@ -32,6 +32,7 @@ class Pac_Man:
         self.ghosts_eaten = 0
 
         self.target = 0
+        self.oldPosDir = []
 
         #some wonkiness to make the target code work
         self.display_width=0
@@ -86,9 +87,9 @@ class Pac_Man:
                 self.x += step
             # Screen wrap
             if self.x < -self.size:
-                self.x = display_width
+                self.x = int(0.5*block_size + MapSizeX*block_size) #display_width
             if self.x > self.size + display_width:
-                self.x = -self.size
+                self.x = -int(0.5*block_size) #-self.size
 
     def draw_wedge_pacman(self, display, wedge_angle):
         radius = self.size / 2

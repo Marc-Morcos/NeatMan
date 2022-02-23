@@ -1,4 +1,6 @@
 import random
+from re import L, X
+from turtle import down, right
 from Maze import Maze
 from Items import *
 from Ghost import Ghost
@@ -7,6 +9,7 @@ from operator import *
 import math
 from Pac_Man import Pac_Man
 import numpy as np
+import copy
 
 #returns grid index for 1D array
 def gridToArray(x,y):
@@ -129,39 +132,228 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     return max_id
 
+def printMaze(maze):
+    for y in range(len(maze)):
+        row = " "
+        for x in range(len(maze[0])):
+            row += str(maze[y][x]) + " "
+        print(row)
+
 #random moves -> no smart
 def dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     if(random.randint(0,10) == 0):
         return random.randint(0,4)
     return pac_man.move_dir
 
+def betterCanMove(entity, mazeArray, direction):
+
+    blocked = [1,3]
+    horzMov = [LEFT, RIGHT]
+    vertMov = [UP, DOWN]
+
+
+    x = entity.x-block_size/2.0 #get the top left corner
+    y = entity.y-block_size/2.0
+
+    occupiedTiles = [[int(round((x)/block_size)),  int(round((y)/block_size))]] 
+
+    for textX in range(0,2):
+        for textY in range(0,2):
+            testTileX = int(((x + textX * (block_size - 1))/block_size))
+            testTileY = int(((y + textY * (block_size - 1))/block_size))
+            testTile = [testTileX,testTileY]
+            if(not testTile in occupiedTiles) and testTileX>=occupiedTiles[0][0]  and testTileY>=occupiedTiles[0][1]:
+                occupiedTiles.append(testTile)
+
+    #determine if its in motion 
+    if len(occupiedTiles) == 2:
+        if(occupiedTiles[0][0] == occupiedTiles[1][0] and direction in vertMov):
+            return True
+        elif(occupiedTiles[0][1] == occupiedTiles[1][1] and direction in horzMov):
+            return True
+
+
+    deltaX,deltaY = entity.COORD_DIR[direction]
+     
+    for tileX, tileY in occupiedTiles:
+        #print("Testing: ({},{}){} Data: {}".format(tileX, tileY, direction, mazeArray[tileY+deltaY][tileX+deltaX]))
+
+        if mazeArray[(tileY+deltaY)%len(mazeArray)][(tileX+deltaX)%len(mazeArray[0])] in blocked:
+            return False
+
+    return True
+    
+"""
+    walls =  [1, 3]
+
+    print(entity.array_coord)
+   
+
+    x_rightBound = int((entity.x + block_size / 2 - entity.step) / block_size)%len(mazeArray[0])
+    x_leftBound = int((entity.x - block_size / 2 + entity.step) / block_size)%len(mazeArray[0])
+    y_upBound = int((entity.y - block_size / 2 - entity.step) / block_size)%len(mazeArray)
+    y_bottomBound = int((entity.y + block_size / 2 + entity.step) / block_size)%len(mazeArray)
+
+    print(x_rightBound,x_leftBound)
+    print(y_upBound,y_bottomBound)
+
+    if(direction == UP and (mazeArray[y_upBound][x_rightBound] in walls or mazeArray[y_upBound][x_leftBound] in walls)):
+        return False
+    elif(direction == DOWN) and (mazeArray[y_bottomBound][x_rightBound] in walls or mazeArray[y_bottomBound][x_leftBound] in walls):
+        return False
+    elif(direction == LEFT and (mazeArray[y_upBound][x_leftBound] in walls or mazeArray[y_bottomBound][x_leftBound] in walls)):
+        return False
+    elif(direction == RIGHT and (mazeArray[y_upBound][x_rightBound] in walls or mazeArray[y_bottomBound][x_rightBound] in walls)):
+       return False
+
+    return True
+
+"""
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+
+    x = pac_man.x-block_size/2.0 #get the top left corner
+    y = pac_man.y-block_size/2.0
+
+    occupiedTiles = [[int(round((x)/block_size)),  int(round((y)/block_size))]] 
+
+    for textX in range(0,2):
+        for textY in range(0,2):
+            testTileX = int(((x + textX * (block_size - 1))/block_size))
+            testTileY = int(((y+ textY * (block_size - 1))/block_size))
+            testTile = [testTileX,testTileY]
+            if(not testTile in occupiedTiles) and testTileX>=occupiedTiles[0][0]  and testTileY>=occupiedTiles[0][1]:
+                occupiedTiles.append(testTile)
+    
+
+    #print(occupiedTiles)
+    possible_dirs = []
+
+    if(betterCanMove(pac_man, maze.maze_array, RIGHT)):
+        possible_dirs.append(RIGHT)
+
+    if(betterCanMove(pac_man, maze.maze_array, LEFT)):
+        possible_dirs.append(LEFT)
+
+    if(betterCanMove(pac_man, maze.maze_array, UP)):
+        possible_dirs.append(UP)
+
+    if(betterCanMove(pac_man, maze.maze_array, DOWN)):
+        possible_dirs.append(DOWN)
+
     return pac_man.humanInput
 
+def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+
+    
+
+    #evaluate walls 
+    possible_dirs = []
+
+    if(betterCanMove(pac_man, maze.maze_array, RIGHT)):
+        possible_dirs.append(RIGHT)
+
+    if(betterCanMove(pac_man, maze.maze_array, LEFT)):
+        possible_dirs.append(LEFT)
+
+    if(betterCanMove(pac_man, maze.maze_array, UP)):
+        possible_dirs.append(UP)
+
+    if(betterCanMove(pac_man, maze.maze_array, DOWN)):
+        possible_dirs.append(DOWN)
+
+    ghostTiles = []
+
+    for ghost in ghosts.values():
+        if ghost.mode == "normal" and not pac_man.powered_up:
+            x = ghost.x-block_size/2.0 #get the top left corner
+            y = ghost.y-block_size/2.0
+
+            for textX in range(0,2):
+                for textY in range(0,2):
+                    testTile = [int(((x + textX * (block_size - 1))/block_size)),  int(((y+ textY * (block_size - 1))/block_size))]
+                    if(not testTile in ghostTiles):
+                        ghostTiles.append(testTile)
+
+
+    pac_manTiles = []
+    x = pac_man.x-block_size/2.0 #get the top left corner
+    y = pac_man.y-block_size/2.0
+
+    for textX in range(0,2):
+        for textY in range(0,2):
+            testTile = [int(((x + textX * (block_size - 1))/block_size)),  int(((y+ textY * (block_size - 1))/block_size))]
+            if(not testTile in pac_manTiles):
+                pac_manTiles.append(testTile)
+
+
+    for direction in possible_dirs:
+        testRange = 2
+        deltaX,deltaY = pac_man.COORD_DIR[direction]
+
+        tiles_to_test = []
+        for tileX, tileY in pac_manTiles:
+            for i in range(1, testRange+1):
+                if(i==1 and deltaX == 0):
+                    for cornercheck in range(-1,2):
+                        testTile = [tileX+deltaX*i + cornercheck, tileY+deltaY*i]
+                        if not testTile in tiles_to_test:
+                            tiles_to_test.append(testTile)
+
+                if(i==1 and deltaY == 0):
+                    for cornercheck in range(-1,2):
+                        testTile = [tileX+deltaX*i, tileY+deltaY*i+ cornercheck]
+                        if not testTile in tiles_to_test:
+                            tiles_to_test.append(testTile)
+
+                else: 
+                    testTile = [tileX+deltaX*i, tileY+deltaY*i]
+                    if not testTile in tiles_to_test:
+                        tiles_to_test.append(testTile)
+
+        for testTile in tiles_to_test:
+            if(testTile in ghostTiles):
+                print("AHHH ghost at ({},{}) in direction {}".format(testTile[0],testTile[1], direction))
+                possible_dirs.remove(direction)
+                break
+
+
+    if len(possible_dirs) != 0 and (pac_man.oldPosDir != possible_dirs or not pac_man.move_dir in possible_dirs):
+        pac_man.oldPosDir = copy.deepcopy(possible_dirs)
+        return random.choice(possible_dirs)
+    return pac_man.move_dir
+
+
+
+
+
+""" old code ahhhh nothing works 
 #avoid ghosts
 def avoid_ghost_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     avoid_distance = 100
     possible_dirs = set([RIGHT, LEFT, UP, DOWN])
 
     for ghost in ghosts.values():
-        if ghost.mode == "normal":
+        :
             # Remove directions that are near an active ghost
-            if 0 < ghost.x - pac_man.x < avoid_distance:
+            if 0 < ghost.array_coord[0] - pac_man.array_coord[0] < avoid_distance:
                possible_dirs -= set([RIGHT])
 
-            if 0 < pac_man.x - ghost.x < avoid_distance:
+            if 0 < pac_man.array_coord[0] - ghost.array_coord[0] < avoid_distance:
                 possible_dirs -= set([LEFT])
 
-            if 0 < ghost.y - pac_man.y < avoid_distance:
+            if 0 < ghost.array_coord[1] - pac_man.array_coord[1] < avoid_distance:
                possible_dirs -= set([DOWN])
 
-            if 0 < pac_man.y - ghost.y < avoid_distance:
+            if 0 < pac_man.array_coord[1] - ghost.array_coord[1] < avoid_distance:
                 possible_dirs -= set([UP])
 
     # Select a random direction out of the possible directions
     if possible_dirs:
-        return random.sample(possible_dirs, 1)[0]
+        next_dir = random.sample(possible_dirs, 1)[0]
+        print(possible_dirs)
+        print(next_dir)
+        return 
     return pac_man.move_dir
 
 #avoid ghosts and walls
@@ -408,7 +600,7 @@ def target_pellet_withGhostAi(pac_man, maze, ghosts, pellets, power_pellets, fru
         #print(possible_dirs)
         return next_dir
 
-"""
+""""""
                 # Only attempt turn if more than 1 tick since last turn
                 if self.turn_timer > 2:
                     # Run away from the player if it is visible

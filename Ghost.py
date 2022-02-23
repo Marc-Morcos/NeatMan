@@ -221,9 +221,9 @@ class Ghost:
                     maze.center(self, "y", self.y)
                 # screen wrap
                 if self.x < -self.size:
-                    self.x = display_width
+                    self.x = int(0.5*block_size + MapSizeX*block_size) #display_width
                 if self.x > self.size + display_width:
-                    self.x = -self.size
+                    self.x = -int(0.5*block_size) #-self.size
 
             # respawn if way found back to house
             if self.mode == "dead" and self.array_coord == [house_x, house_y]:

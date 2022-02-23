@@ -35,6 +35,26 @@ class Maze:
 
         if dir == UP or dir == DOWN:
             x_plus = int((entity.x + block_size / 2 - entity.step) / block_size)
+            x_minus = int((entity.x - block_size / 2) / block_size)
+            tmp_y = int((entity.y - block_size / 2 - entity.step) / block_size)
+            if dir == DOWN:
+                tmp_y = int((entity.y + block_size / 2) / block_size)
+            if self.maze_array[tmp_y][x_plus] in allowed and self.maze_array[tmp_y][x_minus] in allowed:
+                return True
+        elif dir == LEFT or dir == RIGHT:
+            y_plus = int((entity.y + block_size / 2 - entity.step) / block_size)
+            y_minus = int((entity.y - block_size / 2 ) / block_size)
+            tmp_x = int((entity.x - block_size / 2 - entity.step) / block_size)
+            if dir == RIGHT:
+                tmp_x = int((entity.x + block_size / 2) / block_size)
+            if self.maze_array[y_plus][tmp_x] in allowed and self.maze_array[y_minus][tmp_x] in allowed:
+                return True
+        else:
+            return False
+
+"""
+        if dir == UP or dir == DOWN:
+            x_plus = int((entity.x + block_size / 2 - entity.step) / block_size)
             x_minus = int((entity.x - block_size / 2 + entity.step) / block_size)
             tmp_y = int((entity.y - block_size / 2 - entity.step) / block_size)
             if dir == DOWN:
@@ -49,5 +69,4 @@ class Maze:
                 tmp_x = int((entity.x + block_size / 2 + entity.step) / block_size)
             if self.maze_array[y_plus][tmp_x] in allowed and self.maze_array[y_minus][tmp_x] in allowed:
                 return True
-        else:
-            return False
+"""

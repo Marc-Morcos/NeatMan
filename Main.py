@@ -12,7 +12,7 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-pacmanController = humanPlayer #options: dummy, humanPlayer, neat
+pacmanController = avoid_ghost_and_wall_dummy # avoid_ghost_and_wall_dummy #options: dummy, humanPlayer, neat
 
 if(neatMode): 
     pacmanController = modelNeat
@@ -61,6 +61,9 @@ class Main:
                     player.humanInput = LEFT
                 if event.key == pygame.K_RIGHT:
                     player.humanInput = RIGHT
+                if event.key == pygame.K_COMMA:
+                    printMaze(self.maze.maze_array)
+                    print("pac_man_x: {} pac_man_y: {}".format(self.player.x, self.player.y))
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -99,6 +102,7 @@ class Main:
                     if ghost.blue and ghost.mode != "dead":
                         ghost.mode = "dead"
                         self.score += ghost_scores[self.player.ghosts_eaten]
+                        self.player.ghosts_eaten +=1
                     else:
                         if self.lives > 0:
                             self.player.target = 0
