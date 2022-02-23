@@ -8,20 +8,14 @@ from Constants import *
 #run a generation of pacmen
 def eval_Pacman(genomes, config, main = None):
     
-    maxFitness = 0
-    maxFitnessId = -1
     for genome_id, genome in genomes:
         main.player.net = neat.nn.FeedForwardNetwork.create(genome, config)
         genome.fitness = main.game_loop()
         main.reset(hard = True, newMap = False) #reset for next pac in generation
-        if genome.fitness > maxFitness:
-            maxFitness = genome.fitness
-            maxFitnessId = genome_id
 
     
     #generate a new map and reset for next generation
     main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0))
-    #print("Current Generation:", main.current_generation, ", Max Gen Fitness:", maxFitness, ", Max Gen Fitness ID:", maxFitnessId)
     main.current_generation += 1
 
     return
@@ -38,8 +32,17 @@ def neatInit(main):
 
     population = neat.Population(config)
 
+    # Add a stdout reporter to show progress in the terminal.
+    population.add_reporter(neat.StdOutReporter(True))
+    stats = neat.StatisticsReporter()
+    population.add_reporter(stats)
+    population.add_reporter(neat.Checkpointer(neatHyperparams["NumGenB4Checkpoint"], None, neatHyperparams["ModelName"]))
+
     #we want to pass extra stuff into eval_pacman
     newLoop = partial(eval_Pacman,main=main)
 
-    population.run(newLoop, neatHyperparams["NeatNumGenerations"])
+    winner = population.run(newLoop, neatHyperparams["NeatNumGenerations"])
+
+    # Display the winning genome.
+    print('\nBest genome:\n{!s}'.format(winner))
     return population
