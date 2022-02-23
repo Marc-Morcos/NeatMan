@@ -30,7 +30,7 @@ fastMode = False #No longer human playable, increases speed of game to absolute 
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 
-# where we save a whole population during training
+# where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
 #LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation0" 
