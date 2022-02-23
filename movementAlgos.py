@@ -35,7 +35,7 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, always shown at least a quarter of the map
-#if not the full thing, with pacman in the center
+#if not the full thing, with pacman in the center (SET inputs IN neatConfig to 887)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     inputs = np.zeros(887)
 
