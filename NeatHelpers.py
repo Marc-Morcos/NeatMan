@@ -8,13 +8,13 @@ import os
 import pickle
 
 #saves a specific model
-def saveModel(model,generation,config):
-    fileName = os.path.join(checkpointFolder,neatHyperparams["modelName"]+str(generation)+".pkl")
+def saveModel(model,generation,config, modifier = ""):
+    fileName = os.path.join(checkpointFolder,neatHyperparams["modelName"]+str(generation)+modifier+".pkl")
     outfile = open(fileName,'wb')
     pickle.dump(model,outfile)
     outfile.close()
 
-    fileName = os.path.join(checkpointFolder,neatHyperparams["modelName"]+str(generation)+".pklconfig")
+    fileName = os.path.join(checkpointFolder,neatHyperparams["modelName"]+str(generation)+modifier+".pklconfig")
     outfile = open(fileName,'wb')
     pickle.dump(config,outfile)
     outfile.close()
@@ -87,4 +87,8 @@ def neatInit(main):
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
+
+    #save winner
+    saveModel(winner,neatHyperparams["NeatNumGenerations"],config,"winner")
+
     return population

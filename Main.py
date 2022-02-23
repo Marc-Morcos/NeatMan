@@ -256,7 +256,7 @@ class Main:
         # initialize
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
-        self.display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
+        self.display = pygame.display.set_mode((int(self.display_width*scaling_factor), int(self.display_height*scaling_factor)))
         self.display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
