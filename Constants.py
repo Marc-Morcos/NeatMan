@@ -32,7 +32,8 @@ showFPS = False #shows fps, use for testing, prints clutter and slow down progra
 
 # where we save a whole population during training
 # set to None to train from scratch
-LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation0" 
+LoadTrainingCheckpointPath = None 
+#LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation0" 
 
 neatConfigPath = "neatConfig.text"
 
