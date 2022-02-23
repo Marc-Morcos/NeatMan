@@ -5,8 +5,8 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = 10000
-#pop_size = The number of individuals in each generation
 no_fitness_termination = True
+#pop_size = The number of individuals in each generation
 pop_size = 50
 reset_on_extinction   = False
 
