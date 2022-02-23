@@ -10,7 +10,7 @@ class Maze:
         # draw maze
         self.maze_array = [[0] * maze_width for i in range(maze_height)]  # [y][x]
 
-        if maze_width == 28 and maze_height == 31:
+        if maze_width == MapSizeX and maze_height == MapSizeY:
             self.wall_locs, self.pellet_locs, self.power_pellet_locs, self.ghost_door_locs = createMap(self.maze_array)
 
     def draw(self, display):

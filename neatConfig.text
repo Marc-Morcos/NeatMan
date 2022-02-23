@@ -5,14 +5,17 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = 10000
-pop_size              = 15
+#pop_size = The number of individuals in each generation
+no_fitness_termination = True
+pop_size = 50
 reset_on_extinction   = False
 
 [DefaultGenome]
 # node activation options
-activation_default      = relu
+# we need a probabilistic output, and we don't use gradients so we should use tanh or sigmoid
+activation_default      = tanh 
 activation_mutate_rate  = 0.0
-activation_options      = relu
+activation_options      = tanh
 
 # node aggregation options
 aggregation_default     = sum
@@ -48,9 +51,11 @@ node_add_prob           = 0.2
 node_delete_prob        = 0.2
 
 # network parameters
-num_hidden              = 0 #todo
-num_inputs              = 2
-num_outputs             = 1
+#The num hidden is the number of hidden nodes to START, it will add more later as needed anyways
+#if u change it, u might also need to change the "initial_connection" variable
+num_hidden              = 0
+num_inputs              = 887
+num_outputs             = 4
 
 # node response options
 response_init_mean      = 1.0

@@ -12,19 +12,21 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-scaling_factor = 0.7 #factor by which we scale dimensions of game window
+pacmanController = humanPlayer #options: dummy, humanPlayer, neat
 
-pacmanController = avoid_gw_w_tp_dummy
+if(neatMode): 
+    pacmanController = modelNeat
+    neatLoadMode = False #can't load and train at the same time
+    fastMode = True
 
-neatMode = False #No longer human playable, used for training
-neatFrameShow = 512 #show every x frames when in neatmode, try to have this be a power of 2
-showFPS = False #shows fps, use for testing, I think prints slow it down
-
+if(neatLoadMode):
+    pacmanController = modelNeat
 
 class Main:
     def __init__(self):
-        self.maze_width = 28
-        self.maze_height = 31
+        self.maze_width = MapSizeX
+        self.maze_height = MapSizeY
+        self.current_generation = 0
 
         self.lives = 2
         self.last_life_score = 0
@@ -73,7 +75,7 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(self.maze, self.display_width, self.ghosts, self.pellets, self.power_pellets, self.fruit)
+            self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit)
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
@@ -170,11 +172,30 @@ class Main:
         frame = pygame.transform.scale(surface, (self.display_width*scaling_factor, self.display_height*scaling_factor))
         window.blit(frame, frame.get_rect())
 
-    def reset(self):
-        self.level += 1
+    #resets the game
+    #if hard is false, we are just moving to a new level
+    #if hard is true, its a true reset
+    def reset(self, hard = False, newMap = False):
+        net = self.player.net
+        #hard reset  
+        if(hard):
+            self.lives = 2
+            self.last_life_score = 0
+            self.score = 0
+            self.level = 0         
+        #soft reset
+        else:
+            self.level += 1
+        
+        #make a new map
+        if newMap:
+            self.maze = Maze(self.maze_width, self.maze_height) #regen maze
+
         self.collected_pellets = 0
+        self.temp_counter = 0
 
         self.player = Pac_Man(spawn_x, spawn_y,pacmanController)
+        self.player.net = net
 
         # generate all pellets and power pellets
         self.power_pellets = []
@@ -200,18 +221,44 @@ class Main:
         self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), True)
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]), False)
 
+    #main loop of the game
+    def game_loop(self):
+        while self.running:
+            if self.game_state in ("run", "respawn"):
+                # main game loop
+                self.events(self.player)
+                self.loop()
+                self.draw(self.display_surf, self.display)
+
+                # check win condition
+                if self.collected_pellets >= len(self.pellets):
+                    self.game_state = "win"
+                    
+                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)): 
+                    pygame.display.flip()
+                    if(showFPS): print("fps:",self.fps_clock.get_fps()) 
+                self.fps_clock.tick(self.fps)
+                self.tick_counter += 1
+
+            # What to do when we win/lose
+            elif self.game_state == "win":
+                self.reset()
+                print("won level, moving on, score:",self.score)
+                self.game_state = "run"
+            elif self.game_state == "lose":
+                self.running = False
+                if(neatMode): 
+                    self.running = True
+                    self.game_state = "run"
+                    return self.score #update fitness
+                print("score:",self.score)
 
     def run(self):
-
-        #initialize neat stuff
-        if neatMode: neatInit()
-
         # initialize
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
-        flags = DOUBLEBUF
-        display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor),flags)
-        display_surf = pygame.Surface([self.display_width, self.display_height])
+        self.display = pygame.display.set_mode((self.display_width*scaling_factor, self.display_height*scaling_factor))
+        self.display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
 
         # spawn maze and player
@@ -241,34 +288,11 @@ class Main:
         self.display_fruit = Fruit(23, -2, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), True)
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
-        # running game loop
-        while self.running:
-            if self.game_state in ("run", "respawn"):
+        #the gameloop is elsewhere for neat
+        if (not neatMode): self.game_loop()
 
-                # main game loop
-                self.events(self.player)
-                self.loop()
-                self.draw(display_surf, display)
-
-                # check win condition
-                if self.collected_pellets >= len(self.pellets):
-                    self.game_state = "win"
-
-                if((not fastMode) or (self.tick_counter%neatFrameShow == 0)):
-                    pygame.display.flip()
-                    if(showFPS): print("fps:",self.fps_clock.get_fps())
-                self.fps_clock.tick(self.fps)
-                if(showFPS): print(self.fps_clock.get_fps())
-                self.tick_counter += 1
-
-            # What to do when we win/lose
-            elif self.game_state == "win":
-                self.reset()
-                print("won level, moving on, score:",self.score)
-                self.game_state = "run"
-            elif self.game_state == "lose":
-                self.running = False
-                print("score:",self.score)
+        #initialize neat stuff
+        if neatMode: neatInit(self) 
 
 
 if __name__ == "__main__":

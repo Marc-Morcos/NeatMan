@@ -2,6 +2,8 @@ import pygame
 import Ghost
 import math
 from Constants import *
+import neat
+from NeatHelpers import loadModel
 
 class Pac_Man:
     def __init__(self, x, y, movementFunction):
@@ -33,6 +35,10 @@ class Pac_Man:
 
         #some wonkiness to make the target code work
         self.display_width=0
+        
+        # Neural network
+        self.net = None
+        if(neatLoadMode): self.net = loadModel(modelCheckpoint)
 
     def power_up(self, time):
         self.powered_up = True
@@ -54,7 +60,7 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
-        self.look_dir = self.movementFunction(self, maze, ghosts, pellets, power_pellets, fruit)
+        self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]

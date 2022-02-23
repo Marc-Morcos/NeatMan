@@ -1,4 +1,5 @@
 from mazegen.mapgen import mapgen
+from Constants import *
 
     #0 = pellet
     #1 = wall
@@ -8,7 +9,7 @@ from mazegen.mapgen import mapgen
 
 
 def tilesLoc(row,col):
-    return row*28+col
+    return row*MapSizeX+col
 
 #I also edited the mapgen js so we always get 1 tunnel instead of 2
 
@@ -35,8 +36,8 @@ def createMap(mapArray):
     tiles[tilesLoc(13,12)] ='|'
 
     #convert to readable format
-    for row in range(31):
-        for col in range(28):
+    for row in range(MapSizeY):
+        for col in range(MapSizeX):
             char = tiles[tilesLoc(row,col)]
 
             #wall
@@ -66,7 +67,7 @@ def createMap(mapArray):
             else:
                 print("unknown character '", char, "' encountered in mapgenclean")
                 mapArray[row][col] = 3
-                temp = [(tiles[i:i+28]) for i in range(0, len(tiles), 28)]
+                temp = [(tiles[i:i+MapSizeX]) for i in range(0, len(tiles), MapSizeX)]
                 for tempRow in temp:
                     print(tempRow)
 
