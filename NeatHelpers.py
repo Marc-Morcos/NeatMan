@@ -87,4 +87,8 @@ def neatInit(main):
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))
+
+    #save winner
+    saveModel(model+"WINNER",neatHyperparams["NeatNumGenerations"],config)
+
     return population
