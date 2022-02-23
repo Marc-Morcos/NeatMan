@@ -246,7 +246,7 @@ class Main:
             # What to do when we win/lose
             elif self.game_state == "win":
                 self.reset()
-                print("won level, moving on, score:",self.score)
+                if(not neatMode): print("won level, moving on, score:",self.score)
                 self.game_state = "run"
             elif self.game_state == "lose":
                 self.running = False
