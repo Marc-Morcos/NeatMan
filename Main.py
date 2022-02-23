@@ -16,7 +16,11 @@ pacmanController = humanPlayer #options: dummy, humanPlayer, neat
 
 if(neatMode): 
     pacmanController = modelNeat
+    neatLoadMode = False #can't load and train at the same time
     fastMode = True
+
+if(neatLoadMode):
+    pacmanController = modelNeat
 
 class Main:
     def __init__(self):

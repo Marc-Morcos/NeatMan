@@ -2,6 +2,8 @@ import pygame
 import Ghost
 import math
 from Constants import *
+import neat
+from NeatHelpers import loadModel
 
 class Pac_Man:
     def __init__(self, x, y, movementFunction):
@@ -30,6 +32,7 @@ class Pac_Man:
 
         # Neural network
         self.net = None
+        if(neatLoadMode): self.net = loadModel(modelCheckpoint)
 
     def power_up(self, time):
         self.powered_up = True

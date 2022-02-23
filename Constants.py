@@ -22,18 +22,26 @@ MapSizeY = 31
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 #Quick Toggles
-neatMode = True
+neatMode = False #puts the model into a training loop
+neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
+checkpointFolder = "Checkpoints"
+modelCheckpoint = "NeatBoi0.pkl"
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
+
+# where we save a whole population during training
+# set to None to train from scratch
+LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation0" 
 
 neatConfigPath = "neatConfig.text"
 
 #hyperparameters (more hyperparams in config.text)
 neatHyperparams = {"NeatNumGenerations":99999, 
                   "NumGenB4MapSwitch":1,
-                  "NumGenB4Checkpoint":1,
-                  "ModelName": "Checkpoints/NeatBoi",
+                  "NumGenB4Checkpoint":100,
+                  "PopulationCheckpointName": "Checkpoints/NeatBoiPopulation",
+                  "modelName": "NeatBoi"
                   }
 
 #movement constants
