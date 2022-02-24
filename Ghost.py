@@ -7,6 +7,12 @@ from Constants import *
 
 class Ghost:
     def __init__(self, x, y, color, scatter_coord, personality):
+
+        #if ghosts are disabled, trap them in box
+        if turnOffGhosts: 
+            x = house_x
+            y = house_y
+
         # CONSTANTS
         self.offset = block_size * 2
         self.size = 24

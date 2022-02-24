@@ -12,7 +12,7 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-pacmanController = pathFind_to_target #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
+pacmanController = humanPlayer #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
 if(neatMode): 
     pacmanController = modelNeat
@@ -41,6 +41,9 @@ class Main:
         self.temp_counter = 0
 
         self.score = 0
+        self.lastFrameScore = 0
+        self.framesUntilOutOfTime = scoreTimeConstraint
+
         self.collected_pellets = 0
         self.pellets = []
         self.power_pellets = []
@@ -70,6 +73,25 @@ class Main:
         return
 
     def loop(self):
+        #die if you don't score fast enough
+        if scoreTimeConstraint != None and neatMode:
+            if self.lastFrameScore==self.score:
+                self.framesUntilOutOfTime-=1
+                if self.framesUntilOutOfTime <=0:
+                     self.framesUntilOutOfTime = scoreTimeConstraint
+                     if self.lives > 0:
+                            self.player.target = 0
+                            self.game_state = "respawn"
+                            self.fruit.here = False
+                            self.lives -= 1
+                            self.temp_counter = 0
+                     else:
+                            self.game_state = "lose"
+            else:
+                self.framesUntilOutOfTime = scoreTimeConstraint
+        
+        self.lastFrameScore =self.score 
+
         if self.game_state == "run":
             # activate inky once 30 coins have been collected
             if self.ghosts["inky"].mode == "house" and self.collected_pellets > 30:

@@ -45,9 +45,14 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     inputs = np.zeros(887)
 
+    #get pacman true position
+    x = pac_man.x-block_size/2.0 
+    y = pac_man.y-block_size/2.0
+    truePos = [int(((x)/block_size)),  int(((y)/block_size))]
+
     #everything is with respect to pacman
-    xOffset = int(pacman.array_coord[0] - MapSizeX/2)
-    yOffset = int(pacman.array_coord[1] - MapSizeY/2)
+    xOffset = int(truePos[0] - MapSizeX/2)
+    yOffset = int(truePos[1] - MapSizeY/2)
 
     #the order in which we add these is important since multiple things can be in the same spot
 
@@ -74,6 +79,18 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
             inputs[gridToArray(relativeX, relativeY)] = 2
 
+
+    #add visible ghosts to the grid
+    for ghost in ghosts.values():
+            x = ghost.x-block_size/2.0 #get the top left corner
+            y = ghost.y-block_size/2.0
+            testTile = [int(x/block_size),  int(y/block_size)]
+            relativeX = testTile[0] - xOffset
+            relativeY = testTile[1] - yOffset
+
+            if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
+                inputs[gridToArray(relativeX, relativeY)] = -3
+
     #add visible walls to the grid
     for wall in maze.wall_locs:
         relativeX = wall[0] - xOffset
@@ -85,13 +102,6 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         relativeY = wall[1] - yOffset
         if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
             inputs[gridToArray(relativeX, relativeY)] = -1
-
-    #add visible ghosts to the grid
-    for ghost in ghosts.values():
-        relativeX = ghost.array_coord[0] - xOffset
-        relativeY = ghost.array_coord[1] - yOffset
-        if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-            inputs[gridToArray(relativeX, relativeY)] = -3
 
     #add extra info
     index = 868
