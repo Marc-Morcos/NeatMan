@@ -13,8 +13,8 @@ import copy
 from collections import deque
 
 #returns grid index for 1D array
-def gridToArray(x,y):
-    return y*MapSizeX+x
+def gridToArray(x,y,rowSize=MapSizeX):
+    return y*rowSize+x
 
 #Process the inputs for the nead model 
 #just passing in everything (SET inputs IN neatConfig to 912)
@@ -37,92 +37,91 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #tell ai about pacman
     inputs = np.append(inputs,[pacman.x, pacman.y, pacman.move_dir, pacman.powered_up, (pacman.power_time - pacman.timer)])
 
-    return inputs
+    return inputs    
 
 #Process the inputs for the nead model 
-#this gives the input a grid, always shown at least a quarter of the map if not the full thing, 
-# with pacman in the center (SET inputs IN neatConfig to 887)
+#this gives the input a grid, 
+# with pacman in the center (SET inputs IN neatConfig to camera size + 19)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    inputs = np.zeros(887)
+    cameraSizex = 3 #MUST BE ODD NUMBER
+    cameraSizey = 3 #MUST BE ODD NUMBER
+    cameraRadiusx = int((cameraSizex-1)/2)
+    cameraRadiusy = int((cameraSizey-1)/2)
+    inputs = np.zeros(cameraSizex*cameraSizey,int)
+    fullGrid = np.zeros((MapSizeX, MapSizeY),int)
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
     y = pacman.y-block_size/2.0
     truePos = [int(((x)/block_size)),  int(((y)/block_size))]
 
-    #everything is with respect to pacman
-    xOffset = int(truePos[0] - MapSizeX/2)
-    yOffset = int(truePos[1] - MapSizeY/2)
+    #camera offsets from packman
+    cameraMin = [truePos[0]-cameraRadiusx,truePos[1]-cameraRadiusx]
+    cameraMax = [truePos[0]+cameraRadiusy,truePos[1]+cameraRadiusy]
 
     #the order in which we add these is important since multiple things can be in the same spot
 
     #add visible pellets to the grid
     for pellet in pellets:
         if pellet.here:
-            relativeX = pellet.array_coord[0] - xOffset
-            relativeY = pellet.array_coord[1] - yOffset
-            if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-                inputs[gridToArray(relativeX, relativeY)] = 1
+            fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = 1
 
     #add visible power pellets to the grid
     for powerPellet in power_pellets:
         if powerPellet.here:
-            relativeX = powerPellet.array_coord[0] - xOffset
-            relativeY = powerPellet.array_coord[1] - yOffset
-            if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-                inputs[gridToArray(relativeX, relativeY)] = 3
+            fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = 3
 
     #add visible fruit to the grid
     if fruit.here:
-        relativeX = fruit.array_coord[0] - xOffset
-        relativeY = fruit.array_coord[1] - yOffset
-        if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-            inputs[gridToArray(relativeX, relativeY)] = 2
+        fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = 2
 
 
-    #add visible ghosts to the grid
+    #add ghosts to the grid
     for ghost in ghosts.values():
             x = ghost.x-block_size/2.0 #get the top left corner
             y = ghost.y-block_size/2.0
             testTile = [int(x/block_size),  int(y/block_size)]
-            relativeX = testTile[0] - xOffset
-            relativeY = testTile[1] - yOffset
-
-            if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-                inputs[gridToArray(relativeX, relativeY)] = -3
+            fullGrid[testTile[0], testTile[1]] = -3
 
     #add visible walls to the grid
     for wall in maze.wall_locs:
-        relativeX = wall[0] - xOffset
-        relativeY = wall[1] - yOffset
-        if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-            inputs[gridToArray(relativeX, relativeY)] = -1
+        fullGrid[wall[0], wall[1]] = -1
     for wall in maze.ghost_door_locs: #ghost doors are basically walls
-        relativeX = wall[0] - xOffset
-        relativeY = wall[1] - yOffset
-        if(relativeX>=0 and relativeY>=0 and relativeX<MapSizeX and relativeY<MapSizeY):
-            inputs[gridToArray(relativeX, relativeY)] = -1
+        fullGrid[wall[0], wall[1]] = -1
 
-    #add extra info
-    index = 868
-    for ghost in ghosts.values():
-        inputs[index] = ghost.blue
-        index+=1
-        inputs[index] = ghost.move_dir
-        index+=1
-        inputs[index] = (ghost.mode == "normal")
-        index+=1
-        inputs[index] = (pacman.power_time - ghost.blue_timer)
-        index+=1
+     #populate the inputs array with the local camera
+    for x in range(cameraSizex):
+        for y in range(cameraSizey):
+            if(cameraMin[0]+x>=0 and cameraMin[1]+y>=0 and cameraMin[0]+x<MapSizeX and cameraMin[1]+y<MapSizeY):
+                inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x,cameraMin[1]+y]
 
-    inputs[index] = pacman.move_dir
-    index+=1
-    inputs[index] = pacman.powered_up
-    index+=1
-    inputs[index] = (pacman.power_time - pacman.timer)
+    #prints camera
+    # tiles = list(inputs)
+    # temp = [(tiles[i:i+cameraSizex]) for i in range(0, len(tiles), cameraSizex)]
+    # for tempRow in temp:
+    #                 print(tempRow)
+    # print("\n\n\n\n\n\n\n")
+
+    # #add extra info
+    # index = cameraSizex*cameraSizey
+    # for ghost in ghosts.values():
+    #     inputs[index] = ghost.blue
+    #     index+=1
+    #     inputs[index] = ghost.move_dir
+    #     index+=1
+    #     inputs[index] = (ghost.mode == "normal")
+    #     index+=1
+    #     inputs[index] = (pacman.power_time - ghost.blue_timer)
+    #     index+=1
+
+    # inputs[index] = pacman.move_dir
+    # index+=1
+    # inputs[index] = pacman.powered_up
+    # index+=1
+    # inputs[index] = (pacman.power_time - pacman.timer)
+
 
     return inputs        
-
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
