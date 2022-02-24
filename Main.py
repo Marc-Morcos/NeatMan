@@ -211,6 +211,8 @@ class Main:
         #soft reset
         else:
             self.level += 1
+
+        self.framesUntilOutOfTime = scoreTimeConstraint
         
         #make a new map
         if newMap:
