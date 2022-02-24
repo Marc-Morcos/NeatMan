@@ -46,8 +46,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     inputs = np.zeros(887)
 
     #get pacman true position
-    x = pac_man.x-block_size/2.0 
-    y = pac_man.y-block_size/2.0
+    x = pacman.x-block_size/2.0 
+    y = pacman.y-block_size/2.0
     truePos = [int(((x)/block_size)),  int(((y)/block_size))]
 
     #everything is with respect to pacman
