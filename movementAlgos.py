@@ -10,6 +10,7 @@ import math
 from Pac_Man import Pac_Man
 import numpy as np
 import copy
+from collections import deque
 
 #returns grid index for 1D array
 def gridToArray(x,y):
@@ -183,32 +184,6 @@ def betterCanMove(entity, mazeArray, direction):
 
     return True
     
-"""
-    walls =  [1, 3]
-
-    print(entity.array_coord)
-   
-
-    x_rightBound = int((entity.x + block_size / 2 - entity.step) / block_size)%len(mazeArray[0])
-    x_leftBound = int((entity.x - block_size / 2 + entity.step) / block_size)%len(mazeArray[0])
-    y_upBound = int((entity.y - block_size / 2 - entity.step) / block_size)%len(mazeArray)
-    y_bottomBound = int((entity.y + block_size / 2 + entity.step) / block_size)%len(mazeArray)
-
-    print(x_rightBound,x_leftBound)
-    print(y_upBound,y_bottomBound)
-
-    if(direction == UP and (mazeArray[y_upBound][x_rightBound] in walls or mazeArray[y_upBound][x_leftBound] in walls)):
-        return False
-    elif(direction == DOWN) and (mazeArray[y_bottomBound][x_rightBound] in walls or mazeArray[y_bottomBound][x_leftBound] in walls):
-        return False
-    elif(direction == LEFT and (mazeArray[y_upBound][x_leftBound] in walls or mazeArray[y_bottomBound][x_leftBound] in walls)):
-        return False
-    elif(direction == RIGHT and (mazeArray[y_upBound][x_rightBound] in walls or mazeArray[y_bottomBound][x_rightBound] in walls)):
-       return False
-
-    return True
-
-"""
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
 
@@ -243,10 +218,8 @@ def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
 
     return pac_man.humanInput
 
+#moves randomly but does not run into walls or ghosts 
 def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit):
-
-    
-
     #evaluate walls 
     possible_dirs = []
 
@@ -265,7 +238,7 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
     ghostTiles = []
 
     for ghost in ghosts.values():
-        if ghost.mode == "normal" and not pac_man.powered_up:
+        if ghost.mode == "normal" and ghost.blue == False:
             x = ghost.x-block_size/2.0 #get the top left corner
             y = ghost.y-block_size/2.0
 
@@ -323,6 +296,94 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
         return random.choice(possible_dirs)
     return pac_man.move_dir
 
+# A queue node used in BFS -> taken and adapted from https://www.techiedelight.com/find-shortest-path-source-destination-matrix-satisfies-given-constraints/
+class queueNode:
+    # (x, y) represents coordinates of a cell in the matrix
+    # maintain a parent node for the printing path
+    def __init__(self, x, y, parent=None):
+        self.x = x
+        self.y = y
+        self.parent = parent
+
+def getPath(node, path):
+    if node:
+        getPath(node.parent, path)
+        path.append(node)
+
+
+def findPath(start, end, mazeArray):
+
+    start = queueNode(start[0], start[1])
+    end   = queueNode(end[0], end[1])
+    
+    blocked = [1,3]
+
+    if mazeArray[start.y][start.x] in blocked or mazeArray[end.y][end.x] in blocked:
+        return -1
+
+    queue = deque()
+    visited = set()
+
+    visited.add((start.x,start.y))
+
+    queue.append(start)
+
+    while queue:
+
+        curr = queue.popleft() 
+         
+        if curr.x == end.x and curr.y == end.y:
+            path = []
+            getPath(curr, path)
+            return path
+        
+        #check adjacents and add to queue
+        for testX in range(-1, 2):
+            for testY in range(-1, 2):
+
+                x = (testX+curr.x)%len(mazeArray[0])
+                y = (testY+curr.y)%len(mazeArray)
+
+                if(not mazeArray[y][x] in blocked):
+                    nextCoord = queueNode(x,y, curr)
+                    if (nextCoord.x,nextCoord.y) not in visited:
+                        queue.append(nextCoord)
+                        visited.add((nextCoord.x,nextCoord.y))
+
+    return -1
+
+
+def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+    mazeArray = copy.deepcopy(maze.maze_array)
+
+    #makes hostile ghosts appear as walls to the path finding algo
+    for ghost in ghosts.values():
+        if ghost.mode == "normal" and ghost.blue == False:
+            x = ghost.x-block_size/2.0 #get the top left corner
+            y = ghost.y-block_size/2.0
+
+            for textX in range(0,2):
+                for textY in range(0,2):
+                    mazeArray[int(((y+ textY * (block_size - 1))/block_size))%len(mazeArray)][int(((x + textX * (block_size - 1))/block_size))%len(mazeArray[0])] = 1
+
+                   
+    pac_manX = int(round((pac_man.x-block_size/2.0)/block_size))%len(mazeArray[0]) #get pacman location
+    pac_manY = int(round((pac_man.y-block_size/2.0)/block_size))%len(mazeArray) 
+
+    target_tile = [1,1] # colin add your funky fresh function   
+    
+    path = findPath([pac_manX, pac_manY], target_tile, mazeArray)
+    
+    #if no path is avaliable panic
+    if(path == -1 or len(path)<2):
+        return avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+
+    else:
+        nextTile = [path[1].x, path[1].y]
+        if(nextTile[0]>pac_manX): return RIGHT
+        if(nextTile[0]<pac_manX): return LEFT
+        if(nextTile[1]>pac_manY): return DOWN
+        if(nextTile[1]<pac_manY): return UP
 
 
 

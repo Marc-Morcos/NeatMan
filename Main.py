@@ -12,7 +12,7 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-pacmanController = avoid_ghost_and_wall_dummy # avoid_ghost_and_wall_dummy #options: dummy, humanPlayer, neat
+pacmanController = avoid_ghost_and_wall_dummy #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
 if(neatMode): 
     pacmanController = modelNeat
