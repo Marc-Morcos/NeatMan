@@ -43,17 +43,25 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size + 19)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSizex = 3 #MUST BE ODD NUMBER
-    cameraSizey = 3 #MUST BE ODD NUMBER
+    cameraSizex = 25 #MUST BE ODD NUMBER
+    cameraSizey = 25 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey,int)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 19,int)
     fullGrid = np.zeros((MapSizeX, MapSizeY),int)
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
     y = pacman.y-block_size/2.0
     truePos = [int(((x)/block_size)),  int(((y)/block_size))]
+    if(truePos[0]>=MapSizeX):
+        truePos[0] = MapSizeX
+    if(truePos[1]>=MapSizeY):
+        truePos[1] = MapSizeY
+    if(truePos[0]<0):
+        truePos[0] = 0
+    if(truePos[1]<0):
+        truePos[1] = 0
 
     #camera offsets from packman
     cameraMin = [truePos[0]-cameraRadiusx,truePos[1]-cameraRadiusx]
@@ -81,6 +89,16 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
             x = ghost.x-block_size/2.0 #get the top left corner
             y = ghost.y-block_size/2.0
             testTile = [int(x/block_size),  int(y/block_size)]
+
+            if(testTile[0]>=MapSizeX):
+                testTile[0] = MapSizeX
+            if(testTile[1]>=MapSizeY):
+                testTile[1] = MapSizeY
+            if(testTile[0]<0):
+                testTile[0] = 0
+            if(testTile[1]<0):
+                testTile[1] = 0
+
             fullGrid[testTile[0], testTile[1]] = -3
 
     #add visible walls to the grid
@@ -95,30 +113,30 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
             if(cameraMin[0]+x>=0 and cameraMin[1]+y>=0 and cameraMin[0]+x<MapSizeX and cameraMin[1]+y<MapSizeY):
                 inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x,cameraMin[1]+y]
 
-    #prints camera
+    # prints camera
     # tiles = list(inputs)
     # temp = [(tiles[i:i+cameraSizex]) for i in range(0, len(tiles), cameraSizex)]
     # for tempRow in temp:
     #                 print(tempRow)
     # print("\n\n\n\n\n\n\n")
 
-    # #add extra info
-    # index = cameraSizex*cameraSizey
-    # for ghost in ghosts.values():
-    #     inputs[index] = ghost.blue
-    #     index+=1
-    #     inputs[index] = ghost.move_dir
-    #     index+=1
-    #     inputs[index] = (ghost.mode == "normal")
-    #     index+=1
-    #     inputs[index] = (pacman.power_time - ghost.blue_timer)
-    #     index+=1
+    #add extra info
+    index = cameraSizex*cameraSizey
+    for ghost in ghosts.values():
+        inputs[index] = ghost.blue
+        index+=1
+        inputs[index] = ghost.move_dir
+        index+=1
+        inputs[index] = (ghost.mode == "normal")
+        index+=1
+        inputs[index] = (pacman.power_time - ghost.blue_timer)
+        index+=1
 
-    # inputs[index] = pacman.move_dir
-    # index+=1
-    # inputs[index] = pacman.powered_up
-    # index+=1
-    # inputs[index] = (pacman.power_time - pacman.timer)
+    inputs[index] = pacman.move_dir
+    index+=1
+    inputs[index] = pacman.powered_up
+    index+=1
+    inputs[index] = (pacman.power_time - pacman.timer)
 
 
     return inputs        
