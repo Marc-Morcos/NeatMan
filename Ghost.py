@@ -6,8 +6,6 @@ import math
 from Constants import *
 
 class Ghost:
-    instances = []
-
     def __init__(self, x, y, color, scatter_coord, personality):
         # CONSTANTS
         self.offset = block_size * 2
@@ -42,8 +40,6 @@ class Ghost:
         self.respawn_timer = 0
         self.timer = 0
         self.blue_timer = 0
-
-        Ghost.instances.append(self)
 
     def move(self, player, maze, display_width, tick_counter, blinky_coord):
         def find_distance(a_pos, b_pos):

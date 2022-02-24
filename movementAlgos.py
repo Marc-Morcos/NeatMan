@@ -286,7 +286,7 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
 
         for testTile in tiles_to_test:
             if(testTile in ghostTiles):
-                print("AHHH ghost at ({},{}) in direction {}".format(testTile[0],testTile[1], direction))
+                #print("AHHH ghost at ({},{}) in direction {}".format(testTile[0],testTile[1], direction))
                 possible_dirs.remove(direction)
                 break
 
@@ -308,12 +308,11 @@ def getPath(node, path):
         getPath(node.parent, path)
         path.append(node)
 
-def findPath(start, end, mazeArray):
+'''
+def findPath(start, end, blocked, mazeArray):
 
     start = queueNode(start[0], start[1])
     end   = queueNode(end[0], end[1])
-    
-    blocked = [1,3]
 
     if mazeArray[start.y][start.x] in blocked or mazeArray[end.y][end.x] in blocked:
         return -1
@@ -348,7 +347,49 @@ def findPath(start, end, mazeArray):
                         visited.add((nextCoord.x,nextCoord.y))
 
     return -1
+'''
 
+
+def find_path_to_objective(start, objective, blocked, mazeArray):
+
+    start = queueNode(start[0], start[1])
+
+    '''
+    if mazeArray[start.y][start.x] in blocked:
+        print("weird error")
+        return -1
+    '''
+
+    queue = list()
+    visited = set()
+
+    visited.add((start.x,start.y))
+
+    queue.append(start)
+
+    dirs = ((0, 1), (0, -1), (1, 0), (-1, 0))
+
+    while queue:
+
+        curr = queue.pop(0)
+        
+        if [curr.x, curr.y] in objective:
+            path = []
+            getPath(curr, path)
+            return path
+
+        #check adjacents and add to queue
+        for testX, testY in dirs:
+                x = (testX+curr.x)%len(mazeArray[0])
+                y = (testY+curr.y)%len(mazeArray)
+
+                if(not mazeArray[y][x] in blocked):
+                    nextCoord = queueNode(x,y, curr)
+                    if (nextCoord.x,nextCoord.y) not in visited:
+                        queue.append(nextCoord)
+                        visited.add((nextCoord.x,nextCoord.y))
+
+    return -1
 
 def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     mazeArray = copy.deepcopy(maze.maze_array)
@@ -366,14 +407,48 @@ def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
     pac_manX = int(round((pac_man.x-block_size/2.0)/block_size))%len(mazeArray[0]) #get pacman location
     pac_manY = int(round((pac_man.y-block_size/2.0)/block_size))%len(mazeArray) 
 
-    target_tile = [1,1] # colin add your funky fresh function   
+    # Don't get power pellets until all ghosts are active
+    if ghosts["clyde"].mode == "normal":
+        blocked = [1,3]
+    else:
+        blocked = [1,3,4]
 
-    path = findPath([pac_manX, pac_manY], target_tile, mazeArray)
+    path = -1
+    timed_objectives = []
+
+    # colin add your funky fresh function  
+    if pac_man.powered_up and pac_man.ghosts_eaten < 4:
+        for ghost in ghosts.values():
+            if ghost.mode == "normal" and ghost.blue:
+                timed_objectives.append(ghost.array_coord)      
     
-    #if no path is avaliable panic
-    if(path == -1 or len(path)<2):
-        return avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    if fruit.here:
+        timed_objectives.append(fruit.array_coord)
 
+    if timed_objectives:
+        path = find_path_to_objective([pac_manX, pac_manY], timed_objectives, blocked, mazeArray)
+    
+    if path == -1:
+        power_pellet_locs = []
+        for power_pellet in power_pellets:
+            if power_pellet.here:
+                power_pellet_locs.append(power_pellet.array_coord)
+
+        if power_pellet_locs and ghosts["clyde"].mode == "normal":
+            path = find_path_to_objective([pac_manX, pac_manY], power_pellet_locs, blocked, mazeArray)
+
+        if path == -1:
+            pellet_locs = []
+            for pellet in pellets:
+                if pellet.here:
+                    pellet_locs.append(pellet.array_coord)
+            path = find_path_to_objective([pac_manX, pac_manY], pellet_locs, blocked, mazeArray)
+
+    #if no path is avaliable panic
+    if(path == -1):
+        return avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    elif len(path) < 2:
+        return pac_man.move_dir
     else:
         nextTile = [path[1].x, path[1].y]
         if(nextTile[0]>pac_manX): return RIGHT
