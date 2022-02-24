@@ -55,9 +55,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     y = pacman.y-block_size/2.0
     truePos = [int(((x)/block_size)),  int(((y)/block_size))]
     if(truePos[0]>=MapSizeX):
-        truePos[0] = MapSizeX
+        truePos[0] = MapSizeX-1
     if(truePos[1]>=MapSizeY):
-        truePos[1] = MapSizeY
+        truePos[1] = MapSizeY-1
     if(truePos[0]<0):
         truePos[0] = 0
     if(truePos[1]<0):
@@ -91,9 +91,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
             testTile = [int(x/block_size),  int(y/block_size)]
 
             if(testTile[0]>=MapSizeX):
-                testTile[0] = MapSizeX
+                testTile[0] = MapSizeX-1
             if(testTile[1]>=MapSizeY):
-                testTile[1] = MapSizeY
+                testTile[1] = MapSizeY-1
             if(testTile[0]<0):
                 testTile[0] = 0
             if(testTile[1]<0):
