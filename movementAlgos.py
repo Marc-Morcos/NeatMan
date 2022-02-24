@@ -298,8 +298,6 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
 
 # A queue node used in BFS -> taken and adapted from https://www.techiedelight.com/find-shortest-path-source-destination-matrix-satisfies-given-constraints/
 class queueNode:
-    # (x, y) represents coordinates of a cell in the matrix
-    # maintain a parent node for the printing path
     def __init__(self, x, y, parent=None):
         self.x = x
         self.y = y
@@ -309,7 +307,6 @@ def getPath(node, path):
     if node:
         getPath(node.parent, path)
         path.append(node)
-
 
 def findPath(start, end, mazeArray):
 
@@ -365,13 +362,12 @@ def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
             for textX in range(0,2):
                 for textY in range(0,2):
                     mazeArray[int(((y+ textY * (block_size - 1))/block_size))%len(mazeArray)][int(((x + textX * (block_size - 1))/block_size))%len(mazeArray[0])] = 1
-
-                   
+               
     pac_manX = int(round((pac_man.x-block_size/2.0)/block_size))%len(mazeArray[0]) #get pacman location
     pac_manY = int(round((pac_man.y-block_size/2.0)/block_size))%len(mazeArray) 
 
     target_tile = [1,1] # colin add your funky fresh function   
-    
+
     path = findPath([pac_manX, pac_manY], target_tile, mazeArray)
     
     #if no path is avaliable panic
@@ -384,8 +380,6 @@ def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
         if(nextTile[0]<pac_manX): return LEFT
         if(nextTile[1]>pac_manY): return DOWN
         if(nextTile[1]<pac_manY): return UP
-
-
 
 
 """ old code ahhhh nothing works 
