@@ -7,12 +7,14 @@ class Pellet:
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 
+        self.colour = (255, 255, 255)
+
         self.here = True
 
     def draw(self, display):
         if self.here:
             half = pellet_size/2
-            pygame.draw.ellipse(display, (255, 255, 255), (self.x - half, self.y - half + offset,
+            pygame.draw.ellipse(display, self.colour, (self.x - half, self.y - half + offset,
                                                                 pellet_size, pellet_size))
 
     def collide(self, player):

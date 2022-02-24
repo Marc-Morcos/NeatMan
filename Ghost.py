@@ -6,8 +6,6 @@ import math
 from Constants import *
 
 class Ghost:
-    instances = []
-
     def __init__(self, x, y, color, scatter_coord, personality):
         # CONSTANTS
         self.offset = block_size * 2
@@ -42,8 +40,6 @@ class Ghost:
         self.respawn_timer = 0
         self.timer = 0
         self.blue_timer = 0
-
-        Ghost.instances.append(self)
 
     def move(self, player, maze, display_width, tick_counter, blinky_coord):
         def find_distance(a_pos, b_pos):
@@ -221,9 +217,9 @@ class Ghost:
                     maze.center(self, "y", self.y)
                 # screen wrap
                 if self.x < -self.size:
-                    self.x = display_width
+                    self.x = int(0.5*block_size + MapSizeX*block_size) #display_width
                 if self.x > self.size + display_width:
-                    self.x = -self.size
+                    self.x = -int(0.5*block_size) #-self.size
 
             # respawn if way found back to house
             if self.mode == "dead" and self.array_coord == [house_x, house_y]:

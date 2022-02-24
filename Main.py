@@ -12,7 +12,7 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-pacmanController = humanPlayer #options: dummy, humanPlayer, neat
+pacmanController = pathFind_to_target #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
 if(neatMode): 
     pacmanController = modelNeat
@@ -35,7 +35,7 @@ class Main:
         self.display_height = self.maze_height * block_size + offset
 
         self.fps = 60
-        if(fastMode): self.fps = 999999999
+        if(neatMode): self.fps = 99999999
         self.fps_clock = pygame.time.Clock()
         self.tick_counter = 1
         self.temp_counter = 0
@@ -61,6 +61,9 @@ class Main:
                     player.humanInput = LEFT
                 if event.key == pygame.K_RIGHT:
                     player.humanInput = RIGHT
+                if event.key == pygame.K_COMMA:
+                    printMaze(self.maze.maze_array)
+                    print("pac_man_x: {} pac_man_y: {}".format(self.player.x, self.player.y))
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
@@ -99,8 +102,10 @@ class Main:
                     if ghost.blue and ghost.mode != "dead":
                         ghost.mode = "dead"
                         self.score += ghost_scores[self.player.ghosts_eaten]
+                        self.player.ghosts_eaten +=1
                     else:
                         if self.lives > 0:
+                            self.player.target = 0
                             self.game_state = "respawn"
                             self.fruit.here = False
                             self.lives -= 1
@@ -108,7 +113,7 @@ class Main:
                         else:
                             self.game_state = "lose"
 
-            # Update fruit
+            # Update fruitdisplayWidth
             self.fruit.update()
 
             # Give fruit
@@ -128,14 +133,9 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
-        if(fastMode and (self.tick_counter%neatFrameShow != 0)):
-            if self.game_state == "respawn":
-                if self.temp_counter < 36:
+        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
+            if self.game_state == "respawn" and self.temp_counter < 36:
                     self.temp_counter += 1
-                else:
-                    self.game_state = "run"
-                    self.player.x = spawn_x * block_size + block_size / 2
-                    self.player.y = spawn_y * block_size + block_size / 2
             return
 
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))

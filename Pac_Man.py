@@ -18,6 +18,7 @@ class Pac_Man:
         self.look_dir = DOWN
         self.humanInput = DOWN
         self.move_dir = DOWN
+        self.try_move_dir = DOWN
 
         # Location in pixels
         self.array_coord = [x, y]
@@ -30,6 +31,12 @@ class Pac_Man:
         self.power_time = 0
         self.ghosts_eaten = 0
 
+        self.target = 0
+        self.oldPosDir = []
+
+        #some wonkiness to make the target code work
+        self.display_width=0
+        
         # Neural network
         self.net = None
         if(neatLoadMode): self.net = loadModel(modelCheckpoint)
@@ -80,9 +87,9 @@ class Pac_Man:
                 self.x += step
             # Screen wrap
             if self.x < -self.size:
-                self.x = display_width
+                self.x = int(0.5*block_size + MapSizeX*block_size) #display_width
             if self.x > self.size + display_width:
-                self.x = -self.size
+                self.x = -int(0.5*block_size) #-self.size
 
     def draw_wedge_pacman(self, display, wedge_angle):
         radius = self.size / 2
@@ -98,7 +105,8 @@ class Pac_Man:
 
         pygame.draw.polygon(display, (255, 255, 0), pointlist)
 
-    def draw_while_running(self, display, display_width, maze, tick_counter):
+    def draw_while_running(self, display, display_width , maze, tick_counter):
+        self.display_width = display_width
         if (not block_size/2 < self.x < display_width - block_size/2 - self.size) \
                 or maze.can_move(self, self.move_dir):
             if tick_counter % 18 < 9:
