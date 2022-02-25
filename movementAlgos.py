@@ -91,6 +91,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     #add ghosts to the grid
     for ghost in ghosts.values():
+            if(turnOffGhosts): break #make disabled ghosts invisible to model
             x = ghost.x-block_size/2.0 #get the top left corner
             y = ghost.y-block_size/2.0
             testTile = [int(x/block_size),  int(y/block_size)]
