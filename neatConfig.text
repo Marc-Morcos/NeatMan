@@ -58,7 +58,7 @@ num_inputs              = 45
 num_outputs             = 4
 
 # node response options
-response_init_mean      = 1.0 a
+response_init_mean      = 1.0
 response_init_stdev     = 0.0
 response_max_value      = 30.0
 response_min_value      = -30.0
