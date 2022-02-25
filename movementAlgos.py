@@ -47,8 +47,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizey = 25 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 19,int)
-    fullGrid = np.zeros((MapSizeX, MapSizeY),int)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 19)
+    fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
     x = pacman.x-block_size/2.0 

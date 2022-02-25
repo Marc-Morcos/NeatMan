@@ -155,9 +155,14 @@ class Main:
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
-        if(neatMode and (self.tick_counter%neatFrameShow != 0)):
-            if self.game_state == "respawn" and self.temp_counter < 36:
+        if(fastMode and (self.tick_counter%neatFrameShow != 0)):
+            if self.game_state == "respawn":
+                if self.temp_counter < 36:
                     self.temp_counter += 1
+                else:
+                    self.game_state = "run"
+                    self.player.x = spawn_x * block_size + block_size / 2
+                    self.player.y = spawn_y * block_size + block_size / 2
             return
 
         pygame.draw.rect(surface, (0, 0, 0), (0, 0, self.display_width, self.display_height))
