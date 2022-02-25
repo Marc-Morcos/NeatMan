@@ -92,3 +92,18 @@ def neatInit(main):
     saveModel(winner,neatHyperparams["NeatNumGenerations"],config,"winner")
 
     return population
+
+
+#!!!!!not for neat training!!!!!!
+#prints the statistics of a selected model
+def evaluateModelInit(main):
+
+    scoreArray = []
+    for i in range(numberOfTests):
+        print("Starting Game: {}/{}".format(i+1, numberOfTests))
+        score = main.game_loop()
+        scoreArray.append(score)
+        main.reset(hard = True, newMap = True) #reset for next pac in generation    
+
+    print("\nScores:\n {}\n\nBest: {}\nWorst: {}\nAverage: {}".format(scoreArray, max(scoreArray), min(scoreArray), sum(scoreArray)*1.0/numberOfTests))
+    return

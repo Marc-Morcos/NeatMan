@@ -31,12 +31,14 @@ neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
+numberOfTests = 30 #number of games to evaluate on
 
 # where we load a whole population to continue training
 # set to None to train from scratch
-#LoadTrainingCheckpointPath = None 
-LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation5x5Gen39" 
-LoadTrainingCheckpointGenerationNum = 39 #if LoadTrainingCheckpointPath is not None, generations starts at this
+LoadTrainingCheckpointPath = None 
+# LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
+LoadTrainingCheckpointGenerationNum = 49 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
