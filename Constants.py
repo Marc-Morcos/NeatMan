@@ -45,10 +45,10 @@ neatConfigPath = "neatConfig.text"
 #hyperparameters (more hyperparams in config.text)
 neatHyperparams = {"NeatNumGenerations":1700, 
                   "NumGenB4MapSwitch":1,
-                  "NumGenB4Checkpoint":1,
+                  "NumGenB4Checkpoint":20,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation5x5Gen",
-                  "modelName": "NeatBoi5x5Gen"
+                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation15x15Gen",
+                  "modelName": "NeatBoi15x15Gen"
                   }
 
 #movement constants

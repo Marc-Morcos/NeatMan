@@ -43,8 +43,8 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size + 35)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSizex = 5 #MUST BE ODD NUMBER
-    cameraSizey = 5 #MUST BE ODD NUMBER
+    cameraSizex = 15 #MUST BE ODD NUMBER
+    cameraSizey = 15 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
     inputs = np.zeros(cameraSizex*cameraSizey+ 35)
@@ -123,6 +123,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #more ghost info
     index = cameraSizex*cameraSizey
     for ghost in ghosts.values():
+        if(turnOffGhosts): #make disabled ghosts invisible to model
+            index+=4*6
+            break 
         inputs[index] = ghost.blue
         index+=1
         inputs[index] = ghost.move_dir
