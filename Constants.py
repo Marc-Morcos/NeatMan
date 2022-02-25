@@ -22,7 +22,7 @@ MapSizeY = 31
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 #Quick Toggles
-neatMode = False #puts the model into a training loop
+neatMode = True #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints"
 modelCheckpoint = "NeatBoi0.pkl"
@@ -36,8 +36,8 @@ numberOfTests = 30 #number of games to evaluate on
 
 # where we load a whole population to continue training
 # set to None to train from scratch
-#LoadTrainingCheckpointPath = None 
-LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
+LoadTrainingCheckpointPath = None 
+# LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
 LoadTrainingCheckpointGenerationNum = 49 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"

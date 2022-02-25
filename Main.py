@@ -324,7 +324,7 @@ class Main:
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
         #the gameloop is elsewhere for neat
-        if (not neatMode or not evaluateModelMode): self.game_loop()
+        if (not neatMode and not evaluateModelMode): self.game_loop()
 
         #initialize neat stuff
         if neatMode: neatInit(self) 
