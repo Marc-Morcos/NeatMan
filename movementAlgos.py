@@ -17,7 +17,7 @@ def gridToArray(x,y,rowSize=MapSizeX):
     return y*rowSize+x
 
 #Process the inputs for the nead model 
-#just passing in everything (SET inputs IN neatConfig to 912)
+#just passing in everything (SET inputs IN neatConfig to 913)
 def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #converting the inputs to a 1D array to pass into NEAT
     inputs = np.array(maze.maze_array)
@@ -35,19 +35,19 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         inputs = np.append(inputs,[ghost.x, ghost.y, ghost.blue, ghost.move_dir, (ghost.mode == "normal"), (pacman.power_time - ghost.blue_timer)])
     
     #tell ai about pacman
-    inputs = np.append(inputs,[pacman.x, pacman.y, pacman.move_dir, pacman.powered_up, (pacman.power_time - pacman.timer)])
+    inputs = np.append(inputs,[pacman.x, pacman.y, pacman.move_dir, pacman.powered_up, (pacman.power_time - pacman.timer),(pacman.lives)])
 
     return inputs    
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 19)
+# with pacman in the center (SET inputs IN neatConfig to camera size + 20)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 25 #MUST BE ODD NUMBER
     cameraSizey = 25 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 19)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 20)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
@@ -137,6 +137,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     inputs[index] = pacman.powered_up
     index+=1
     inputs[index] = (pacman.power_time - pacman.timer)
+    index+=1
+    inputs[index] = (pacman.lives)
 
 
     return inputs        

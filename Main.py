@@ -28,7 +28,6 @@ class Main:
         self.maze_height = MapSizeY
         self.current_generation = 0
 
-        self.lives = 2
         self.last_life_score = 0
 
         self.display_width = self.maze_width * block_size
@@ -79,11 +78,11 @@ class Main:
                 self.framesUntilOutOfTime-=1
                 if self.framesUntilOutOfTime <=0:
                      self.framesUntilOutOfTime = scoreTimeConstraint
-                     if self.lives > 0:
+                     if self.player.lives > 0:
                             self.player.target = 0
                             self.game_state = "respawn"
                             self.fruit.here = False
-                            self.lives -= 1
+                            self.player.lives -= 1
                             self.temp_counter = 0
                      else:
                             self.game_state = "lose"
@@ -126,11 +125,11 @@ class Main:
                         self.score += ghost_scores[self.player.ghosts_eaten]
                         self.player.ghosts_eaten +=1
                     else:
-                        if self.lives > 0:
+                        if self.player.lives > 0:
                             self.player.target = 0
                             self.game_state = "respawn"
                             self.fruit.here = False
-                            self.lives -= 1
+                            self.player.lives -= 1
                             self.temp_counter = 0
                         else:
                             self.game_state = "lose"
@@ -151,7 +150,7 @@ class Main:
             self.score += self.fruit.collide(self.player)
 
             if self.score - self.last_life_score >= life_points:
-                self.lives += 1
+                self.player.lives += 1
                 self.last_life_score += life_points
 
     def draw(self, surface, window):
@@ -195,7 +194,7 @@ class Main:
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
         game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 20)
-        game_font.render_to(surface, (400, 15), str(self.lives) + " LIVES", (255, 255, 255))
+        game_font.render_to(surface, (400, 15), str(self.player.lives) + " LIVES", (255, 255, 255))
         game_font.render_to(surface, (600, 15), "FRUIT: ", (255, 255, 255))
 
         #scaling code from https://stackoverflow.com/questions/43196126/how-do-you-scale-a-design-resolution-to-other-resolutions-with-pygame
@@ -209,7 +208,7 @@ class Main:
         net = self.player.net
         #hard reset  
         if(hard):
-            self.lives = 2
+            self.player.lives = 2
             self.last_life_score = 0
             self.score = 0
             self.level = 0         

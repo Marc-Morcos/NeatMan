@@ -54,7 +54,7 @@ node_delete_prob        = 0.2
 #The num hidden is the number of hidden nodes to START, it will add more later as needed anyways
 #if u change it, u might also need to change the "initial_connection" variable
 num_hidden              = 0
-num_inputs              = 644
+num_inputs              = 645
 num_outputs             = 4
 
 # node response options

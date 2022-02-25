@@ -7,6 +7,9 @@ from NeatHelpers import loadModel
 
 class Pac_Man:
     def __init__(self, x, y, movementFunction):
+        #lives
+        self.lives = 2
+        
         # Constants
         self.size = 26
         self.step_len = block_size / 15
