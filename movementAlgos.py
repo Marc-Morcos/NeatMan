@@ -83,6 +83,11 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     if fruit.here:
         fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = 2
 
+    #add visible walls to the grid
+    for wall in maze.wall_locs:
+        fullGrid[wall[0], wall[1]] = -1
+    for wall in maze.ghost_door_locs: #ghost doors are basically walls
+        fullGrid[wall[0], wall[1]] = -1
 
     #add ghosts to the grid
     for ghost in ghosts.values():
@@ -100,12 +105,6 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
                 testTile[1] = 0
 
             fullGrid[testTile[0], testTile[1]] = -3
-
-    #add visible walls to the grid
-    for wall in maze.wall_locs:
-        fullGrid[wall[0], wall[1]] = -1
-    for wall in maze.ghost_door_locs: #ghost doors are basically walls
-        fullGrid[wall[0], wall[1]] = -1
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
