@@ -75,7 +75,7 @@ class Main:
 
     def loop(self):
         #die if you don't score fast enough
-        if scoreTimeConstraint != None and (neatMode or evaluateModelMode):
+        if scoreTimeConstraint != None and (neatMode):
             if self.lastFrameScore==self.score:
                 self.framesUntilOutOfTime-=1
                 if self.framesUntilOutOfTime <=0:
@@ -329,7 +329,7 @@ class Main:
         #initialize neat stuff
         if neatMode: neatInit(self) 
 
-        #initialize neat stuff
+        #initialize eval mode
         if evaluateModelMode: evaluateModelInit(self) 
 
 
