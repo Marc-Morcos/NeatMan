@@ -29,24 +29,24 @@ modelCheckpoint = "NeatBoi0.pkl"
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
-turnOffGhosts = True
-scoreTimeConstraint = 10*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+turnOffGhosts = False
+scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 #LoadTrainingCheckpointPath = None 
-LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
-LoadTrainingCheckpointGenerationNum = 49 #if LoadTrainingCheckpointPath is not None, generations starts at this
+LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation5x5Gen39" 
+LoadTrainingCheckpointGenerationNum = 39 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
 #hyperparameters (more hyperparams in config.text)
 neatHyperparams = {"NeatNumGenerations":1700, 
                   "NumGenB4MapSwitch":1,
-                  "NumGenB4Checkpoint":50,
+                  "NumGenB4Checkpoint":1,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation",
-                  "modelName": "NeatBoi"
+                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation5x5Gen",
+                  "modelName": "NeatBoi5x5Gen"
                   }
 
 #movement constants
