@@ -34,8 +34,9 @@ scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set
 
 # where we load a whole population to continue training
 # set to None to train from scratch
-LoadTrainingCheckpointPath = None 
-#LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation0" 
+#LoadTrainingCheckpointPath = None 
+LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
+LoadTrainingCheckpointGenerationNum = 49 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 

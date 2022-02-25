@@ -27,6 +27,8 @@ class Main:
         self.maze_width = MapSizeX
         self.maze_height = MapSizeY
         self.current_generation = 0
+        if LoadTrainingCheckpointPath != None:
+            self.current_generation = LoadTrainingCheckpointGenerationNum
 
         self.last_life_score = 0
 
