@@ -12,7 +12,7 @@ from movementAlgos import *
 from NeatHelpers import *
 import neat
 
-pacmanController = humanPlayer #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
+pacmanController = dummy #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
 if(neatMode): 
     pacmanController = modelNeat
@@ -75,7 +75,7 @@ class Main:
 
     def loop(self):
         #die if you don't score fast enough
-        if scoreTimeConstraint != None and neatMode:
+        if scoreTimeConstraint != None and (neatMode or evaluateModelMode):
             if self.lastFrameScore==self.score:
                 self.framesUntilOutOfTime-=1
                 if self.framesUntilOutOfTime <=0:
@@ -282,7 +282,7 @@ class Main:
                 self.game_state = "run"
             elif self.game_state == "lose":
                 self.running = False
-                if(neatMode): 
+                if(neatMode or evaluateModelMode): 
                     self.running = True
                     self.game_state = "run"
                     return self.score #update fitness
@@ -324,10 +324,13 @@ class Main:
         self.fruit = Fruit(spawn_x, spawn_y, fruit_scores[self.level % 8], pygame.image.load(fruit_images[self.level % 8]).convert(), False)
 
         #the gameloop is elsewhere for neat
-        if (not neatMode): self.game_loop()
+        if (not neatMode or not evaluateModelMode): self.game_loop()
 
         #initialize neat stuff
         if neatMode: neatInit(self) 
+
+        #initialize neat stuff
+        if evaluateModelMode: evaluateModelInit(self) 
 
 
 if __name__ == "__main__":
