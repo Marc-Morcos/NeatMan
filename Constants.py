@@ -29,8 +29,8 @@ modelCheckpoint = "NeatBoi0.pkl"
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 512 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
-turnOffGhosts = False
-scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+turnOffGhosts = True
+scoreTimeConstraint = 10*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 
 # where we load a whole population to continue training
 # set to None to train from scratch
@@ -45,7 +45,7 @@ neatHyperparams = {"NeatNumGenerations":1700,
                   "NumGenB4MapSwitch":1,
                   "NumGenB4Checkpoint":50,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": "Checkpoints/NeatBoiPopulation",
+                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation",
                   "modelName": "NeatBoi"
                   }
 
