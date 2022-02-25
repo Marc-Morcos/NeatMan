@@ -41,13 +41,13 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 20)
+# with pacman in the center (SET inputs IN neatConfig to camera size + 35)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 5 #MUST BE ODD NUMBER
     cameraSizey = 5 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 20)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 35)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
@@ -120,7 +120,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #                 print(tempRow)
     # print("\n\n\n\n\n\n\n")
 
-    #add extra info
+    #more ghost info
     index = cameraSizex*cameraSizey
     for ghost in ghosts.values():
         inputs[index] = ghost.blue
@@ -131,15 +131,38 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         index+=1
         inputs[index] = (pacman.power_time - ghost.blue_timer)
         index+=1
+        inputs[index] = (pacman.x-ghost.x)
+        index+=1
+        inputs[index] = (pacman.y-ghost.y)
+        index+=1
+    
+    #give distance to a nearest pellet (in case no pellets are on camera)
+    closest = 99999999
+    for pellet in pellets:
+        if pellet.here:
+            xDis = pacman.x-pellet.x
+            yDis = pacman.y-pellet.y
+            distance = abs(xDis) + abs(yDis)
+            if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
+                closest = distance
+                inputs[index] = xDis
+                inputs[index+1] = yDis
+    index+=2
+    
+    #move direction
+    inputs[index+pacman.move_dir] = 1
+    index+=4
 
-    inputs[index] = pacman.move_dir
-    index+=1
+    #more info about pacman
     inputs[index] = pacman.powered_up
     index+=1
     inputs[index] = (pacman.power_time - pacman.timer)
     index+=1
     inputs[index] = (pacman.lives)
-
+    index+=1
+    inputs[index] = (pacman.x)
+    index+=1
+    inputs[index] = (pacman.y)
 
     return inputs        
 
