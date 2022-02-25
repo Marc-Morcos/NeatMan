@@ -78,7 +78,7 @@ def neatInit(main):
     population.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     population.add_reporter(stats)
-    population.add_reporter(neat.Checkpointer(neatHyperparams["NumGenB4Checkpoint"], None, neatHyperparams["PopulationCheckpointName"]))
+    population.add_reporter(neat.Checkpointer(neatHyperparams["NumGenB4Checkpoint"], neatHyperparams["SecondsB4Checkpoint"], neatHyperparams["PopulationCheckpointName"]))
 
     #we want to pass extra stuff into eval_pacman
     newLoop = partial(eval_Pacman,main=main)
