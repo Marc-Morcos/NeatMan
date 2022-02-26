@@ -64,6 +64,7 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
+        penalty = 0
         self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
@@ -80,6 +81,9 @@ class Pac_Man:
             if maze.can_move(self, self.move_dir):
                 self.x += step * self.COORD_DIR[self.move_dir][0]
                 self.y += step * self.COORD_DIR[self.move_dir][1]
+            elif(neatMode):
+                penalty = IdlePenalty
+                
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
         else:
@@ -93,6 +97,8 @@ class Pac_Man:
                 self.x = int(0.5*block_size + MapSizeX*block_size) #display_width
             if self.x > self.size + display_width:
                 self.x = -int(0.5*block_size) #-self.size
+
+        return penalty
 
     def draw_wedge_pacman(self, display, wedge_angle):
         radius = self.size / 2

@@ -13,7 +13,7 @@ from NeatHelpers import *
 import neat
 import random
 
-pacmanController = dummy #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
+pacmanController = humanPlayer #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
 if(neatMode): 
     pacmanController = modelNeat
@@ -102,7 +102,9 @@ class Main:
             if self.ghosts["clyde"].mode == "house" and self.collected_pellets > len(self.pellets) / 3:
                 self.ghosts["clyde"].mode = "normal"
 
-            self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit)
+            #this only decreases score in neatmode
+            self.score -= self.player.move(maze = self.maze, display_width = self.display_width, ghosts = self.ghosts, power_pellets = self.power_pellets, pellets = self.pellets, fruit = self.fruit)
+            self.lastFrameScore = self.score #simulates the score not increasing
 
             if self.player.update_power_up():
                 for ghost in self.ghosts.values():
