@@ -113,8 +113,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
+        if(cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX):continue
         for y in range(cameraSizey):
-            if(cameraMin[0]+x>=0 and cameraMin[1]+y>=0 and cameraMin[0]+x<MapSizeX and cameraMin[1]+y<MapSizeY):
+            if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x,cameraMin[1]+y]
 
     # prints camera
