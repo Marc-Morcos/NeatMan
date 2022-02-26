@@ -12,7 +12,6 @@ import numpy as np
 import copy
 from collections import deque
 import random
-from datetime import datetime
 
 #returns grid index for 1D array
 def gridToArray(x,y,rowSize=MapSizeX):
