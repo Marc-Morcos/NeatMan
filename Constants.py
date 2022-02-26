@@ -33,7 +33,7 @@ turnOffGhosts = False
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
 numberOfTests = 30 #number of games to evaluate on
-IdlePenalty = 0#1/50 #if in neatmode, decreases score while sitting idle by this ammount every frame
+IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 
 # where we load a whole population to continue training
 # set to None to train from scratch
