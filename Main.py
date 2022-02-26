@@ -197,7 +197,7 @@ class Main:
             ghost.draw(surface, self.player, self.tick_counter)
 
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 40)
-        game_font.render_to(surface, (15, 15), "SCORE: " + str(self.score), (255, 255, 255))
+        game_font.render_to(surface, (15, 15), "SCORE: " + str(int(self.score)), (255, 255, 255))
         game_font = pygame.freetype.SysFont("Helvetica.ttf", 20)
         game_font.render_to(surface, (400, 15), str(self.player.lives) + " LIVES", (255, 255, 255))
         game_font.render_to(surface, (600, 15), "FRUIT: ", (255, 255, 255))
