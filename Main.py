@@ -170,7 +170,6 @@ class Main:
                     self.player.x = spawn_x * block_size + block_size / 2
                     self.player.y = spawn_y * block_size + block_size / 2
                     for ghost in self.ghosts.values():
-                        if(ghost.mode == "normal"):
                             ghost.x = house_x
                             ghost.y = house_y
             return
@@ -199,7 +198,6 @@ class Main:
                 self.player.y = spawn_y * block_size + block_size / 2
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
                 for ghost in self.ghosts.values():
-                        if(ghost.mode == "normal"):
                             ghost.x = house_x
                             ghost.y = house_y
 
