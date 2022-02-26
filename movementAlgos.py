@@ -180,16 +180,39 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     outputs = pacman.net.activate(inputs)
     
     #interpret net output 
-    max = outputs[0]
-    max_ids = [0]
-    for output_id in range(1,len(outputs)):
-        if outputs[output_id] > max:
-            max = outputs[output_id]
-            max_ids = [output_id]
-        elif outputs[output_id] == max:
-            max_ids.append(output_id)
+    if(len(outputs) == 4):
+        max = outputs[0]
+        max_ids = [0]
+        for output_id in range(1,len(outputs)):
+            if outputs[output_id] > max:
+                max = outputs[output_id]
+                max_ids = [output_id]
+            elif outputs[output_id] == max:
+                max_ids.append(output_id)
+        return random.choice(max_ids)
 
-    return random.choice(max_ids)
+    elif(len(outputs) == 2):
+            #interpret net output 
+            if(abs(outputs[0]) == abs(outputs[1])):
+                if(random.choice([0,1]) == 1):
+                    axis = 1
+                else:
+                    axis = 0
+            elif(abs(outputs[0]) > abs(outputs[1])):
+                axis = 0
+            else:
+                axis = 1
+            
+            if(outputs[axis]>0):
+                if(axis == 0):
+                    return UP
+                else:
+                    return RIGHT
+            else:
+                if(axis == 0):
+                    return DOWN
+                else:
+                    return LEFT
 
 def printMaze(maze):
     for y in range(len(maze)):

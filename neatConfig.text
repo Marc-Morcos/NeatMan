@@ -55,6 +55,7 @@ node_delete_prob        = 0.2
 #if u change it, u might also need to change the "initial_connection" variable
 num_hidden              = 0
 num_inputs              = 260
+#can be 4 or 2 for outputs
 num_outputs             = 4
 
 # node response options
