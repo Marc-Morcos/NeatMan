@@ -11,6 +11,8 @@ from Pac_Man import Pac_Man
 import numpy as np
 import copy
 from collections import deque
+import random
+from datetime import datetime
 
 #returns grid index for 1D array
 def gridToArray(x,y,rowSize=MapSizeX):
@@ -180,13 +182,15 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     #interpret net output 
     max = outputs[0]
-    max_id = 0
-    for output_id in range(len(outputs)):
+    max_ids = [0]
+    for output_id in range(1,len(outputs)):
         if outputs[output_id] > max:
             max = outputs[output_id]
-            max_id = output_id
+            max_ids = [output_id]
+        elif outputs[output_id] == max:
+            max_ids.append(output_id)
 
-    return max_id
+    return random.choice(max_ids)
 
 def printMaze(maze):
     for y in range(len(maze)):

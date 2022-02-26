@@ -37,8 +37,8 @@ numberOfTests = 30 #number of games to evaluate on
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation49" 
-LoadTrainingCheckpointGenerationNum = 49 #if LoadTrainingCheckpointPath is not None, generations starts at this
+#LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation15x15Gen99" 
+LoadTrainingCheckpointGenerationNum = 99 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 

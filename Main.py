@@ -11,6 +11,7 @@ from pygame.locals import *
 from movementAlgos import *
 from NeatHelpers import *
 import neat
+import random
 
 pacmanController = dummy #  #options: dummy, humanPlayer, neat, avoid_ghost_and_wall_dummy, pathFind_to_target
 
@@ -290,6 +291,7 @@ class Main:
 
     def run(self):
         # initialize
+        random.seed(datetime.now())
         pygame.init()
         pygame.display.set_caption("NEAT-MAN")
         self.display = pygame.display.set_mode((int(self.display_width*scaling_factor), int(self.display_height*scaling_factor)))
