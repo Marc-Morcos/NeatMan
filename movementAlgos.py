@@ -42,13 +42,13 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 35)
+# with pacman in the center (SET inputs IN neatConfig to camera size + 37)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSizex = 57 #MUST BE ODD NUMBER
-    cameraSizey = 63 #MUST BE ODD NUMBER
+    cameraSizex = 7 #MUST BE ODD NUMBER
+    cameraSizey = 7 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 35)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 37)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
@@ -113,12 +113,15 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
-        if(cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX):continue
+        offset = 0 #wrap screen effect horizontally to account for teleporters
+        while(cameraMin[0]+x+offset<0): offset+=MapSizeX
+        while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
+        
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x,cameraMin[1]+y]
+                inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
 
-    # prints camera
+    ##prints camera
     # tiles = list(inputs)
     # temp = [(tiles[i:i+cameraSizex]) for i in range(0, len(tiles), cameraSizex)]
     # for tempRow in temp:
@@ -136,9 +139,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         index+=1
         inputs[index] = (pacman.power_time - ghost.blue_timer)
         index+=1
-        inputs[index] = (pacman.x-ghost.x)
+        inputs[index] = (pacman.x-ghost.x)/block_size
         index+=1
-        inputs[index] = (pacman.y-ghost.y)
+        inputs[index] = (pacman.y-ghost.y)/block_size
         index+=1
     
     #give distance to a nearest pellet (in case no pellets are on camera)
@@ -165,9 +168,18 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     index+=1
     inputs[index] = (pacman.lives)
     index+=1
-    inputs[index] = (pacman.x)
+    inputs[index] = (pacman.x)/block_size
     index+=1
-    inputs[index] = (pacman.y)
+    inputs[index] = (pacman.y)/block_size
+    index+=1
+    if(fruit.here):
+        inputs[index] = (pacman.y-fruit.y)/block_size
+        index+=1
+        inputs[index] = (pacman.x-fruit.x)/block_size
+    else:
+        inputs[index] = 0
+        index+=1
+        inputs[index] = 0
 
     return inputs        
 
@@ -235,7 +247,6 @@ def betterCanMove(entity, mazeArray, direction):
     horzMov = [LEFT, RIGHT]
     vertMov = [UP, DOWN]
 
-
     x = entity.x-block_size/2.0 #get the top left corner
     y = entity.y-block_size/2.0
 
@@ -255,7 +266,6 @@ def betterCanMove(entity, mazeArray, direction):
             return True
         elif(occupiedTiles[0][1] == occupiedTiles[1][1] and direction in horzMov):
             return True
-
 
     deltaX,deltaY = entity.COORD_DIR[direction]
      
@@ -331,7 +341,6 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
                     if(not testTile in ghostTiles):
                         ghostTiles.append(testTile)
 
-
     pac_manTiles = []
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0
@@ -341,7 +350,6 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
             testTile = [int(((x + textX * (block_size - 1))/block_size)),  int(((y+ textY * (block_size - 1))/block_size))]
             if(not testTile in pac_manTiles):
                 pac_manTiles.append(testTile)
-
 
     for direction in possible_dirs:
         testRange = 2
@@ -372,7 +380,6 @@ def avoid_ghost_and_wall_dummy(pac_man, maze, ghosts, pellets, power_pellets, fr
                 #print("AHHH ghost at ({},{}) in direction {}".format(testTile[0],testTile[1], direction))
                 possible_dirs.remove(direction)
                 break
-
 
     if len(possible_dirs) != 0 and (pac_man.oldPosDir != possible_dirs or not pac_man.move_dir in possible_dirs):
         pac_man.oldPosDir = copy.deepcopy(possible_dirs)
@@ -491,5 +498,6 @@ def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
         if(nextTile[0]<pac_manX): return LEFT
         if(nextTile[1]>pac_manY): return DOWN
         if(nextTile[1]<pac_manY): return UP
+
 
 
