@@ -42,13 +42,13 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 38)
+# with pacman in the center (SET inputs IN neatConfig to camera size + 40)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 7 #MUST BE ODD NUMBER
     cameraSizey = 7 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 38)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 40)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
@@ -147,6 +147,19 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #give distance to a nearest pellet (in case no pellets are on camera)
     closest = 99999999
     for pellet in pellets:
+        if pellet.here:
+            xDis = pacman.x-pellet.x
+            yDis = pacman.y-pellet.y
+            distance = abs(xDis) + abs(yDis)
+            if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
+                closest = distance
+                inputs[index] = xDis
+                inputs[index+1] = yDis
+    index+=2
+
+    #give ditance to nearest power pellet
+    closest = 99999999
+    for pellet in power_pellets:
         if pellet.here:
             xDis = pacman.x-pellet.x
             yDis = pacman.y-pellet.y
