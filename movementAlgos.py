@@ -42,13 +42,13 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 37)
+# with pacman in the center (SET inputs IN neatConfig to camera size + 38)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 7 #MUST BE ODD NUMBER
     cameraSizey = 7 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 37)
+    inputs = np.zeros(cameraSizex*cameraSizey+ 38)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
     #get pacman true position
@@ -180,6 +180,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         inputs[index] = 0
         index+=1
         inputs[index] = 0
+    index+=1
+    inputs[index] = fruit.here
 
     return inputs        
 
