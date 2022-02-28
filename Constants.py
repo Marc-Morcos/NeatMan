@@ -34,7 +34,7 @@ scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set
 evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
 numberOfTests = 30 #number of games to evaluate on
 IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
-wrapAround = False #whether camera view screen should wrap around in the x axis
+wrapAround = True #whether camera view screen should wrap around in the x axis
 
 # where we load a whole population to continue training
 # set to None to train from scratch
