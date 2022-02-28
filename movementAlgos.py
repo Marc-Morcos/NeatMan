@@ -42,14 +42,23 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size + 40)
+# with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 40)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 29 #MUST BE ODD NUMBER
     cameraSizey = 31 #MUST BE ODD NUMBER
+    seperateGhostCam = False
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
-    inputs = np.zeros(cameraSizex*cameraSizey+ 40)
+    if(seperateGhostCam):
+        inputsSize = 2*cameraSizex*cameraSizey+ 40 
+    else:
+        inputsSize = cameraSizex*cameraSizey+ 40 
+    inputs = np.zeros(inputsSize)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
+
+    ghostvalue = -3
+    blueghostvalue =4
+    wallValue = -1
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
@@ -86,9 +95,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     #add visible walls to the grid
     for wall in maze.wall_locs:
-        fullGrid[wall[0], wall[1]] = -1
+        fullGrid[wall[0], wall[1]] = wallValue
     for wall in maze.ghost_door_locs: #ghost doors are basically walls
-        fullGrid[wall[0], wall[1]] = -1
+        fullGrid[wall[0], wall[1]] = wallValue
 
     #add ghosts to the grid
     for ghost in ghosts.values():
@@ -108,8 +117,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
             if(testTile[1]<0):
                 testTile[1] = 0
 
-            fullGrid[testTile[0], testTile[1]] = -3
-            if(ghost.blue): fullGrid[testTile[0], testTile[1]] = 4
+            fullGrid[testTile[0], testTile[1]] = ghostvalue
+            if(ghost.blue): fullGrid[testTile[0], testTile[1]] = blueghostvalue
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
@@ -119,7 +128,14 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+                value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+                if(seperateGhostCam and (value == blueghostvalue or value == ghostvalue)): 
+                    inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
+                elif(seperateGhostCam and value == wallValue):
+                    inputs[gridToArray(x, y, cameraSizex)] = value
+                    inputs[cameraSizex*cameraSizey+gridToArray(x, y, cameraSizex)] = value
+                else:
+                    inputs[gridToArray(x, y, cameraSizex)] = value
 
     ##prints camera
     # tiles = list(inputs)
@@ -130,6 +146,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     #more ghost info
     index = cameraSizex*cameraSizey
+    if(seperateGhostCam): index = index*2
     for ghost in ghosts.values():
         inputs[index] = ghost.blue
         index+=1
