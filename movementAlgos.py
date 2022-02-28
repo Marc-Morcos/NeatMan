@@ -44,8 +44,8 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size + 40)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSizex = 7 #MUST BE ODD NUMBER
-    cameraSizey = 7 #MUST BE ODD NUMBER
+    cameraSizex = 29 #MUST BE ODD NUMBER
+    cameraSizey = 31 #MUST BE ODD NUMBER
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
     inputs = np.zeros(cameraSizex*cameraSizey+ 40)
@@ -113,10 +113,10 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
+        if((not wrapAround) and (cameraMin[0]+offset<0 or cameraMin[0]+x+offset>=MapSizeX)): continue
         offset = 0 #wrap screen effect horizontally to account for teleporters
         while(cameraMin[0]+x+offset<0): offset+=MapSizeX
         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
-        
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 inputs[gridToArray(x, y, cameraSizex)] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
