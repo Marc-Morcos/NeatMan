@@ -113,7 +113,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
      #populate the inputs array with the local camera
     for x in range(cameraSizex):
-        if((not wrapAround) and (cameraMin[0]+offset<0 or cameraMin[0]+x+offset>=MapSizeX)): continue
+        if((not wrapAround) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
         offset = 0 #wrap screen effect horizontally to account for teleporters
         while(cameraMin[0]+x+offset<0): offset+=MapSizeX
         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
