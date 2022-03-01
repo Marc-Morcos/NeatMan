@@ -42,7 +42,7 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 40)
+# with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 44)
 def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraSizex = 29 #MUST BE ODD NUMBER
     cameraSizey = 31 #MUST BE ODD NUMBER
@@ -50,9 +50,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     cameraRadiusx = int((cameraSizex-1)/2)
     cameraRadiusy = int((cameraSizey-1)/2)
     if(seperateGhostCam):
-        inputsSize = 2*cameraSizex*cameraSizey+ 40 
+        inputsSize = 2*cameraSizex*cameraSizey+ 44
     else:
-        inputsSize = cameraSizex*cameraSizey+ 40 
+        inputsSize = cameraSizex*cameraSizey+ 44
     inputs = np.zeros(inputsSize)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
@@ -129,7 +129,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
-                if(seperateGhostCam and (value == blueghostvalue or value == ghostvalue)): 
+                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue)): 
                     inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
                 elif(seperateGhostCam and value == wallValue):
                     inputs[gridToArray(x, y, cameraSizex)] = value
@@ -212,6 +212,40 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         inputs[index] = 0
     index+=1
     inputs[index] = fruit.here
+    index+=1
+
+    #valid moves
+    posX = truePos[0]+1
+    posY = truePos[1]+1
+    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+        inputs[index] = (fullGrid[posX,posY] == -1)
+    else:
+        inputs[index] = False
+    index+=1
+    
+    posX = truePos[0]-1
+    posY = truePos[1]+1
+    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+        inputs[index] = (fullGrid[posX,posY] == -1)
+    else:
+        inputs[index] = False
+    index+=1
+
+    posX = truePos[0]+1
+    posY = truePos[1]-1
+    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+        inputs[index] = (fullGrid[posX,posY] == -1)
+    else:
+        inputs[index] = False
+    index+=1
+
+    posX = truePos[0]-1
+    posY = truePos[1]-1
+    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+        inputs[index] = (fullGrid[posX,posY] == -1)
+    else:
+        inputs[index] = False
+    index+=1
 
     return inputs        
 
