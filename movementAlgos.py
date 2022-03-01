@@ -159,10 +159,10 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         index+=1
         inputs[index] = (pacman.power_time - ghost.blue_timer)
         index+=1
-        inputs[index] = block_size/(pacman.x-ghost.x) #inverted cuz we only care about close ghosts
+        if((pacman.x-ghost.x)!=0): inputs[index] = block_size/(pacman.x-ghost.x) #inverted cuz we only care about close ghosts
         if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
         index+=1
-        inputs[index] = block_size/(pacman.y-ghost.y)#inverted cuz we only care about close ghosts
+        if((pacman.y-ghost.y)!=0): inputs[index] = block_size/(pacman.y-ghost.y)#inverted cuz we only care about close ghosts
         if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
         index+=1
     
