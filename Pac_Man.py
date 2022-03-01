@@ -66,7 +66,11 @@ class Pac_Man:
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
         penalty = 0
+        originalLookDir = self.look_dir
         self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        if(neatMode): 
+            if(abs(self.look_dir-originalLookDir) == 2):
+                penalty+=backTrackPenalty
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
