@@ -148,6 +148,9 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     index = cameraSizex*cameraSizey
     if(seperateGhostCam): index = index*2
     for ghost in ghosts.values():
+        if(turnOffGhosts): 
+            index+=6
+            continue
         inputs[index] = ghost.blue
         index+=1
         inputs[index] = ghost.move_dir
