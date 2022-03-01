@@ -9,6 +9,7 @@ class Pac_Man:
     def __init__(self, x, y, movementFunction):
         #lives
         self.lives = 2
+        if(neatMode): self.lives = neatLives
         
         # Constants
         self.size = 26

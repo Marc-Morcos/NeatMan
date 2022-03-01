@@ -225,6 +225,7 @@ class Main:
         #hard reset  
         if(hard):
             newlives = 2
+            if(neatMode): newlives = neatLives
             self.last_life_score = 0
             self.score = 0
             self.level = 0         
