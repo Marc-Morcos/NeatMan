@@ -320,6 +320,24 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove= DOWN
                 else:
                     nextMove= LEFT
+        
+    elif(len(outputs) == 3):
+            #interpret net output 
+            if(outputs[2]>0):
+                axis = 1
+            else:
+                axis = 0
+            
+            if(outputs[axis]>0):
+                if(axis == 0):
+                    nextMove= UP
+                else:
+                    nextMove= RIGHT
+            else:
+                if(axis == 0):
+                    nextMove= DOWN
+                else:
+                    nextMove= LEFT
             
             # penalty 
             if(nextMove == RIGHT and soroundings[0] == ghostvalue and neatMode):
