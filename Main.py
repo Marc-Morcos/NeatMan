@@ -51,6 +51,7 @@ class Main:
         self.power_pellets = []
         self.num_fruit = 0
         self.running = True
+        self.coinFlip = (random.choice([0,1]) == 1)
 
         self.game_state = "run"
         self.level = 0
@@ -224,6 +225,7 @@ class Main:
         newlives = self.player.lives
         #hard reset  
         if(hard):
+            self.coinFlip = (random.choice([0,1]) == 1)
             newlives = 2
             if(neatMode): newlives = neatLives
             self.last_life_score = 0
@@ -252,7 +254,7 @@ class Main:
             self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
-            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and (random.choice([0,1]) == 1))))
+            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlip)))
 
         self.ghosts = {}
 
@@ -321,7 +323,7 @@ class Main:
             self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
-            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and (random.choice([0,1]) == 1))))
+            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlipip)))
 
         self.ghosts = {}
 
