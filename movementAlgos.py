@@ -56,7 +56,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     inputs = np.zeros(inputsSize)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
-    ghostvalue = -3
+    ghostvalue = -3 #set in multiple places in the code (avoid changing)
     blueghostvalue =4
     wallValue = -1
 
@@ -266,6 +266,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
+
+    ghostvalue = -3 #set in multiple places in the code (avoid changing)
     
     #Get the inputs
     inputs,soroundings = cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
@@ -311,13 +313,13 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove= LEFT
             
             # penalty 
-            if(nextMove == RIGHT and soroundings[0] == -3 and neatMode):
+            if(nextMove == RIGHT and soroundings[0] == ghostvalue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == LEFT and soroundings[1] == -3 and neatMode):
+            if(nextMove == LEFT and soroundings[1] == ghostvalue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == DOWN and soroundings[2] == -3 and neatMode):
+            if(nextMove == DOWN and soroundings[2] == ghostvalue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == UP and soroundings[3] == -3 and neatMode):
+            if(nextMove == UP and soroundings[3] == ghostvalue and neatMode):
                 pacman.penalty+=sabotagePenalty
             
     return nextMove
