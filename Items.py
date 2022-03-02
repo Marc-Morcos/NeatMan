@@ -1,5 +1,6 @@
 import pygame
 from Constants import *
+import random
 
 class Pellet:
     def __init__(self, x, y,sparseFlipped = False):
