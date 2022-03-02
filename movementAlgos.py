@@ -133,7 +133,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
-                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == -4)): 
+                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == -4 or value == 5)): 
                     inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
                 elif(seperateGhostCam and value == wallValue):
                     inputs[gridToArray(x, y, cameraSizex)] = value
