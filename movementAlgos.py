@@ -59,6 +59,11 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     ghostvalue = -3 #set in multiple places in the code (avoid changing)
     blueghostvalue =4
     wallValue = -1
+    pelletValue = 1
+    PowerPelletValue = 3
+    ghostMoveValue = -4
+    blueGhostMoveValue = 5
+    fruitValue = 2
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
@@ -82,16 +87,16 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     #add visible pellets to the grid
     for pellet in pellets:
         if pellet.here:
-            fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = 1
+            fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = pelletValue
 
     #add visible power pellets to the grid
     for powerPellet in power_pellets:
         if powerPellet.here:
-            fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = 3
+            fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = PowerPelletValue
 
     #add visible fruit to the grid
     if fruit.here:
-        fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = 2
+        fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = fruitValue
 
     #add ghosts to the grid
     for ghost in ghosts.values():
@@ -118,8 +123,8 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
             if(ghost.move_dir == LEFT): movecoord = [testTile[0]-1, testTile[1]]
             if(ghost.move_dir == RIGHT): movecoord = [testTile[0]+1, testTile[1]]
             if(movecoord[0]>=0 and movecoord[0]<MapSizeX and movecoord[1]>=0 and movecoord[1]<MapSizeY and fullGrid[movecoord[0],movecoord[1]]!=wallValue):
-                fullGrid[movecoord[0],movecoord[1]] = -4
-                if(ghost.blue): fullGrid[movecoord[0],movecoord[1]] = 5
+                fullGrid[movecoord[0],movecoord[1]] = ghostMoveValue
+                if(ghost.blue): fullGrid[movecoord[0],movecoord[1]] = blueGhostMoveValue
 
             fullGrid[testTile[0], testTile[1]] = ghostvalue
             if(ghost.blue): fullGrid[testTile[0], testTile[1]] = blueghostvalue
@@ -133,7 +138,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         for y in range(cameraSizey):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
-                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == -4 or value == 5)): 
+                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == ghostMoveValue or value == blueGhostMoveValue)): 
                     inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
                 elif(seperateGhostCam and value == wallValue):
                     inputs[gridToArray(x, y, cameraSizex)] = value
