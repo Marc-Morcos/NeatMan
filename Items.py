@@ -2,7 +2,7 @@ import pygame
 from Constants import *
 
 class Pellet:
-    def __init__(self, x, y):
+    def __init__(self, x, y,sparseFlipped = False):
         self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
@@ -10,6 +10,7 @@ class Pellet:
         self.colour = (255, 255, 255)
 
         self.here = True
+        if(sparseFlipped and neatMode): self.here = random.choice([False,False,False,False,True])
 
     def draw(self, display):
         if self.here:

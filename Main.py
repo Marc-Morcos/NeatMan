@@ -252,7 +252,7 @@ class Main:
             self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
-            self.pellets.append(Pellet(loc[0], loc[1]))
+            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and (random.choice([0,1]) == 1))))
 
         self.ghosts = {}
 
@@ -321,7 +321,7 @@ class Main:
             self.power_pellets.append(PowerPellet(loc[0], loc[1]))
         self.pellets = []
         for loc in self.maze.pellet_locs:
-            self.pellets.append(Pellet(loc[0], loc[1]))
+            self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and (random.choice([0,1]) == 1))))
 
         self.ghosts = {}
 
