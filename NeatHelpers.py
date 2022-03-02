@@ -54,7 +54,7 @@ def eval_Pacman(genomes, config, main = None):
 
     
     #generate a new map and reset for next generation
-    main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0))
+    main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0), coinFlip = True)
     main.current_generation += 1
 
     return

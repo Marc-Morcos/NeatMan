@@ -220,12 +220,12 @@ class Main:
     #resets the game
     #if hard is false, we are just moving to a new level
     #if hard is true, its a true reset
-    def reset(self, hard = False, newMap = False):
+    def reset(self, hard = False, newMap = False,coinFlip = False):
         net = self.player.net
         newlives = self.player.lives
+        if(coinFlip): self.coinFlip = (random.choice([0,1]) == 1)
         #hard reset  
         if(hard):
-            self.coinFlip = (random.choice([0,1]) == 1)
             newlives = 2
             if(neatMode): newlives = neatLives
             self.last_life_score = 0
