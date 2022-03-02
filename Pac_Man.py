@@ -41,6 +41,9 @@ class Pac_Man:
         #some wonkiness to make the target code work
         self.display_width=0
         
+        #used for neatmode
+        self.penalty = 0
+        
         # Neural network
         self.net = None
         if(neatLoadMode): self.net = loadModel(modelCheckpoint)
@@ -65,12 +68,11 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
-        penalty = 0
+        self.penalty = 0
         originalLookDir = self.look_dir
         self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
-        if(neatMode): 
-            if(abs(self.look_dir-originalLookDir) == 2):
-                penalty+=backTrackPenalty
+        if(abs(self.look_dir-originalLookDir) == 2):
+            self.penalty+=backTrackPenalty
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
@@ -86,8 +88,8 @@ class Pac_Man:
             if maze.can_move(self, self.move_dir):
                 self.x += step * self.COORD_DIR[self.move_dir][0]
                 self.y += step * self.COORD_DIR[self.move_dir][1]
-            elif(neatMode):
-                penalty = IdlePenalty
+            else:
+                self.penalty = IdlePenalty
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
@@ -103,7 +105,8 @@ class Pac_Man:
             if self.x > self.size + display_width:
                 self.x = -int(0.5*block_size) #-self.size
 
-        return penalty
+        if(neatMode): return self.penalty #only apply penalty if in neatmode
+        return 0 
 
     def draw_wedge_pacman(self, display, wedge_angle):
         radius = self.size / 2

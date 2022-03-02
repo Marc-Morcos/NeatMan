@@ -252,16 +252,28 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         inputs[index] = False
     index+=1
 
-    return inputs        
+    soroundings = [0,0,0,0]
+    if(truePos[0]+1 < MapSizeX): #right
+        soroundings[0] = fullGrid[truePos[0]+1,truePos[1]]
+    if(truePos[0]-1 >= 0): #left
+        soroundings[1] = fullGrid[truePos[0]-1,truePos[1]]
+    if(truePos[1]+1 < MapSizeY): #down
+        soroundings[2] = fullGrid[truePos[0],truePos[1]+1]
+    if(truePos[1]-1 >= 0): #up
+        soroundings[3] = fullGrid[truePos[0],truePos[1]-1]
+
+    return inputs, soroundings  
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     #Get the inputs
-    inputs = cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
+    inputs,soroundings = cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
 
     #pass inputs into the neural network
     outputs = pacman.net.activate(inputs)
+
+    nextMove = 0
     
     #interpret net output 
     if(len(outputs) == 4):
@@ -273,7 +285,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                 max_ids = [output_id]
             elif outputs[output_id] == max:
                 max_ids.append(output_id)
-        return random.choice(max_ids)
+        nextMove = random.choice(max_ids) 
 
     elif(len(outputs) == 2):
             #interpret net output 
@@ -289,14 +301,26 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
             
             if(outputs[axis]>0):
                 if(axis == 0):
-                    return UP
+                    nextMove= UP
                 else:
-                    return RIGHT
+                    nextMove= RIGHT
             else:
                 if(axis == 0):
-                    return DOWN
+                    nextMove= DOWN
                 else:
-                    return LEFT
+                    nextMove= LEFT
+            
+            # penalty 
+            if(nextMove == RIGHT and soroundings[0] == -3 and neatMode):
+                pacman.penalty+=sabotagePenalty
+            if(nextMove == LEFT and soroundings[1] == -3 and neatMode):
+                pacman.penalty+=sabotagePenalty
+            if(nextMove == DOWN and soroundings[2] == -3 and neatMode):
+                pacman.penalty+=sabotagePenalty
+            if(nextMove == UP and soroundings[3] == -3 and neatMode):
+                pacman.penalty+=sabotagePenalty
+            
+    return nextMove
 
 def printMaze(maze):
     for y in range(len(maze)):
