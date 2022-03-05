@@ -37,7 +37,6 @@ IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this
 wrapAround = True #whether camera view screen should wrap around in the x axis
 neatLives = 2 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
-sabotagePenalty = 0#400 #penalty for going towards a non blue, non dead ghost, that is also going towards it (if ur other penalties are too high, pacman tries to kill himself, this fixes that)
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 
 # where we load a whole population to continue training

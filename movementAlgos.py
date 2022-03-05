@@ -261,17 +261,122 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
         inputs[index] = False
     index+=1
 
-    soroundings = [0,0,0,0]
-    if(truePos[0]+1 < MapSizeX): #right
-        soroundings[0] = fullGrid[truePos[0]+1,truePos[1]]
-    if(truePos[0]-1 >= 0): #left
-        soroundings[1] = fullGrid[truePos[0]-1,truePos[1]]
-    if(truePos[1]+1 < MapSizeY): #down
-        soroundings[2] = fullGrid[truePos[0],truePos[1]+1]
-    if(truePos[1]-1 >= 0): #up
-        soroundings[3] = fullGrid[truePos[0],truePos[1]-1]
+    return inputs
 
-    return inputs, soroundings  
+
+#Process the inputs for the nead model 
+#this gives the input a grid, 
+# with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 0)
+def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
+    cameraSize = 11 #MUST BE ODD NUMBER
+    cameraRadius = int((cameraSize-1)/2)
+    fullGrid = np.zeros((MapSizeX, MapSizeY))
+
+    ghostvalue = -3 #set in multiple places in the code (avoid changing)
+    blueghostvalue =4
+    wallValue = -1
+    pelletValue = 1
+    PowerPelletValue = 3
+    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
+    blueGhostMoveValue = 5
+    fruitValue = 2
+
+    #get pacman true position
+    x = pacman.x-block_size/2.0 
+    y = pacman.y-block_size/2.0
+    truePos = [int(((x)/block_size)),  int(((y)/block_size))]
+    if(truePos[0]>=MapSizeX):
+        truePos[0] = MapSizeX-1
+    if(truePos[1]>=MapSizeY):
+        truePos[1] = MapSizeY-1
+    if(truePos[0]<0):
+        truePos[0] = 0
+    if(truePos[1]<0):
+        truePos[1] = 0
+
+    #camera offsets from pacqman
+    cameraMin = [truePos[0]-cameraRadius,truePos[1]-cameraRadius]
+    cameraMax = [truePos[0]+cameraRadius,truePos[1]+cameraRadius]
+
+    #the order in which we add these is important since multiple things can be in the same spot
+
+    #add visible pellets to the grid
+    for pellet in pellets:
+        if pellet.here:
+            fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = pelletValue
+
+    #add visible power pellets to the grid
+    for powerPellet in power_pellets:
+        if powerPellet.here:
+            fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = PowerPelletValue
+
+    #add visible fruit to the grid
+    if fruit.here:
+        fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = fruitValue
+
+    #add ghosts to the grid
+    for ghost in ghosts.values():
+            if(turnOffGhosts): break #make disabled ghosts invisible to model
+            if(ghost.mode != "normal"): continue #hide invisible ghosts
+
+            x = ghost.x-block_size/2.0 #get the top left corner
+            y = ghost.y-block_size/2.0
+            testTile = [int(x/block_size),  int(y/block_size)]
+
+            if(testTile[0]>=MapSizeX):
+                testTile[0] = MapSizeX-1
+            if(testTile[1]>=MapSizeY):
+                testTile[1] = MapSizeY-1
+            if(testTile[0]<0):
+                testTile[0] = 0
+            if(testTile[1]<0):
+                testTile[1] = 0
+
+            #move direction
+            movecoord = 0
+            if(ghost.move_dir == UP): movecoord = [testTile[0], testTile[1]-1]
+            if(ghost.move_dir == DOWN): movecoord = [testTile[0], testTile[1]+1]
+            if(ghost.move_dir == LEFT): movecoord = [testTile[0]-1, testTile[1]]
+            if(ghost.move_dir == RIGHT): movecoord = [testTile[0]+1, testTile[1]]
+            if(movecoord[0]>=0 and movecoord[0]<MapSizeX and movecoord[1]>=0 and movecoord[1]<MapSizeY and fullGrid[movecoord[0],movecoord[1]]!=wallValue):
+                fullGrid[movecoord[0],movecoord[1]] = ghostMoveValue
+                if(ghost.blue): fullGrid[movecoord[0],movecoord[1]] = blueGhostMoveValue
+
+            fullGrid[testTile[0], testTile[1]] = ghostvalue
+            if(ghost.blue): fullGrid[testTile[0], testTile[1]] = blueghostvalue
+
+    smallCamera = np.zeros((cameraSize, cameraSize))
+
+     #populate the inputs array with the local camera
+    for x in range(cameraSize):
+        if((not wrapAround) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
+        offset = 0 #wrap screen effect horizontally to account for teleporters
+        while(cameraMin[0]+x+offset<0): offset+=MapSizeX
+        while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
+        for y in range(cameraSize):
+            if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
+                value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+                smallCamera[x, y] = value
+    
+    #rotation based on pacman's look direction
+    if pacman.look_dir == RIGHT:
+        smallCamera = np.rot90(smallCamera, 1)
+    elif pacman.look_dir == DOWN:
+        smallCamera = np.rot90(smallCamera, 2)
+    elif pacman.look_dir == LEFT:
+        smallCamera = np.rot90(smallCamera, 3)
+    
+    inputs = smallCamera.reshape(-1)
+    
+    #prints camera
+    tiles = list(inputs)
+    temp = [(tiles[i:i+cameraSize]) for i in range(0, len(tiles), cameraSize)]
+    for tempRow in temp:
+                    print(tempRow)
+    print("\n\n\n\n\n\n\n")
+    
+
+    return inputs  
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
@@ -279,7 +384,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     
     #Get the inputs
-    inputs,soroundings = cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
+    inputs = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
 
     #pass inputs into the neural network
     outputs = pacman.net.activate(inputs)
@@ -287,67 +392,55 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     nextMove = 0
     
     #interpret net output 
-    if(len(outputs) == 4):
-        max = outputs[0]
-        max_ids = [0]
-        for output_id in range(1,len(outputs)):
-            if outputs[output_id] > max:
-                max = outputs[output_id]
-                max_ids = [output_id]
-            elif outputs[output_id] == max:
-                max_ids.append(output_id)
-        nextMove = random.choice(max_ids) 
+    # if(len(outputs) == 4):
+    #     max = outputs[0]
+    #     max_ids = [0]
+    #     for output_id in range(1,len(outputs)):
+    #         if outputs[output_id] > max:
+    #             max = outputs[output_id]
+    #             max_ids = [output_id]
+    #         elif outputs[output_id] == max:
+    #             max_ids.append(output_id)
+    #     nextMove = random.choice(max_ids) 
 
-    elif(len(outputs) == 2):
+    if(len(outputs) == 2):
             #interpret net output 
-            if(abs(outputs[0]) == abs(outputs[1])):
-                if(random.choice([0,1]) == 1):
-                    axis = 1
-                else:
-                    axis = 0
-            elif(abs(outputs[0]) > abs(outputs[1])):
+            if(abs(outputs[0]) > abs(outputs[1])):
                 axis = 0
             else:
                 axis = 1
             
             if(outputs[axis]>0):
                 if(axis == 0):
-                    nextMove= UP
+                    nextMove = pacman.look_dir
                 else:
-                    nextMove= RIGHT
+                    nextMove = pacman.look_dir + 1
             else:
                 if(axis == 0):
-                    nextMove= DOWN
+                    nextMove = pacman.look_dir + 2
                 else:
-                    nextMove= LEFT
+                    nextMove =  pacman.look_dir - 1
         
-    elif(len(outputs) == 3):
-            #interpret net output 
-            if(outputs[2]>0):
-                axis = 1
-            else:
-                axis = 0
+    # elif(len(outputs) == 3):
+    #         #interpret net output 
+    #         if(outputs[2]>0):
+    #             axis = 1
+    #         else:
+    #             axis = 0
             
-            if(outputs[axis]>0):
-                if(axis == 0):
-                    nextMove= UP
-                else:
-                    nextMove= RIGHT
-            else:
-                if(axis == 0):
-                    nextMove= DOWN
-                else:
-                    nextMove= LEFT
-            
-            # penalty 
-            if(nextMove == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
-                pacman.penalty+=sabotagePenalty
-            if(nextMove == LEFT and soroundings[1] == ghostMoveValue and neatMode):
-                pacman.penalty+=sabotagePenalty
-            if(nextMove == DOWN and soroundings[2] == ghostMoveValue and neatMode):
-                pacman.penalty+=sabotagePenalty
-            if(nextMove == UP and soroundings[3] == ghostMoveValue and neatMode):
-                pacman.penalty+=sabotagePenalty
+    #         if(outputs[axis]>0):
+    #             if(axis == 0):
+    #                 nextMove= UP
+    #             else:
+    #                 nextMove= RIGHT
+    #         else:
+    #             if(axis == 0):
+    #                 nextMove= DOWN
+    #             else:
+    #                 nextMove= LEFT
+
+
+    nextMove = nextMove%4        
             
     return nextMove
 
