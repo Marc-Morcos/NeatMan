@@ -268,12 +268,12 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 0)
 def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSize = 11 #MUST BE ODD NUMBER
+    cameraSize = 3 #MUST BE ODD NUMBER
     cameraRadius = int((cameraSize-1)/2)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
     
     ghostvalue = -3 
-    blueghostvalue =4
+    blueghostvalue = 4
     wallValue = -1
     pelletValue = 1
     PowerPelletValue = 3
@@ -370,11 +370,8 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
         for y in range(cameraSize):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                smallCamera[x, y] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+                smallCamera[y, x] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
     
-    # print(smallCamera)
-    # print("\n\n\n\n\n\n\n")
-
     #rotation based on pacman's look direction
     if pacman.look_dir == RIGHT:
         smallCamera = np.rot90(smallCamera, 1)
