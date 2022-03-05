@@ -61,7 +61,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     wallValue = -1
     pelletValue = 1
     PowerPelletValue = 3
-    ghostMoveValue = -4
+    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     blueGhostMoveValue = 5
     fruitValue = 2
 
@@ -276,7 +276,7 @@ def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
-    ghostvalue = -3 #set in multiple places in the code (avoid changing)
+    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     
     #Get the inputs
     inputs,soroundings = cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
@@ -340,13 +340,13 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove= LEFT
             
             # penalty 
-            if(nextMove == RIGHT and soroundings[0] == ghostvalue and neatMode):
+            if(nextMove == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == LEFT and soroundings[1] == ghostvalue and neatMode):
+            if(nextMove == LEFT and soroundings[1] == ghostMoveValue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == DOWN and soroundings[2] == ghostvalue and neatMode):
+            if(nextMove == DOWN and soroundings[2] == ghostMoveValue and neatMode):
                 pacman.penalty+=sabotagePenalty
-            if(nextMove == UP and soroundings[3] == ghostvalue and neatMode):
+            if(nextMove == UP and soroundings[3] == ghostMoveValue and neatMode):
                 pacman.penalty+=sabotagePenalty
             
     return nextMove
