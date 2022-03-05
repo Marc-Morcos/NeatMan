@@ -314,6 +314,12 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     if fruit.here:
         fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = fruitValue
 
+    #add visible walls to the grid
+    for wall in maze.wall_locs:
+        fullGrid[wall[0], wall[1]] = wallValue
+    for wall in maze.ghost_door_locs: #ghost doors are basically walls
+        fullGrid[wall[0], wall[1]] = wallValue
+        
     #add ghosts to the grid
     for ghost in ghosts.values():
             if(turnOffGhosts): break #make disabled ghosts invisible to model
@@ -496,6 +502,7 @@ def betterCanMove(entity, mazeArray, direction):
     
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
+    rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
 
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0

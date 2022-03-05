@@ -22,7 +22,7 @@ MapSizeY = 31
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
 #Quick Toggles
-neatMode = True #puts the model into a training loop
+neatMode = False #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints"
 modelCheckpoint = "NeatBoi0.pkl"
