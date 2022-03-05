@@ -43,225 +43,225 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #Process the inputs for the nead model 
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 44)
-def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSizex = 10 #MUST BE ODD NUMBER
-    cameraSizey = 10 #MUST BE ODD NUMBER
-    seperateGhostCam = False
-    cameraRadiusx = int((cameraSizex-1)/2)
-    cameraRadiusy = int((cameraSizey-1)/2)
-    if(seperateGhostCam):
-        inputsSize = 2*cameraSizex*cameraSizey+ 44
-    else:
-        inputsSize = cameraSizex*cameraSizey+ 44
-    inputs = np.zeros(inputsSize)
-    fullGrid = np.zeros((MapSizeX, MapSizeY))
+# def cameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
+#     cameraSizex = 10 #MUST BE ODD NUMBER
+#     cameraSizey = 10 #MUST BE ODD NUMBER
+#     seperateGhostCam = False
+#     cameraRadiusx = int((cameraSizex-1)/2)
+#     cameraRadiusy = int((cameraSizey-1)/2)
+#     if(seperateGhostCam):
+#         inputsSize = 2*cameraSizex*cameraSizey+ 44
+#     else:
+#         inputsSize = cameraSizex*cameraSizey+ 44
+#     inputs = np.zeros(inputsSize)
+#     fullGrid = np.zeros((MapSizeX, MapSizeY))
 
-    ghostvalue = -3 #set in multiple places in the code (avoid changing)
-    blueghostvalue =4
-    wallValue = -1
-    pelletValue = 1
-    PowerPelletValue = 3
-    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
-    blueGhostMoveValue = 5
-    fruitValue = 2
+#     ghostvalue = -3 #set in multiple places in the code (avoid changing)
+#     blueghostvalue =4
+#     wallValue = -1
+#     pelletValue = 1
+#     PowerPelletValue = 3
+#     ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
+#     blueGhostMoveValue = 5
+#     fruitValue = 2
 
-    #get pacman true position
-    x = pacman.x-block_size/2.0 
-    y = pacman.y-block_size/2.0
-    truePos = [int(((x)/block_size)),  int(((y)/block_size))]
-    if(truePos[0]>=MapSizeX):
-        truePos[0] = MapSizeX-1
-    if(truePos[1]>=MapSizeY):
-        truePos[1] = MapSizeY-1
-    if(truePos[0]<0):
-        truePos[0] = 0
-    if(truePos[1]<0):
-        truePos[1] = 0
+#     #get pacman true position
+#     x = pacman.x-block_size/2.0 
+#     y = pacman.y-block_size/2.0
+#     truePos = [int(((x)/block_size)),  int(((y)/block_size))]
+#     if(truePos[0]>=MapSizeX):
+#         truePos[0] = MapSizeX-1
+#     if(truePos[1]>=MapSizeY):
+#         truePos[1] = MapSizeY-1
+#     if(truePos[0]<0):
+#         truePos[0] = 0
+#     if(truePos[1]<0):
+#         truePos[1] = 0
 
-    #camera offsets from packman
-    cameraMin = [truePos[0]-cameraRadiusx,truePos[1]-cameraRadiusx]
-    cameraMax = [truePos[0]+cameraRadiusy,truePos[1]+cameraRadiusy]
+#     #camera offsets from packman
+#     cameraMin = [truePos[0]-cameraRadiusx,truePos[1]-cameraRadiusx]
+#     cameraMax = [truePos[0]+cameraRadiusy,truePos[1]+cameraRadiusy]
 
-    #the order in which we add these is important since multiple things can be in the same spot
+#     #the order in which we add these is important since multiple things can be in the same spot
 
-    #add visible pellets to the grid
-    for pellet in pellets:
-        if pellet.here:
-            fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = pelletValue
+#     #add visible pellets to the grid
+#     for pellet in pellets:
+#         if pellet.here:
+#             fullGrid[pellet.array_coord[0], pellet.array_coord[1]] = pelletValue
 
-    #add visible power pellets to the grid
-    for powerPellet in power_pellets:
-        if powerPellet.here:
-            fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = PowerPelletValue
+#     #add visible power pellets to the grid
+#     for powerPellet in power_pellets:
+#         if powerPellet.here:
+#             fullGrid[powerPellet.array_coord[0], powerPellet.array_coord[1]] = PowerPelletValue
 
-    #add visible fruit to the grid
-    if fruit.here:
-        fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = fruitValue
+#     #add visible fruit to the grid
+#     if fruit.here:
+#         fullGrid[fruit.array_coord[0], fruit.array_coord[1] ] = fruitValue
 
-    #add ghosts to the grid
-    for ghost in ghosts.values():
-            if(turnOffGhosts): break #make disabled ghosts invisible to model
-            if(ghost.mode != "normal"): continue #hide invisible ghosts
+#     #add ghosts to the grid
+#     for ghost in ghosts.values():
+#             if(turnOffGhosts): break #make disabled ghosts invisible to model
+#             if(ghost.mode != "normal"): continue #hide invisible ghosts
 
-            x = ghost.x-block_size/2.0 #get the top left corner
-            y = ghost.y-block_size/2.0
-            testTile = [int(x/block_size),  int(y/block_size)]
+#             x = ghost.x-block_size/2.0 #get the top left corner
+#             y = ghost.y-block_size/2.0
+#             testTile = [int(x/block_size),  int(y/block_size)]
 
-            if(testTile[0]>=MapSizeX):
-                testTile[0] = MapSizeX-1
-            if(testTile[1]>=MapSizeY):
-                testTile[1] = MapSizeY-1
-            if(testTile[0]<0):
-                testTile[0] = 0
-            if(testTile[1]<0):
-                testTile[1] = 0
+#             if(testTile[0]>=MapSizeX):
+#                 testTile[0] = MapSizeX-1
+#             if(testTile[1]>=MapSizeY):
+#                 testTile[1] = MapSizeY-1
+#             if(testTile[0]<0):
+#                 testTile[0] = 0
+#             if(testTile[1]<0):
+#                 testTile[1] = 0
 
-            #move direction
-            movecoord = 0
-            if(ghost.move_dir == UP): movecoord = [testTile[0], testTile[1]-1]
-            if(ghost.move_dir == DOWN): movecoord = [testTile[0], testTile[1]+1]
-            if(ghost.move_dir == LEFT): movecoord = [testTile[0]-1, testTile[1]]
-            if(ghost.move_dir == RIGHT): movecoord = [testTile[0]+1, testTile[1]]
-            if(movecoord[0]>=0 and movecoord[0]<MapSizeX and movecoord[1]>=0 and movecoord[1]<MapSizeY and fullGrid[movecoord[0],movecoord[1]]!=wallValue):
-                fullGrid[movecoord[0],movecoord[1]] = ghostMoveValue
-                if(ghost.blue): fullGrid[movecoord[0],movecoord[1]] = blueGhostMoveValue
+#             #move direction
+#             movecoord = 0
+#             if(ghost.move_dir == UP): movecoord = [testTile[0], testTile[1]-1]
+#             if(ghost.move_dir == DOWN): movecoord = [testTile[0], testTile[1]+1]
+#             if(ghost.move_dir == LEFT): movecoord = [testTile[0]-1, testTile[1]]
+#             if(ghost.move_dir == RIGHT): movecoord = [testTile[0]+1, testTile[1]]
+#             if(movecoord[0]>=0 and movecoord[0]<MapSizeX and movecoord[1]>=0 and movecoord[1]<MapSizeY and fullGrid[movecoord[0],movecoord[1]]!=wallValue):
+#                 fullGrid[movecoord[0],movecoord[1]] = ghostMoveValue
+#                 if(ghost.blue): fullGrid[movecoord[0],movecoord[1]] = blueGhostMoveValue
 
-            fullGrid[testTile[0], testTile[1]] = ghostvalue
-            if(ghost.blue): fullGrid[testTile[0], testTile[1]] = blueghostvalue
+#             fullGrid[testTile[0], testTile[1]] = ghostvalue
+#             if(ghost.blue): fullGrid[testTile[0], testTile[1]] = blueghostvalue
 
-     #populate the inputs array with the local camera
-    for x in range(cameraSizex):
-        if((not wrapAround) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
-        offset = 0 #wrap screen effect horizontally to account for teleporters
-        while(cameraMin[0]+x+offset<0): offset+=MapSizeX
-        while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
-        for y in range(cameraSizey):
-            if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
-                if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == ghostMoveValue or value == blueGhostMoveValue)): 
-                    inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
-                elif(seperateGhostCam and value == wallValue):
-                    inputs[gridToArray(x, y, cameraSizex)] = value
-                    inputs[cameraSizex*cameraSizey+gridToArray(x, y, cameraSizex)] = value
-                else:
-                    inputs[gridToArray(x, y, cameraSizex)] = value
+#      #populate the inputs array with the local camera
+#     for x in range(cameraSizex):
+#         if((not wrapAround) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
+#         offset = 0 #wrap screen effect horizontally to account for teleporters
+#         while(cameraMin[0]+x+offset<0): offset+=MapSizeX
+#         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
+#         for y in range(cameraSizey):
+#             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
+#                 value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+#                 if(seperateGhostCam and (value == ghostvalue or value == blueghostvalue or value == ghostMoveValue or value == blueGhostMoveValue)): 
+#                     inputs[cameraSizex*cameraSizey+ gridToArray(x, y, cameraSizex)] = value
+#                 elif(seperateGhostCam and value == wallValue):
+#                     inputs[gridToArray(x, y, cameraSizex)] = value
+#                     inputs[cameraSizex*cameraSizey+gridToArray(x, y, cameraSizex)] = value
+#                 else:
+#                     inputs[gridToArray(x, y, cameraSizex)] = value
 
-    # #prints camera
-    # tiles = list(inputs)
-    # temp = [(tiles[i:i+cameraSizex]) for i in range(0, len(tiles), cameraSizex)]
-    # for tempRow in temp:
-    #                 print(tempRow)
-    # print("\n\n\n\n\n\n\n")
+#     # #prints camera
+#     # tiles = list(inputs)
+#     # temp = [(tiles[i:i+cameraSizex]) for i in range(0, len(tiles), cameraSizex)]
+#     # for tempRow in temp:
+#     #                 print(tempRow)
+#     # print("\n\n\n\n\n\n\n")
 
-    #more ghost info
-    index = cameraSizex*cameraSizey
-    if(seperateGhostCam): index = index*2
-    for ghost in ghosts.values():
-        if(turnOffGhosts): 
-            index+=6
-            continue
-        inputs[index] = ghost.blue
-        index+=1
-        inputs[index] = ghost.move_dir
-        index+=1
-        inputs[index] = (ghost.mode == "normal")
-        index+=1
-        inputs[index] = (pacman.power_time - ghost.blue_timer)
-        index+=1
-        if((pacman.x-ghost.x)!=0 and (ghost.mode == "normal")): inputs[index] = block_size/(pacman.x-ghost.x) #inverted cuz we only care about close ghosts
-        if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
-        index+=1
-        if((pacman.y-ghost.y)!=0 and (ghost.mode == "normal")): inputs[index] = block_size/(pacman.y-ghost.y)#inverted cuz we only care about close ghosts
-        if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
-        index+=1
+#     #more ghost info
+#     index = cameraSizex*cameraSizey
+#     if(seperateGhostCam): index = index*2
+#     for ghost in ghosts.values():
+#         if(turnOffGhosts): 
+#             index+=6
+#             continue
+#         inputs[index] = ghost.blue
+#         index+=1
+#         inputs[index] = ghost.move_dir
+#         index+=1
+#         inputs[index] = (ghost.mode == "normal")
+#         index+=1
+#         inputs[index] = (pacman.power_time - ghost.blue_timer)
+#         index+=1
+#         if((pacman.x-ghost.x)!=0 and (ghost.mode == "normal")): inputs[index] = block_size/(pacman.x-ghost.x) #inverted cuz we only care about close ghosts
+#         if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
+#         index+=1
+#         if((pacman.y-ghost.y)!=0 and (ghost.mode == "normal")): inputs[index] = block_size/(pacman.y-ghost.y)#inverted cuz we only care about close ghosts
+#         if(ghost.blue): inputs[index] = -inputs[index] #want to get to blue ghosts
+#         index+=1
     
-    #give distance to a nearest pellet (in case no pellets are on camera)
-    closest = 99999999
-    for pellet in pellets:
-        if pellet.here:
-            xDis = pacman.x-pellet.x
-            yDis = pacman.y-pellet.y
-            distance = abs(xDis) + abs(yDis)
-            if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
-                closest = distance
-                inputs[index] = xDis
-                inputs[index+1] = yDis
-    index+=2
+#     #give distance to a nearest pellet (in case no pellets are on camera)
+#     closest = 99999999
+#     for pellet in pellets:
+#         if pellet.here:
+#             xDis = pacman.x-pellet.x
+#             yDis = pacman.y-pellet.y
+#             distance = abs(xDis) + abs(yDis)
+#             if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
+#                 closest = distance
+#                 inputs[index] = xDis
+#                 inputs[index+1] = yDis
+#     index+=2
 
-    #give ditance to nearest power pellet
-    closest = 99999999
-    for pellet in power_pellets:
-        if pellet.here:
-            xDis = pacman.x-pellet.x
-            yDis = pacman.y-pellet.y
-            distance = abs(xDis) + abs(yDis)
-            if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
-                closest = distance
-                inputs[index] = xDis
-                inputs[index+1] = yDis
-    index+=2
+#     #give ditance to nearest power pellet
+#     closest = 99999999
+#     for pellet in power_pellets:
+#         if pellet.here:
+#             xDis = pacman.x-pellet.x
+#             yDis = pacman.y-pellet.y
+#             distance = abs(xDis) + abs(yDis)
+#             if(distance < closest): #no need for pythagoras cuz pacman can't move diagonally
+#                 closest = distance
+#                 inputs[index] = xDis
+#                 inputs[index+1] = yDis
+#     index+=2
     
-    #move direction
-    inputs[index+pacman.move_dir] = 1
-    index+=4
+#     #move direction
+#     inputs[index+pacman.move_dir] = 1
+#     index+=4
 
-    #more info about pacman
-    inputs[index] = pacman.powered_up
-    index+=1
-    inputs[index] = (pacman.power_time - pacman.timer)
-    index+=1
-    inputs[index] = (pacman.lives)
-    index+=1
-    inputs[index] = (pacman.x)/block_size
-    index+=1
-    inputs[index] = (pacman.y)/block_size
-    index+=1
-    if(fruit.here):
-        inputs[index] = (pacman.y-fruit.y)/block_size
-        index+=1
-        inputs[index] = (pacman.x-fruit.x)/block_size
-    else:
-        inputs[index] = 0
-        index+=1
-        inputs[index] = 0
-    index+=1
-    inputs[index] = fruit.here
-    index+=1
+#     #more info about pacman
+#     inputs[index] = pacman.powered_up
+#     index+=1
+#     inputs[index] = (pacman.power_time - pacman.timer)
+#     index+=1
+#     inputs[index] = (pacman.lives)
+#     index+=1
+#     inputs[index] = (pacman.x)/block_size
+#     index+=1
+#     inputs[index] = (pacman.y)/block_size
+#     index+=1
+#     if(fruit.here):
+#         inputs[index] = (pacman.y-fruit.y)/block_size
+#         index+=1
+#         inputs[index] = (pacman.x-fruit.x)/block_size
+#     else:
+#         inputs[index] = 0
+#         index+=1
+#         inputs[index] = 0
+#     index+=1
+#     inputs[index] = fruit.here
+#     index+=1
 
-    #valid moves
-    posX = truePos[0]+1
-    posY = truePos[1]+1
-    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
-        inputs[index] = (fullGrid[posX,posY] == -1)
-    else:
-        inputs[index] = False
-    index+=1
+#     #valid moves
+#     posX = truePos[0]+1
+#     posY = truePos[1]+1
+#     if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+#         inputs[index] = (fullGrid[posX,posY] == -1)
+#     else:
+#         inputs[index] = False
+#     index+=1
     
-    posX = truePos[0]-1
-    posY = truePos[1]+1
-    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
-        inputs[index] = (fullGrid[posX,posY] == -1)
-    else:
-        inputs[index] = False
-    index+=1
+#     posX = truePos[0]-1
+#     posY = truePos[1]+1
+#     if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+#         inputs[index] = (fullGrid[posX,posY] == -1)
+#     else:
+#         inputs[index] = False
+#     index+=1
 
-    posX = truePos[0]+1
-    posY = truePos[1]-1
-    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
-        inputs[index] = (fullGrid[posX,posY] == -1)
-    else:
-        inputs[index] = False
-    index+=1
+#     posX = truePos[0]+1
+#     posY = truePos[1]-1
+#     if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+#         inputs[index] = (fullGrid[posX,posY] == -1)
+#     else:
+#         inputs[index] = False
+#     index+=1
 
-    posX = truePos[0]-1
-    posY = truePos[1]-1
-    if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
-        inputs[index] = (fullGrid[posX,posY] == -1)
-    else:
-        inputs[index] = False
-    index+=1
+#     posX = truePos[0]-1
+#     posY = truePos[1]-1
+#     if(posX>=0 and posX<MapSizeX and posY>=0 and posY<MapSizeY):
+#         inputs[index] = (fullGrid[posX,posY] == -1)
+#     else:
+#         inputs[index] = False
+#     index+=1
 
-    return inputs
+#     return inputs
 
 
 #Process the inputs for the nead model 
@@ -271,15 +271,24 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     cameraSize = 11 #MUST BE ODD NUMBER
     cameraRadius = int((cameraSize-1)/2)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
-
-    ghostvalue = -3 #set in multiple places in the code (avoid changing)
+    
+    ghostvalue = -3 
     blueghostvalue =4
     wallValue = -1
     pelletValue = 1
     PowerPelletValue = 3
-    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
+    ghostMoveValue = -4 
     blueGhostMoveValue = 5
     fruitValue = 2
+
+    # ghostvalue = 5 #set in multiple places in the code (avoid changing)
+    # blueghostvalue =7
+    # wallValue = 2
+    # pelletValue = 1
+    # PowerPelletValue = 3
+    # ghostMoveValue = 6 #set in multiple places in the code (avoid changing)
+    # blueGhostMoveValue = 4
+    # fruitValue = 8
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
@@ -361,9 +370,11 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
         for y in range(cameraSize):
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                value = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
-                smallCamera[x, y] = value
+                smallCamera[x, y] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
     
+    # print(smallCamera)
+    # print("\n\n\n\n\n\n\n")
+
     #rotation based on pacman's look direction
     if pacman.look_dir == RIGHT:
         smallCamera = np.rot90(smallCamera, 1)
@@ -374,12 +385,12 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     
     inputs = smallCamera.reshape(-1)
     
-    #prints camera
-    tiles = list(inputs)
-    temp = [(tiles[i:i+cameraSize]) for i in range(0, len(tiles), cameraSize)]
-    for tempRow in temp:
-                    print(tempRow)
-    print("\n\n\n\n\n\n\n")
+    # #prints camera
+    # tiles = list(inputs)
+    # temp = [(tiles[i:i+cameraSize]) for i in range(0, len(tiles), cameraSize)]
+    # for tempRow in temp:
+    #                 print(tempRow)
+    # print("\n\n\n\n\n\n\n")
     
 
     return inputs  
@@ -502,7 +513,7 @@ def betterCanMove(entity, mazeArray, direction):
     
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
-    rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    # rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
 
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0
