@@ -372,12 +372,12 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
                 smallCamera[y, x] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
     
-    #rotation based on pacman's look direction
-    if pacman.look_dir == RIGHT:
+    #rotation based on pacman's move_dir
+    if pacman.move_dir == RIGHT:
         smallCamera = np.rot90(smallCamera, 1)
-    elif pacman.look_dir == DOWN:
+    elif pacman.move_dir == DOWN:
         smallCamera = np.rot90(smallCamera, 2)
-    elif pacman.look_dir == LEFT:
+    elif pacman.move_dir == LEFT:
         smallCamera = np.rot90(smallCamera, 3)
     
     inputs = smallCamera.reshape(-1)
@@ -426,14 +426,14 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
             
             if(outputs[axis]>0):
                 if(axis == 0):
-                    nextMove = pacman.look_dir
+                    nextMove = pacman.move_dir
                 else:
-                    nextMove = pacman.look_dir + 1
+                    nextMove = pacman.move_dir + 1
             else:
                 if(axis == 0):
-                    nextMove = pacman.look_dir + 2
+                    nextMove = pacman.move_dir + 2
                 else:
-                    nextMove =  pacman.look_dir - 1
+                    nextMove =  pacman.move_dir - 1
         
     # elif(len(outputs) == 3):
     #         #interpret net output 
