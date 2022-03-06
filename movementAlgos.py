@@ -1,5 +1,6 @@
 import random
 from re import L, X
+from tkinter import Y
 from turtle import down, right
 from Maze import Maze
 from Items import *
@@ -272,23 +273,23 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     cameraRadius = int((cameraSize-1)/2)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
     
-    ghostvalue = -3 
-    blueghostvalue = 4
-    wallValue = -1
-    pelletValue = 1
-    PowerPelletValue = 3
-    ghostMoveValue = -4 
-    blueGhostMoveValue = 5
-    fruitValue = 2
-
-    # ghostvalue = 5 #set in multiple places in the code (avoid changing)
-    # blueghostvalue =7
-    # wallValue = 2
+    # ghostvalue = -3 
+    # blueghostvalue = 4
+    # wallValue = -1
     # pelletValue = 1
     # PowerPelletValue = 3
-    # ghostMoveValue = 6 #set in multiple places in the code (avoid changing)
-    # blueGhostMoveValue = 4
-    # fruitValue = 8
+    # ghostMoveValue = -4 
+    # blueGhostMoveValue = 5
+    # fruitValue = 2
+
+    ghostvalue = 5 #set in multiple places in the code (avoid changing)
+    blueghostvalue =7
+    wallValue = 2
+    pelletValue = 1
+    PowerPelletValue = 3
+    ghostMoveValue = 6 #set in multiple places in the code (avoid changing)
+    blueGhostMoveValue = 4
+    fruitValue = 8
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
@@ -362,24 +363,22 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
     smallCamera = np.zeros((cameraSize, cameraSize))
 
-     #populate the inputs array with the local camera
+    #populate the inputs array with the local camera
     for x in range(cameraSize):
-        if((not wrapAround) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
-        offset = 0 #wrap screen effect horizontally to account for teleporters
-        while(cameraMin[0]+x+offset<0): offset+=MapSizeX
-        while(cameraMin[0]+x+offset>=MapSizeX): offset-=MapSizeX
+        if((not wrapAroundX) and (cameraMin[0]+x<0 or cameraMin[0]+x>=MapSizeX)): continue
         for y in range(cameraSize):
-            if(cameraMin[1]+y>=0 and cameraMin[1]+y<MapSizeY):
-                smallCamera[y, x] = fullGrid[cameraMin[0]+x+offset,cameraMin[1]+y]
+            if((not wrapAroundY) and (cameraMin[1]+y<0 or cameraMin[1]+y>=MapSizeY)): continue
+            smallCamera[y, x] = fullGrid[(cameraMin[0]+x)%MapSizeX,(cameraMin[1]+y)%MapSizeY]
     
     #rotation based on pacman's move_dir
-    if pacman.move_dir == RIGHT:
-        smallCamera = np.rot90(smallCamera, 1)
-    elif pacman.move_dir == DOWN:
-        smallCamera = np.rot90(smallCamera, 2)
-    elif pacman.move_dir == LEFT:
-        smallCamera = np.rot90(smallCamera, 3)
-    
+    if(rotateCamera):
+        if pacman.move_dir == RIGHT:
+            smallCamera = np.rot90(smallCamera, 1)
+        elif pacman.move_dir == DOWN:
+            smallCamera = np.rot90(smallCamera, 2)
+        elif pacman.move_dir == LEFT:
+            smallCamera = np.rot90(smallCamera, 3)
+        
     inputs = smallCamera.reshape(-1)
     
     # #prints camera
@@ -510,7 +509,7 @@ def betterCanMove(entity, mazeArray, direction):
     
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
-    # rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    #rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
 
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0
