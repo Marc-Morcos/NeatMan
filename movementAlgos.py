@@ -288,7 +288,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     wallValue = -1
     pelletValue = 1
     PowerPelletValue = 3
-    ghostMoveValue = -4 
+    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     blueGhostMoveValue = 5
     fruitValue = 2
 
@@ -412,8 +412,6 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
-
-    ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     
     #Get the inputs
     inputs,soroundings = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)

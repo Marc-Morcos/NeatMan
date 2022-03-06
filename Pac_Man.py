@@ -68,9 +68,14 @@ class Pac_Man:
         return False
 
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
+        ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
         self.penalty = 0
         originalLookDir = self.look_dir
-        self.look_dir,soroundings = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        temp = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        if(neatMode):
+            self.look_dir,soroundings = temp
+        else:
+            self.look_dir = temp
         if(abs(self.look_dir-originalLookDir) == 2):
             self.penalty+=backTrackPenalty
         step = self.step_len
@@ -94,14 +99,14 @@ class Pac_Man:
                 self.penalty += IdlePenalty
 
             # kamikazePenalty 
-            if(self.move_dir == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
-                pacman.penalty+=kamikazePenalty
-            if(self.move_dir == LEFT and soroundings[1] == ghostMoveValue and neatMode):
-                pacman.penalty+=kamikazePenalty
-            if(self.move_dir == DOWN and soroundings[2] == ghostMoveValue and neatMode):
-                pacman.penalty+=kamikazePenalty
-            if(self.move_dir == UP and soroundings[3] == ghostMoveValue and neatMode):
-                pacman.penalty+=kamikazePenalty  
+            if(neatMode and self.move_dir == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
+                self.penalty+=kamikazePenalty
+            if(neatMode and self.move_dir == LEFT and soroundings[1] == ghostMoveValue and neatMode):
+                self.penalty+=kamikazePenalty
+            if(neatMode and self.move_dir == DOWN and soroundings[2] == ghostMoveValue and neatMode):
+                self.penalty+=kamikazePenalty
+            if(neatMode and self.move_dir == UP and soroundings[3] == ghostMoveValue and neatMode):
+                self.penalty+=kamikazePenalty  
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
