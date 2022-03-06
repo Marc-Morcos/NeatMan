@@ -472,19 +472,9 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove = pacman.move_dir -1
 
 
-    nextMove = nextMove%4    
-
-    # penalty 
-    if(nextMove == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
-        pacman.penalty+=kamikazePenalty
-    if(nextMove == LEFT and soroundings[1] == ghostMoveValue and neatMode):
-        pacman.penalty+=kamikazePenalty
-    if(nextMove == DOWN and soroundings[2] == ghostMoveValue and neatMode):
-        pacman.penalty+=kamikazePenalty
-    if(nextMove == UP and soroundings[3] == ghostMoveValue and neatMode):
-        pacman.penalty+=kamikazePenalty    
+    nextMove = nextMove%4      
             
-    return nextMove
+    return nextMove,soroundings
 
 def printMaze(maze):
     for y in range(len(maze)):

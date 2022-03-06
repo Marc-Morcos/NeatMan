@@ -70,7 +70,7 @@ class Pac_Man:
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
         self.penalty = 0
         originalLookDir = self.look_dir
-        self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        self.look_dir,soroundings = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
         if(abs(self.look_dir-originalLookDir) == 2):
             self.penalty+=backTrackPenalty
         step = self.step_len
@@ -92,6 +92,16 @@ class Pac_Man:
                 self.y += step * self.COORD_DIR[self.move_dir][1]
             else:
                 self.penalty += IdlePenalty
+
+            # kamikazePenalty 
+            if(self.move_dir == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
+                pacman.penalty+=kamikazePenalty
+            if(self.move_dir == LEFT and soroundings[1] == ghostMoveValue and neatMode):
+                pacman.penalty+=kamikazePenalty
+            if(self.move_dir == DOWN and soroundings[2] == ghostMoveValue and neatMode):
+                pacman.penalty+=kamikazePenalty
+            if(self.move_dir == UP and soroundings[3] == ghostMoveValue and neatMode):
+                pacman.penalty+=kamikazePenalty  
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
