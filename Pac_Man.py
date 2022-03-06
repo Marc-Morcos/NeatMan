@@ -83,13 +83,15 @@ class Pac_Man:
             if self.look_dir != self.move_dir:
                 if maze.can_move(self, self.look_dir):
                     self.move_dir = self.look_dir
+                else:
+                    self.penalty += wallBonkPenalty
 
             # Do movement
             if maze.can_move(self, self.move_dir):
                 self.x += step * self.COORD_DIR[self.move_dir][0]
                 self.y += step * self.COORD_DIR[self.move_dir][1]
             else:
-                self.penalty = IdlePenalty
+                self.penalty += IdlePenalty
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen

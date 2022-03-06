@@ -40,6 +40,7 @@ neatLives = 2 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
+wallBonkPenalty = 0 #1/60 #penalize model from trying to walk into walls 
 
 # where we load a whole population to continue training
 # set to None to train from scratch
