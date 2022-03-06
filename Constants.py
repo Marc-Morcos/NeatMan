@@ -52,7 +52,7 @@ neatHyperparams = {"NeatNumGenerations":1700,
                   "NumGenB4MapSwitch":1,
                   "NumGenB4Checkpoint":20,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoiPopulation15x15Gen",
+                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoi15x15PopulationGen",
                   "modelName": "NeatBoi15x15Gen"
                   }
 
