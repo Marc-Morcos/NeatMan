@@ -438,9 +438,9 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     elif(len(outputs) == 3):
             #interpret net output 
             if(outputs[2]>0):
-                axis = 1
-            else:
                 axis = 0
+            else:
+                axis = 1
             
             if(outputs[axis]>0):
                 if(axis == 0):
