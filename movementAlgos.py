@@ -435,23 +435,23 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                 else:
                     nextMove =  pacman.move_dir - 1
         
-    # elif(len(outputs) == 3):
-    #         #interpret net output 
-    #         if(outputs[2]>0):
-    #             axis = 1
-    #         else:
-    #             axis = 0
+    elif(len(outputs) == 3):
+            #interpret net output 
+            if(outputs[2]>0):
+                axis = 1
+            else:
+                axis = 0
             
-    #         if(outputs[axis]>0):
-    #             if(axis == 0):
-    #                 nextMove= UP
-    #             else:
-    #                 nextMove= RIGHT
-    #         else:
-    #             if(axis == 0):
-    #                 nextMove= DOWN
-    #             else:
-    #                 nextMove= LEFT
+            if(outputs[axis]>0):
+                if(axis == 0):
+                    nextMove = pacman.move_dir
+                else:
+                    nextMove = pacman.move_dir + 1
+            else:
+                if(axis == 0):
+                    nextMove = pacman.move_dir + 2
+                else:
+                    nextMove = pacman.move_dir -1
 
 
     nextMove = nextMove%4        
