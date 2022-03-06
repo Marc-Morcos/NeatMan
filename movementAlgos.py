@@ -273,23 +273,23 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     cameraRadius = int((cameraSize-1)/2)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
     
-    # ghostvalue = -3 
-    # blueghostvalue = 4
-    # wallValue = -1
-    # pelletValue = 1
-    # PowerPelletValue = 3
-    # ghostMoveValue = -4 
-    # blueGhostMoveValue = 5
-    # fruitValue = 2
-
-    ghostvalue = 5 #set in multiple places in the code (avoid changing)
-    blueghostvalue =7
-    wallValue = 2
+    ghostvalue = -3 
+    blueghostvalue = 4
+    wallValue = -1
     pelletValue = 1
     PowerPelletValue = 3
-    ghostMoveValue = 6 #set in multiple places in the code (avoid changing)
-    blueGhostMoveValue = 4
-    fruitValue = 8
+    ghostMoveValue = -4 
+    blueGhostMoveValue = 5
+    fruitValue = 2
+
+    # ghostvalue = 5 #set in multiple places in the code (avoid changing)
+    # blueghostvalue =7
+    # wallValue = 2
+    # pelletValue = 1
+    # PowerPelletValue = 3
+    # ghostMoveValue = 6 #set in multiple places in the code (avoid changing)
+    # blueGhostMoveValue = 4
+    # fruitValue = 8
 
     #get pacman true position
     x = pacman.x-block_size/2.0 
