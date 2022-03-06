@@ -262,7 +262,17 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 #         inputs[index] = False
 #     index+=1
 
-#     return inputs
+#    soroundings = [0,0,0,0]
+#     if(truePos[0]+1 < MapSizeX): #right
+#         soroundings[0] = fullGrid[truePos[0]+1,truePos[1]]
+#     if(truePos[0]-1 >= 0): #left
+#         soroundings[1] = fullGrid[truePos[0]-1,truePos[1]]
+#     if(truePos[1]+1 < MapSizeY): #down
+#         soroundings[2] = fullGrid[truePos[0],truePos[1]+1]
+#     if(truePos[1]-1 >= 0): #up
+#         soroundings[3] = fullGrid[truePos[0],truePos[1]-1]
+
+#     return inputs, soroundings  
 
 
 #Process the inputs for the nead model 
@@ -388,8 +398,17 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     #                 print(tempRow)
     # print("\n\n\n\n\n\n\n")
     
+    soroundings = [0,0,0,0]
+    if(truePos[0]+1 < MapSizeX): #right
+        soroundings[0] = fullGrid[truePos[0]+1,truePos[1]]
+    if(truePos[0]-1 >= 0): #left
+        soroundings[1] = fullGrid[truePos[0]-1,truePos[1]]
+    if(truePos[1]+1 < MapSizeY): #down
+        soroundings[2] = fullGrid[truePos[0],truePos[1]+1]
+    if(truePos[1]-1 >= 0): #up
+        soroundings[3] = fullGrid[truePos[0],truePos[1]-1]
 
-    return inputs  
+    return inputs, soroundings  
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
@@ -397,7 +416,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
     
     #Get the inputs
-    inputs = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
+    inputs,soroundings = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
 
     #pass inputs into the neural network
     outputs = pacman.net.activate(inputs)
@@ -453,7 +472,17 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove = pacman.move_dir -1
 
 
-    nextMove = nextMove%4        
+    nextMove = nextMove%4    
+
+    # penalty 
+    if(nextMove == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
+        pacman.penalty+=sabotagePenalty
+    if(nextMove == LEFT and soroundings[1] == ghostMoveValue and neatMode):
+        pacman.penalty+=sabotagePenalty
+    if(nextMove == DOWN and soroundings[2] == ghostMoveValue and neatMode):
+        pacman.penalty+=sabotagePenalty
+    if(nextMove == UP and soroundings[3] == ghostMoveValue and neatMode):
+        pacman.penalty+=sabotagePenalty    
             
     return nextMove
 

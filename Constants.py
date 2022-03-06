@@ -35,12 +35,13 @@ evaluateModelMode = False #runs the selected model for a select number of games 
 numberOfTests = 30 #number of games to evaluate on
 IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 wrapAroundX = True #whether camera view screen should wrap around in the x axis
-wrapAroundY = True #whether camera view screen should wrap around in the y axis
+wrapAroundY = False #whether camera view screen should wrap around in the y axis
 neatLives = 2 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
-wallBonkPenalty = 0 #1/60 #penalize model from trying to walk into walls 
+wallBonkPenalty = 0 #1/60 #penalize model from trying to walk into walls
+kamikazePenalty = 0 #15 #penalize ghost for running into ghost that is also going towards it (the model should litterally never do this) 
 
 # where we load a whole population to continue training
 # set to None to train from scratch
