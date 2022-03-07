@@ -89,8 +89,8 @@ class Pac_Man:
                 else:
                     self.penalty += wallBonkPenalty
 
-        if(abs(self.move_dir-originalMoveDir) == 2):
-            self.penalty+=backTrackPenalty
+            if(abs(self.move_dir-originalMoveDir) == 2):
+                self.penalty+=backTrackPenalty
 
             # Do movement
             if maze.can_move(self, self.move_dir):
