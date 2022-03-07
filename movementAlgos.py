@@ -426,6 +426,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     # interpret net output 
     if(len(outputs) == 1):
+        if(not oneOutput): print("Turn on 1 output")
         if(outputs[0] == 0):
                     nextMove = pacman.look_dir
         else:
