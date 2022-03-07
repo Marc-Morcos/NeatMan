@@ -373,7 +373,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     smallCamera = np.zeros((cameraSize, cameraSize))
 
     if(wacky2Output or oneOutput):
-        fullGrid[truePos[0],truePos[1]] = (pacman.move_dir - pacman.look_dir)%4-2
+        fullGrid[truePos[0],truePos[1]] = (((pacman.look_dir-pacman.move_dir)%4) == 1)
 
     #populate the inputs array with the local camera
     for x in range(cameraSize):
@@ -437,12 +437,16 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     elif(wacky2Output):
         if(len(outputs)!=2): print("wacky2Outputs on but not 2 outputs")
         if(outputs[0]>0):
-            nextMove = pacman.move_dir #yes I know these don't match, im trying something
+            nextMove = pacman.move_dir 
         else:
             if(outputs[1] >= 0):
-                    nextMove = pacman.look_dir - 1
+                    nextMove = pacman.move_dir - 1
             else:
+                if ((pacman.look_dir-pacman.move_dir)%4) == 1:
                     nextMove = pacman.look_dir + 1
+                else:
+                    nextMove = pacman.move_dir + 1
+
 
     elif(len(outputs) == 2):
             #interpret net output 
