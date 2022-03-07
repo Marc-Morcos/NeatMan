@@ -52,6 +52,7 @@ class Main:
         self.num_fruit = 0
         self.running = True
         self.coinFlip = (random.choice([0,1]) == 1)
+        self.manuallySave = False #keep this false
 
         self.game_state = "run"
         self.level = 0
@@ -73,6 +74,7 @@ class Main:
                 if event.key == pygame.K_EQUALS and neatMode:
                     player.lives = -1
                     self.game_state = "lose"
+                    self.player.manuallySave = True
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()

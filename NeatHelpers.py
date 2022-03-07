@@ -52,6 +52,11 @@ def eval_Pacman(genomes, config, main = None):
     if (main.current_generation % neatHyperparams["NumGenB4Checkpoint"] == 0):
         saveModel(maxScoreGenes,main.current_generation,config)
 
+    #manually save
+    if(main.manuallySave):
+        main.manuallySave = False
+        saveModel(maxScoreGenes,main.current_generation,config,modifier = "MANUALLYSAVED")
+
     
     #generate a new map and reset for next generation
     main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0), coinFlip = True)
