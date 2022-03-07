@@ -382,7 +382,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             if((not wrapAroundY) and (cameraMin[1]+y<0 or cameraMin[1]+y>=MapSizeY)): continue
             smallCamera[y, x] = fullGrid[(cameraMin[0]+x)%MapSizeX,(cameraMin[1]+y)%MapSizeY]
     
-    rotateDir = ghost.move_dir
+    rotateDir = pacman.move_dir
     if(rotateCamera):
         if rotateDir == RIGHT:
             smallCamera = np.rot90(smallCamera, 1)
