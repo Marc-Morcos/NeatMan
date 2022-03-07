@@ -109,13 +109,13 @@ class Pac_Man:
                 self.penalty+=kamikazePenalty  
 
             #not dumb reward
-            if(neatMode and self.move_dir == RIGHT and soroundings[0] >= 0  and neatMode):
+            if(neatMode and self.look_dir == RIGHT and soroundings[0] >= 0  and neatMode):
                 self.penalty-=notDumbReward
-            elif(neatMode and self.move_dir == LEFT and soroundings[1] >= 0 and neatMode):
+            elif(neatMode and self.look_dir == LEFT and soroundings[1] >= 0 and neatMode):
                 self.penalty-=notDumbReward
-            elif(neatMode and self.move_dir == DOWN and soroundings[2] >= 0 and neatMode):
+            elif(neatMode and self.look_dir == DOWN and soroundings[2] >= 0 and neatMode):
                 self.penalty-=notDumbReward
-            elif(neatMode and self.move_dir == UP and soroundings[3] >= 0 and neatMode):
+            elif(neatMode and self.look_dir == UP and soroundings[3] >= 0 and neatMode):
                 self.penalty-=notDumbReward  
                 
 
