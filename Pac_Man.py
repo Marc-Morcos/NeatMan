@@ -70,18 +70,16 @@ class Pac_Man:
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
         ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
         self.penalty = 0
-        originalLookDir = self.look_dir
         temp = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
         if(neatMode or neatLoadMode):
             self.look_dir,soroundings = temp
         else:
             self.look_dir = temp
-        if(abs(self.look_dir-originalLookDir) == 2):
-            self.penalty+=backTrackPenalty
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
 
+        originalMoveDir = self.move_dir
         # Can only change direction within the bounds of the maze
         if block_size < self.x < display_width - block_size:
             # Change movement direction to match look direction if possible
@@ -90,6 +88,9 @@ class Pac_Man:
                     self.move_dir = self.look_dir
                 else:
                     self.penalty += wallBonkPenalty
+
+        if(abs(self.move_dir-originalMoveDir) == 2):
+            self.penalty+=backTrackPenalty
 
             # Do movement
             if maze.can_move(self, self.move_dir):
