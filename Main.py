@@ -74,7 +74,7 @@ class Main:
                 if event.key == pygame.K_EQUALS and neatMode:
                     player.lives = -1
                     self.game_state = "lose"
-                    self.player.manuallySave = True
+                    self.manuallySave = True
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
