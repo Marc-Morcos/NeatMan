@@ -425,15 +425,12 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     nextMove = 0
     
     # interpret net output 
-    if(len(outputs) == 1):
-        if(not oneOutput): print("Turn on 1 output")
+    if(oneOutput):
+        if(len(outputs)!=1): print("oneOutput on but not 1 output")
         if(outputs[0] >= 0):
                     nextMove = pacman.move_dir #yes I know these don't match, im trying something
         else:
                     nextMove = pacman.look_dir + 1
-    
-    elif(oneOutput):
-        print("turn off 1 output")
     
     elif(wacky2Output):
         if(len(outputs)!=2): print("wacky2Outputs on but not 2 outputs")
