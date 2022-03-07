@@ -372,8 +372,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
     smallCamera = np.zeros((cameraSize, cameraSize))
 
-    if(wacky2Output or oneOutput):
-        fullGrid[truePos[0],truePos[1]] = (((pacman.look_dir-pacman.move_dir)%4) == 1)
+    fullGrid[truePos[0],truePos[1]] = pacman.framesNotMoving
 
     #populate the inputs array with the local camera
     for x in range(cameraSize):

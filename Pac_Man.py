@@ -43,6 +43,7 @@ class Pac_Man:
         
         #used for neatmode
         self.penalty = 0
+        self.framesNotMoving = 0
         
         # Neural network
         self.net = None
@@ -96,8 +97,10 @@ class Pac_Man:
             if maze.can_move(self, self.move_dir):
                 self.x += step * self.COORD_DIR[self.move_dir][0]
                 self.y += step * self.COORD_DIR[self.move_dir][1]
+                self.framesNotMoving = 0
             else:
                 self.penalty += IdlePenalty
+                self.framesNotMoving +=1
 
             # kamikazePenalty 
             if(neatMode and self.move_dir == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
