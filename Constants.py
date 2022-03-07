@@ -56,7 +56,7 @@ LoadTrainingCheckpointGenerationNum = 299 #if LoadTrainingCheckpointPath is not 
 neatConfigPath = "neatConfig.text"
 
 #hyperparameters (more hyperparams in config.text)
-neatHyperparams = {"NeatNumGenerations":None, #if none, it will go until you stop it 
+neatHyperparams = {"NeatNumGenerations":99999999, 
                   "NumGenB4MapSwitch":5,
                   "NumGenB4Checkpoint":10,
                   "SecondsB4Checkpoint":3000,
