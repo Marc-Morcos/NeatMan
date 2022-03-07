@@ -437,7 +437,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     elif(wacky2Output):
         if(len(outputs)!=2): print("wacky2Outputs on but not 2 outputs")
         if(outputs[0]>0):
-            nextMove = pacman.move_dir
+            nextMove = pacman.move_dir #yes I know these don't match, im trying something
         else:
             if(outputs[1] >= 0):
                     nextMove = pacman.look_dir - 1
