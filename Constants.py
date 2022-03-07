@@ -45,6 +45,7 @@ kamikazePenalty = 0 #15 #penalize ghost for running into ghost that is also goin
 notDumbReward = 0#10/60 #reward applied when a nonegative (according to cammera) move is picked (lookdir*movedir), multiplied by (the value on camera++0.2)
 oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
+antiRacetrack = False #add walls to prevent spinning around ghost house
 
 # where we load a whole population to continue training
 # set to None to train from scratch

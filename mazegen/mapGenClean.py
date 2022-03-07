@@ -34,6 +34,9 @@ def createMap(mapArray):
     tiles[tilesLoc(13,11)] ='|'
     tiles[tilesLoc(13,16)] = '|'
     tiles[tilesLoc(13,12)] ='|'
+    if(antiRacetrack and neatMode):
+        tiles[tilesLoc(12,9)] = '|'
+        tiles[tilesLoc(12,18)] = '|'
 
     #convert to readable format
     for row in range(MapSizeY):
