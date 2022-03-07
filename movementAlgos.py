@@ -274,7 +274,6 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #     return inputs, soroundings  
 
-
 #Process the inputs for the nead model 
 #this gives the input a grid, 
 # with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 0)
@@ -470,7 +469,6 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                     nextMove = pacman.move_dir + 2
                 else:
                     nextMove = pacman.move_dir -1
-
 
     nextMove = nextMove%4      
             
@@ -748,6 +746,7 @@ def pathFind_to_target(pac_man, maze, ghosts, pellets, power_pellets, fruit):
         if(nextTile[0]<pac_manX): return LEFT
         if(nextTile[1]>pac_manY): return DOWN
         if(nextTile[1]<pac_manY): return UP
+
 
 
 
