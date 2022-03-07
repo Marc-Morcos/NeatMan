@@ -108,15 +108,15 @@ class Pac_Man:
             elif(neatMode and self.move_dir == UP and soroundings[3] == ghostMoveValue and neatMode):
                 self.penalty+=kamikazePenalty  
 
-            #not dumb reward
+             #not dumb reward
             if(neatMode and self.look_dir == RIGHT and soroundings[0] >= 0  and neatMode):
-                self.penalty-=notDumbReward
+                self.penalty-=notDumbReward*(soroundings[0]+1)
             elif(neatMode and self.look_dir == LEFT and soroundings[1] >= 0 and neatMode):
-                self.penalty-=notDumbReward
+                self.penalty-=notDumbReward*(soroundings[0]+1)
             elif(neatMode and self.look_dir == DOWN and soroundings[2] >= 0 and neatMode):
-                self.penalty-=notDumbReward
+                self.penalty-=notDumbReward*(soroundings[0]+1)
             elif(neatMode and self.look_dir == UP and soroundings[3] >= 0 and neatMode):
-                self.penalty-=notDumbReward  
+                self.penalty-=notDumbReward*(soroundings[0]+1)
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
