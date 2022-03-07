@@ -43,6 +43,7 @@ rotateCamera = True #rotates the camera so that the 'top' of the camera is the d
 wallBonkPenalty = 0 #1/60 #penalize model from trying to walk into walls
 kamikazePenalty = 0 #15 #penalize ghost for running into ghost that is also going towards it (the model should litterally never do this) 
 notDumbReward = 0#10/60 #reward applied when a nonegative (according to cammera) move is picked (lookdir*movedir), multiplied by (the value on camera++0.2)
+oneOutput = False #turn this on if you want to use the 1 output scheme
 
 # where we load a whole population to continue training
 # set to None to train from scratch

@@ -380,13 +380,17 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             if((not wrapAroundY) and (cameraMin[1]+y<0 or cameraMin[1]+y>=MapSizeY)): continue
             smallCamera[y, x] = fullGrid[(cameraMin[0]+x)%MapSizeX,(cameraMin[1]+y)%MapSizeY]
     
-    #rotation based on pacman's move_dir
+    #rotation based on pacman
+    if(oneOutput):
+                rotateDir = ghost.look_dir
+    else:
+                rotateDir = ghost.move_dir
     if(rotateCamera):
-        if pacman.move_dir == RIGHT:
+        if rotateDir == RIGHT:
             smallCamera = np.rot90(smallCamera, 1)
-        elif pacman.move_dir == DOWN:
+        elif rotateDir == DOWN:
             smallCamera = np.rot90(smallCamera, 2)
-        elif pacman.move_dir == LEFT:
+        elif rotateDir == LEFT:
             smallCamera = np.rot90(smallCamera, 3)
         
     inputs = smallCamera.reshape(-1)
@@ -421,19 +425,17 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     nextMove = 0
     
-    #interpret net output 
-    # if(len(outputs) == 4):
-    #     max = outputs[0]
-    #     max_ids = [0]
-    #     for output_id in range(1,len(outputs)):
-    #         if outputs[output_id] > max:
-    #             max = outputs[output_id]
-    #             max_ids = [output_id]
-    #         elif outputs[output_id] == max:
-    #             max_ids.append(output_id)
-    #     nextMove = random.choice(max_ids) 
+    # interpret net output 
+    if(len(outputs) == 1):
+        if(outputs[0] == 0):
+                    nextMove = pacman.look_dir
+        else:
+                    nextMove = pacman.look_dir + 1
+    
+    elif(oneOutput):
+        print("turn off 1 output")
 
-    if(len(outputs) == 2):
+    elif(len(outputs) == 2):
             #interpret net output 
             if(abs(outputs[0]) > abs(outputs[1])):
                 axis = 0
