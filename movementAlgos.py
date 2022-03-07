@@ -427,7 +427,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     if(len(outputs) == 1):
         if(not oneOutput): print("Turn on 1 output")
         if(outputs[0] >= 0):
-                    nextMove = pacman.look_dir
+                    nextMove = pacman.move_dir - 1 #yes I know these don't match, im trying something
         else:
                     nextMove = pacman.look_dir + 1
     
