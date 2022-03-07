@@ -70,6 +70,9 @@ class Main:
                 if event.key == pygame.K_COMMA:
                     printMaze(self.maze.maze_array)
                     print("pac_man_x: {} pac_man_y: {}".format(self.player.x, self.player.y))
+                if event.key == pygame.K_EQUALS:
+                    player.lives = -1
+                    self.game_state = "lose"
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
