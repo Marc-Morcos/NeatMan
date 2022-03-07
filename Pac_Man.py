@@ -72,7 +72,7 @@ class Pac_Man:
         self.penalty = 0
         originalLookDir = self.look_dir
         temp = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
-        if(neatMode):
+        if(neatMode or neatLoadMode):
             self.look_dir,soroundings = temp
         else:
             self.look_dir = temp
