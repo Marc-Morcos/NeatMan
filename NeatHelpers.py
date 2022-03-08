@@ -5,6 +5,7 @@ from functools import partial
 import neat
 from Constants import *
 import os
+import multiprocessing
 import pickle
 
 #saves a specific model
@@ -36,32 +37,11 @@ def loadModel(name):
 
 
 #run a generation of pacmen
-def eval_Pacman(genomes, config, main = None):
-
-    maxScore = 0
-    maxScoreGenes = -1
-    for genome_id, genome in genomes:
-        main.player.net = neat.nn.FeedForwardNetwork.create(genome, config)
-        genome.fitness = main.game_loop()
-        main.reset(hard = True, newMap = False) #reset for next pac in generation
-        if genome.fitness>maxScore:
-            maxScore=genome.fitness
-            maxScoreGenes = genome
-    
-    #save the best model
-    if (main.current_generation % neatHyperparams["NumGenB4Checkpoint"] == 0):
-        saveModel(maxScoreGenes,main.current_generation,config)
-
-    #manually save
-    if(main.manuallySave):
-        main.manuallySave = False
-        saveModel(maxScoreGenes,main.current_generation,config,modifier = "MANUALLYSAVED")
-
-    
-    #generate a new map and reset for next generation
-    main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0), coinFlip = True)
-    main.current_generation += 1
-
+def eval_Pacman(genome, config, MainClass = None):
+    main = MainClass()
+    main.run()
+    main.player.net = neat.nn.FeedForwardNetwork.create(genome, config)
+    genome.fitness = main.game_loop()
     return
 
 #initializes neat stuff
@@ -86,9 +66,10 @@ def neatInit(main):
     population.add_reporter(neat.Checkpointer(neatHyperparams["NumGenB4Checkpoint"], neatHyperparams["SecondsB4Checkpoint"], neatHyperparams["PopulationCheckpointName"]))
 
     #we want to pass extra stuff into eval_pacman
-    newLoop = partial(eval_Pacman,main=main)
-
-    winner = population.run(newLoop, neatHyperparams["NeatNumGenerations"])
+    newLoop = partial(eval_Pacman,MainClass=main)
+    
+    pe = neat.ParallelEvaluator(multiprocessing.cpu_count(), newLoop)
+    winner = population.run(pe.evaluate, neatHyperparams["NeatNumGenerations"])
 
     # Display the winning genome.
     print('\nBest genome:\n{!s}'.format(winner))

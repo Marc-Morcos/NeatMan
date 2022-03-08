@@ -348,13 +348,12 @@ class Main:
         #the gameloop is elsewhere for neat
         if (not neatMode and not evaluateModelMode): self.game_loop()
 
-        #initialize neat stuff
-        if neatMode: neatInit(self) 
-
         #initialize eval mode
         if evaluateModelMode: evaluateModelInit(self) 
 
 
 if __name__ == "__main__":
     main = Main()
-    main.run()
+    #initialize neat stuff
+    if neatMode: neatInit(Main) 
+    else: main.run()
