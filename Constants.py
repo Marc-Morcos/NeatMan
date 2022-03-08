@@ -21,6 +21,11 @@ MapSizeX = 28
 MapSizeY = 31
 scaling_factor = 0.7 #factor by which we scale dimensions of game window
 
+#eval
+evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
+numberOfTests = 30 #number of games to evaluate on
+
+
 #Quick Toggles
 neatMode = False #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
@@ -31,8 +36,6 @@ neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be 
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
-evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
-numberOfTests = 30 #number of games to evaluate on
 IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 wrapAroundX = True #whether camera view screen should wrap around in the x axis
 wrapAroundY = False #whether camera view screen should wrap around in the y axis
@@ -82,3 +85,7 @@ UP = 3
 #Don't touch
 if(not neatMode):
     clearMapBonus = 0
+if(neatMode):
+    evaluateModelMode = False
+    neatLoadMode = False
+    fastMode = True

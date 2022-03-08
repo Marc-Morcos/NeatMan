@@ -17,8 +17,6 @@ pacmanController = humanPlayer #  #options: dummy, humanPlayer, neat, avoid_ghos
 
 if(neatMode): 
     pacmanController = modelNeat
-    neatLoadMode = False #can't load and train at the same time
-    fastMode = True
 
 if(neatLoadMode):
     pacmanController = modelNeat
