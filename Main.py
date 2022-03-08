@@ -123,11 +123,11 @@ class Main:
             for pellet in self.pellets:
                 if pellet.collide(self.player):
                     self.collected_pellets += 1
-                    self.score += pellet_score
+                    self.score += pellet_score*(1+self.collected_pellets*clearMapBonus/251)
 
             for power_pellet in self.power_pellets:
                 if power_pellet.collide(self.player):
-                    self.score += power_pellet_score
+                    self.score += power_pellet_score*(1+self.collected_pellets*clearMapBonus/251)
                     self.player.power_up(8 * 60)
 
             for ghost in self.ghosts.values():
@@ -135,7 +135,7 @@ class Main:
                 if ghost.collide(self.player):
                     if ghost.blue and ghost.mode != "dead":
                         ghost.mode = "dead"
-                        self.score += ghost_scores[self.player.ghosts_eaten]
+                        self.score += ghost_scores[self.player.ghosts_eaten]*(1+self.collected_pellets*clearMapBonus/251)
                         self.player.ghosts_eaten +=1
                     else:
                         if self.player.lives > 0:
@@ -160,7 +160,7 @@ class Main:
                 self.fruit.here = True
                 self.num_fruit += 1
 
-            self.score += self.fruit.collide(self.player)
+            self.score += self.fruit.collide(self.player)*(1+self.collected_pellets*clearMapBonus/251)
 
             if self.score - self.last_life_score >= life_points:
                 self.player.lives += 1

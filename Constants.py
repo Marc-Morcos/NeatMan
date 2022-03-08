@@ -46,6 +46,7 @@ notDumbReward = 0#10/60 #reward applied when a nonegative (according to cammera)
 oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
+clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 
 # where we load a whole population to continue training
 # set to None to train from scratch
@@ -70,3 +71,14 @@ DOWN = 1
 LEFT = 2
 UP = 3
 
+
+
+
+
+
+
+
+
+#Don't touch
+if(not neatMode):
+    clearMapBonus = 0
