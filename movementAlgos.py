@@ -276,9 +276,9 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
 #Process the inputs for the nead model 
 #this gives the input a grid, 
-# with pacman in the center (SET inputs IN neatConfig to camera size(*2 if seperateGhostCam) + 0)
+# with pacman in the center (SET inputs IN neatConfig to camera size squared + 16)
 def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    cameraSize = 3 #MUST BE ODD NUMBER
+    cameraSize = 5 #MUST BE ODD NUMBER
     cameraRadius = int((cameraSize-1)/2)
     fullGrid = np.zeros((MapSizeX, MapSizeY))
     
@@ -380,19 +380,119 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         for y in range(cameraSize):
             if((not wrapAroundY) and (cameraMin[1]+y<0 or cameraMin[1]+y>=MapSizeY)): continue
             smallCamera[y, x] = fullGrid[(cameraMin[0]+x)%MapSizeX,(cameraMin[1]+y)%MapSizeY]
+
+    #sensing
+    closeGhosts = np.array([[28,28],[28,28]])
+    for ghost in ghosts.values():
+        if(turnOffGhosts or ghost.blue or ghost.mode != "normal"): continue
+        x = ghost.x-block_size/2.0 #get the top left corner
+        y = ghost.y-block_size/2.0
+        testTile = [int(x/block_size),  int(y/block_size)]
+        distx = testTile[0]-truePos[0]
+        disty = testTile[1]-truePos[1]
+        totalDist = abs(distx)+abs(disty)
+        if(disty<0 and totalDist<closeGhosts[0,0]):
+            closeGhosts[0,0] = totalDist
+        if(disty>0 and totalDist<closeGhosts[1,1]):
+            closeGhosts[1,1] = totalDist
+        if(distx<0 and totalDist<closeGhosts[1,0]):
+            closeGhosts[1,0] =totalDist
+        if(distx>0 and totalDist<closeGhosts[0,1]):
+            closeGhosts[0,1] = totalDist
+
+    closeBlueGhosts = np.array([[28,28],[28,28]])
+    for ghost in ghosts.values():
+        if(turnOffGhosts or (not ghost.blue) or ghost.mode != "normal"): continue
+        x = ghost.x-block_size/2.0 #get the top left corner
+        y = ghost.y-block_size/2.0
+        testTile = [int(x/block_size),  int(y/block_size)]
+        distx = testTile[0]-truePos[0]
+        disty = testTile[1]-truePos[1]
+        totalDist = abs(distx)+abs(disty)
+        if(disty<0 and totalDist<closeBlueGhosts[0,0]):
+            closeBlueGhosts[0,0] = totalDist
+        if(disty>0 and totalDist<closeBlueGhosts[1,1]):
+            closeBlueGhosts[1,1] = totalDist
+        if(distx<0 and totalDist<closeBlueGhosts[1,0]):
+            closeBlueGhosts[1,0] = totalDist
+        if(distx>0 and totalDist<closeBlueGhosts[0,1]):
+            closeBlueGhosts[0,1] = totalDist
+
+    #add fruit to blue ghosts
+    if fruit.here:
+        distx = fruit.array_coord[0]-truePos[0]
+        disty = fruit.array_coord[1]-truePos[1]
+        totalDist = abs(distx)+abs(disty)
+        if(disty<0 and totalDist<closeBlueGhosts[0,0]):
+            closeBlueGhosts[0,0] = totalDist
+        if(disty>0 and totalDist<closeBlueGhosts[1,1]):
+            closeBlueGhosts[1,1] = totalDist
+        if(distx<0 and totalDist<closeBlueGhosts[1,0]):
+            closeBlueGhosts[1,0] = totalDist
+        if(distx>0 and totalDist<closeBlueGhosts[0,1]):
+            closeBlueGhosts[0,1] = totalDist
+
+    closePellets = np.array([[28,28],[28,28]])
+    for pellet in pellets:
+        if not pellet.here: continue
+        distx = pellet.array_coord[0]-truePos[0]
+        disty = pellet.array_coord[1]-truePos[1]
+        totalDist = abs(distx)+abs(disty)
+        if(disty<0 and totalDist<closePellets[0,0]):
+            closePellets[0,0] =totalDist
+        if(disty>0 and totalDist<closePellets[1,1]):
+            closePellets[1,1] =totalDist
+        if(distx<0 and totalDist<closePellets[1,0]):
+            closePellets[1,0] = totalDist
+        if(distx>0 and totalDist<closePellets[0,1]):
+            closePellets[0,1] = totalDist
+
+    closePowerPellets = np.array([[28,28],[28,28]])
+    for powerPellet in power_pellets:
+        if not powerPellet.here: continue
+        distx = powerPellet.array_coord[0]-truePos[0]
+        disty = powerPellet.array_coord[1]-truePos[1]
+        totalDist = abs(distx)+abs(disty)
+        if(disty<0 and totalDist<closePowerPellets[0,0]):
+            closePowerPellets[0,0] = totalDist
+        if(disty>0 and totalDist<closePowerPellets[1,1]):
+            closePowerPellets[1,1] = totalDist
+        if(distx<0 and totalDist<closePowerPellets[1,0]):
+            closePowerPellets[1,0] = totalDist
+        if(distx>0 and totalDist<closePowerPellets[0,1]):
+            closePowerPellets[0,1] = totalDist
     
     rotateDir = pacman.move_dir
     if (wacky2Output or oneOutput) and (((pacman.look_dir-pacman.move_dir)%4) == 1):
         rotateDir = pacman.look_dir
     if(rotateCamera):
         if rotateDir == RIGHT:
-            smallCamera = np.rot90(smallCamera, 1)
+            smallCamera = np.rot90(smallCamera, 1).reshape(-1)
+            closeGhosts = np.rot90(closeGhosts, 1).reshape(-1)
+            closeBlueGhosts = np.rot90(closeBlueGhosts, 1).reshape(-1)
+            closePellets = np.rot90(closePellets, 1).reshape(-1)
+            closePowerPellets = np.rot90(closePowerPellets, 1).reshape(-1)
+            
         elif rotateDir == DOWN:
-            smallCamera = np.rot90(smallCamera, 2)
+            smallCamera = np.rot90(smallCamera, 2).reshape(-1)
+            closeGhosts = np.rot90(closeGhosts, 2).reshape(-1)
+            closeBlueGhosts = np.rot90(closeBlueGhosts, 2).reshape(-1)
+            closePellets = np.rot90(closePellets, 2).reshape(-1)
+            closePowerPellets = np.rot90(closePowerPellets, 2).reshape(-1)
         elif rotateDir == LEFT:
-            smallCamera = np.rot90(smallCamera, 3)
-        
-    inputs = smallCamera.reshape(-1)
+            smallCamera = np.rot90(smallCamera, 3).reshape(-1)
+            closeGhosts = np.rot90(closeGhosts, 3).reshape(-1)
+            closeBlueGhosts = np.rot90(closeBlueGhosts, 3).reshape(-1)
+            closePellets = np.rot90(closePellets, 3).reshape(-1)
+            closePowerPellets = np.rot90(closePowerPellets, 3).reshape(-1)
+        else:
+            smallCamera = smallCamera.reshape(-1)
+            closeGhosts = closeGhosts.reshape(-1)
+            closeBlueGhosts = closeBlueGhosts.reshape(-1)
+            closePellets = closePellets.reshape(-1)
+            closePowerPellets = closePowerPellets.reshape(-1)
+
+    inputs = np.concatenate((smallCamera,closeGhosts,closeBlueGhosts,closePellets,closePowerPellets))
     
     # #prints camera
     # tiles = list(inputs)
