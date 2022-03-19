@@ -86,6 +86,7 @@ UP = 3
 #Don't touch
 if(not neatMode):
     clearMapBonus = 0
+    turnOffGhosts = False
 if(neatMode):
     evaluateModelMode = False
     neatLoadMode = False

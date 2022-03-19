@@ -80,7 +80,7 @@ class Main:
 
     def loop(self):
         #kill score
-        if(self.score >= killScore):
+        if(neatMode and self.score >= killScore):
             self.player.lives = -1
             self.game_state = "lose"
 

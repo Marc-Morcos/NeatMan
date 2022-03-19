@@ -42,7 +42,7 @@ def NaiveNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
     return inputs    
 
 #multi group multi destination djikstra, returns shortest path to closest of each group
-def multiDest(start, objectiveGroups, blocked, mazeArray):
+def multiDest(start, objectiveGroups, blocked, mazeArray, notAllowed = []):
 
     start = queueNode(start[0], start[1])
 
@@ -81,7 +81,7 @@ def multiDest(start, objectiveGroups, blocked, mazeArray):
                 x = (testX+curr.x)%len(mazeArray[0])
                 y = (testY+curr.y)%len(mazeArray)
 
-                if(not mazeArray[y][x] in blocked):
+                if((not mazeArray[y][x] in blocked) and (not [x,y] in notAllowed) and (not (x,y) in notAllowed)):
                     nextCoord = queueNode(x,y, curr)
                     if (nextCoord.x,nextCoord.y) not in visited:
                         queue.append(nextCoord)
@@ -91,28 +91,11 @@ def multiDest(start, objectiveGroups, blocked, mazeArray):
 
 
 def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
-    mazeArrayUP = copy.deepcopy(maze.maze_array)
-    mazeArrayDOWN = copy.deepcopy(maze.maze_array)
-    mazeArrayLEFT = copy.deepcopy(maze.maze_array)
-    mazeArrayRIGHT = copy.deepcopy(maze.maze_array)
 
     #get grid position
-    pac_manX = int(((pacman.x-block_size/2.0)/block_size))%len(mazeArrayUP[0]) #get pacman location
-    pac_manY = int(((pacman.y-block_size/2.0)/block_size))%len(mazeArrayUP) 
-
-    #make sure each array forces a specific first move
-    mazeArrayUP[(pac_manY)%len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
-    mazeArrayUP[(pac_manY)%len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
-    mazeArrayUP[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
-    mazeArrayDOWN[(pac_manY)%len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
-    mazeArrayDOWN[(pac_manY)%len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
-    mazeArrayDOWN[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
-    mazeArrayLEFT[(pac_manY)%len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
-    mazeArrayLEFT[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
-    mazeArrayLEFT[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
-    mazeArrayRIGHT[(pac_manY)%len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
-    mazeArrayRIGHT[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
-    mazeArrayRIGHT[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    pac_manX = int(round((pacman.x-block_size/2.0)/block_size))%len(maze.maze_array[0]) #get pacman location
+    pac_manY = int(round((pacman.y-block_size/2.0)/block_size))%len(maze.maze_array) 
+    truePos = [pac_manX,pac_manY]
     
     #get pacman true position (not rounded)
     x = pacman.x-block_size/2.0 
@@ -131,20 +114,51 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pelletsObjs = []
     powerPelletObjs = []
 
+    upNotAllowed =  [((pac_manX+1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
+                    ((pac_manX-1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
+                    ((pac_manX)%len(maze.maze_array[0]),(pac_manY+1)%len(maze.maze_array))]
+    rightNotAllowed=[((pac_manX)%len(maze.maze_array[0]),(pac_manY+1)%len(maze.maze_array)),
+                    ((pac_manX-1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
+                    ((pac_manX)%len(maze.maze_array[0]),(pac_manY-1)%len(maze.maze_array))]
+    leftNotAllowed= [((pac_manX)%len(maze.maze_array[0]),(pac_manY+1)%len(maze.maze_array)),
+                    ((pac_manX)%len(maze.maze_array[0]),(pac_manY-1)%len(maze.maze_array)),
+                    ((pac_manX+1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array))]
+    downNotAllowed= [((pac_manX+1)%len(maze.maze_array[0]),(pac_manY  )%len(maze.maze_array)),
+                    ((pac_manX-1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
+                    ((pac_manX)%len(maze.maze_array[0]),(pac_manY-1)%len(maze.maze_array))]
+
      #dijkstra distances
     closeGhosts = np.array([[12,12],[12,12]],dtype=float)
     for ghost in ghosts.values():
             if (not turnOffGhosts) and ghost.mode == "normal" and (not ghost.blue or (ghost.blue_timer + (2) >= pacman.power_time)):
-                ghostObjs.append(ghost.array_coord)  
+                x = ghost.x-block_size/2.0
+                y = ghost.y-block_size/2.0
+                testTile = [int(round(x/block_size)),  int(round(y/block_size))]
+                if(testTile == truePos):
+                    diffx = x-truePos2[0]
+                    diffy = y-truePos2[1]
+                    if(diffx != 0):
+                        if diffx<0:
+                            testTile[0] = testTile[0]-1
+                        else:
+                            testTile[0] = testTile[0]+1
+                    else:
+                        if diffy<0:
+                            testTile[1] = testTile[1]-1
+                        else:
+                            testTile[1] = testTile[1]+1
+                testTile[0] = testTile[0]%len(maze.maze_array[0])
+                testTile[1] = testTile[1]%len(maze.maze_array)
+                ghostObjs.append(testTile)  
     
     if (ghostObjs):
-        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1], mazeArrayUP)
+        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, upNotAllowed)
         if path != -1: closeGhosts[0,0] = len(path)/5
-        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1], mazeArrayRIGHT)
+        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, rightNotAllowed)
         if path != -1: closeGhosts[0,1] = len(path)/5
-        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1], mazeArrayLEFT)
+        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, leftNotAllowed)
         if path != -1: closeGhosts[1,0] = len(path)/5
-        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1], mazeArrayDOWN)
+        path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, downNotAllowed)
         if path != -1: closeGhosts[1,1] = len(path)/5
     
     
@@ -167,35 +181,89 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             closeGhosts2[1,0] =totalDist
         if(distx>0 and abs(disty) < block_size/10 and canmove2[0,1] and totalDist<closeGhosts2[0,1]):
             closeGhosts2[0,1] = totalDist
-
-
-    #makes hostile ghosts appear as walls to the path finding algo
-    for ghost in ghosts.values():
-        if(turnOffGhosts or (ghost.blue and not (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
-        x = ghost.x-block_size/2.0 #get the top left corner
-        y = ghost.y-block_size/2.0
-
-        mazeArrayUP[int(((y)/block_size))%len(mazeArrayUP)][int(((x)/block_size))%len(mazeArrayUP[0])] = 1
-        mazeArrayRIGHT[int(((y)/block_size))%len(mazeArrayUP)][int(((x)/block_size))%len(mazeArrayUP[0])] = 1
-        mazeArrayLEFT[int(((y)/block_size))%len(mazeArrayUP)][int(((x)/block_size))%len(mazeArrayUP[0])] = 1
-        mazeArrayDOWN[int(((y)/block_size))%len(mazeArrayUP)][int(((x)/block_size))%len(mazeArrayUP[0])] = 1
                
 
     #dijkstra distances
     for ghost in ghosts.values():
             if (not turnOffGhosts) and ghost.mode == "normal" and (ghost.blue and not (ghost.blue_timer + (2) >= pacman.power_time)):
-                blueAndFruitObjs.append(ghost.array_coord)      
+                x = ghost.x-block_size/2.0
+                y = ghost.y-block_size/2.0
+                testTile = [int(round(x/block_size)),  int(round(y/block_size))]
+                if(testTile == truePos):
+                    diffx = x-truePos2[0]
+                    diffy = y-truePos2[1]
+                    if(diffx != 0):
+                        if diffx<0:
+                            testTile[0] = testTile[0]-1
+                        else:
+                            testTile[0] = testTile[0]+1
+                    else:
+                        if diffy<0:
+                            testTile[1] = testTile[1]-1
+                        else:
+                            testTile[1] = testTile[1]+1
+                testTile[0] = testTile[0]%len(maze.maze_array[0])
+                testTile[1] = testTile[1]%len(maze.maze_array)
+                blueAndFruitObjs.append(testTile)      
     
     if fruit.here:
-        blueAndFruitObjs.append(fruit.array_coord)
+        testTile = fruit.array_coord.copy()
+        if(testTile == truePos):
+            diffx = x-truePos2[0]
+            diffy = y-truePos2[1]
+            if(diffx != 0):
+                if diffx<0:
+                    testTile[0] = testTile[0]-1
+                else:
+                    testTile[0] = testTile[0]+1
+            else:
+                if diffy<0:
+                    testTile[1] = testTile[1]-1
+                else:
+                    testTile[1] = testTile[1]+1
+        testTile[0] = testTile[0]%len(maze.maze_array[0])
+        testTile[1] = testTile[1]%len(maze.maze_array)
+        blueAndFruitObjs.append(testTile)
     
     for power_pellet in power_pellets:
             if power_pellet.here:
-                powerPelletObjs.append(power_pellet.array_coord)
+                testTile = power_pellet.array_coord.copy()
+                if(testTile == truePos):
+                    diffx = x-truePos2[0]
+                    diffy = y-truePos2[1]
+                    if(diffx != 0):
+                        if diffx<0:
+                            testTile[0] = testTile[0]-1
+                        else:
+                            testTile[0] = testTile[0]+1
+                    else:
+                        if diffy<0:
+                            testTile[1] = testTile[1]-1
+                        else:
+                            testTile[1] = testTile[1]+1
+                testTile[0] = testTile[0]%len(maze.maze_array[0])
+                testTile[1] = testTile[1]%len(maze.maze_array)
+                powerPelletObjs.append(testTile)
     
     for pellet in pellets:
         if pellet.here:
-            pelletsObjs.append(pellet.array_coord)
+                testTile = pellet.array_coord.copy()
+                if(testTile == truePos):
+                    diffx = x-truePos2[0]
+                    diffy = y-truePos2[1]
+                    if(diffx != 0):
+                        if diffx<0:
+                            testTile[0] = testTile[0]-1
+                        else:
+                            testTile[0] = testTile[0]+1
+                    else:
+                        if diffy<0:
+                            testTile[1] = testTile[1]-1
+                        else:
+                            testTile[1] = testTile[1]+1
+                testTile[0] = testTile[0]%len(maze.maze_array[0])
+                testTile[1] = testTile[1]%len(maze.maze_array)
+                pelletsObjs.append(testTile)
 
     closeBlueGhosts = np.array([[12,12],[12,12]],dtype=float)
     closePellets = np.array([[12,12],[12,12]],dtype=float)
@@ -204,16 +272,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     objGroups =  [pelletsObjs,powerPelletObjs,blueAndFruitObjs]
     closeGroups =  [closePellets,closePowerPellets,closeBlueGhosts]
     if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
-        paths = multiDest([pac_manX, pac_manY], objGroups, [1], mazeArrayUP)
+        paths = multiDest([pac_manX, pac_manY], objGroups, [1],maze.maze_array, upNotAllowed+ghostObjs)
         for path,close in zip(paths,closeGroups):
             if path != -1: close[0,0] = len(path)/5
-        paths = multiDest([pac_manX, pac_manY], objGroups, [1], mazeArrayRIGHT)
+        paths = multiDest([pac_manX, pac_manY], objGroups, [1],maze.maze_array, rightNotAllowed+ghostObjs)
         for path,close in zip(paths,closeGroups):
             if path != -1: close[0,1] = len(path)/5
-        paths = multiDest([pac_manX, pac_manY], objGroups, [1], mazeArrayLEFT)
+        paths = multiDest([pac_manX, pac_manY], objGroups, [1],maze.maze_array, leftNotAllowed+ghostObjs)
         for path,close in zip(paths,closeGroups):
             if path != -1: close[1,0] = len(path)/5
-        paths = multiDest([pac_manX, pac_manY], objGroups, [1], mazeArrayDOWN)
+        paths = multiDest([pac_manX, pac_manY], objGroups, [1],maze.maze_array, downNotAllowed+ghostObjs)
         for path,close in zip(paths,closeGroups):
             if path != -1: close[1,1] = len(path)/5
     
@@ -480,7 +548,7 @@ def betterCanMove(entity, mazeArray, direction):
     
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
-    # rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
 
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0
@@ -600,7 +668,8 @@ def getPath(node, path):
         getPath(node.parent, path)
         path.append(node)
 
-def find_path_to_objective(start, objective, blocked, mazeArray):
+def find_path_to_objective(start, objective, blocked, mazeArray,notAllowed = []):
+    start
 
     start = queueNode(start[0], start[1])
 
@@ -627,7 +696,8 @@ def find_path_to_objective(start, objective, blocked, mazeArray):
                 x = (testX+curr.x)%len(mazeArray[0])
                 y = (testY+curr.y)%len(mazeArray)
 
-                if(not mazeArray[y][x] in blocked):
+                
+                if((not mazeArray[y][x] in blocked) and (not [x,y] in notAllowed) and (not (x,y) in notAllowed)):
                     nextCoord = queueNode(x,y, curr)
                     if (nextCoord.x,nextCoord.y) not in visited:
                         queue.append(nextCoord)
