@@ -30,7 +30,7 @@ numberOfTests = 30 #number of games to evaluate on
 neatMode = True #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints" 
-modelCheckpoint = "MurdochRipper4outGen474.pkl" 
+modelCheckpoint = "GhostBusterGen.pkl" 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
@@ -50,11 +50,12 @@ disablePowerPellets = False #disable power pellets
 killScore = 20000 #kill pacman if he gets this score (None to disable)
 
 
+
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/MurdochRipper4outPopulationGen474" 
-LoadTrainingCheckpointGenerationNum = 474 #if LoadTrainingCheckpointPath is not None, generations starts at this
+# LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterPopulationGen57" 
+LoadTrainingCheckpointGenerationNum = 57 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
