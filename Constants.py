@@ -34,12 +34,12 @@ modelCheckpoint = "MurdochRipper4outGen474.pkl"
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
-turnOffGhosts = False
-scoreTimeConstraint = 700*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+turnOffGhosts = True
+scoreTimeConstraint = 15*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 wrapAroundX = True #whether camera view screen should wrap around in the x axis
 wrapAroundY = False #whether camera view screen should wrap around in the y axis
-neatLives = 1 #number of lives neatMan has while training in neatmode
+neatLives = 0 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
@@ -54,7 +54,7 @@ disablePowerPellets = False #disable power pellets
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-LoadTrainingCheckpointPath = checkpointFolder + "/MurdochRipper4outPopulationGen474" 
+# LoadTrainingCheckpointPath = checkpointFolder + "/MurdochRipper4outPopulationGen474" 
 LoadTrainingCheckpointGenerationNum = 474 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
