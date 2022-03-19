@@ -70,7 +70,7 @@ class Main:
                     printMaze(self.maze.maze_array)
                     print("pac_man_x: {} pac_man_y: {}".format(self.player.x, self.player.y))
                 if event.key == pygame.K_EQUALS and neatMode:
-                    player.lives = -1
+                    self.player.lives = -1
                     self.game_state = "lose"
                     self.manuallySave = True
             if event.type == pygame.QUIT:
@@ -81,7 +81,7 @@ class Main:
     def loop(self):
         #kill score
         if(self.score <= killScore):
-            player.lives = -1
+            self.player.lives = -1
             self.game_state = "lose"
 
         #die if you don't score fast enough
