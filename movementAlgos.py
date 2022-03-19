@@ -101,18 +101,18 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pac_manY = int(((pacman.y-block_size/2.0)/block_size))%len(mazeArrayUP) 
 
     #make sure each array forces a specific first move
-    mazeArrayUP[pac_manY][pac_manX+1] = 1
-    mazeArrayUP[pac_manY][pac_manX-1] = 1
-    mazeArrayUP[pac_manY+1][pac_manX] = 1
-    mazeArrayDOWN[pac_manY][pac_manX+1] = 1
-    mazeArrayDOWN[pac_manY][pac_manX-1] = 1
-    mazeArrayDOWN[pac_manY-1][pac_manX] = 1
-    mazeArrayLEFT[pac_manY][pac_manX+1] = 1
-    mazeArrayLEFT[pac_manY+1][pac_manX] = 1
-    mazeArrayLEFT[pac_manY-1][pac_manX] = 1
-    mazeArrayRIGHT[pac_manY][pac_manX-1] = 1
-    mazeArrayRIGHT[pac_manY+1][pac_manX] = 1
-    mazeArrayRIGHT[pac_manY-1][pac_manX] = 1
+    mazeArrayUP[(pac_manY%)len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
+    mazeArrayUP[(pac_manY%)len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
+    mazeArrayUP[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    mazeArrayDOWN[(pac_manY)%len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
+    mazeArrayDOWN[(pac_manY)%len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
+    mazeArrayDOWN[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    mazeArrayLEFT[(pac_manY)%len(mazeArrayUP) ][(pac_manX+1)%len(mazeArrayUP[0])] = 1
+    mazeArrayLEFT[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    mazeArrayLEFT[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    mazeArrayRIGHT[(pac_manY)%len(mazeArrayUP) ][(pac_manX-1)%len(mazeArrayUP[0])] = 1
+    mazeArrayRIGHT[(pac_manY+1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
+    mazeArrayRIGHT[(pac_manY-1)%len(mazeArrayUP) ][(pac_manX)%len(mazeArrayUP[0])] = 1
     
     #get pacman true position (not rounded)
     x = pacman.x-block_size/2.0 

@@ -79,6 +79,11 @@ class Main:
         return
 
     def loop(self):
+        #kill score
+        if(self.score <= killScore):
+            player.lives = -1
+            self.game_state = "lose"
+
         #die if you don't score fast enough
         if scoreTimeConstraint != None and (neatMode):
             if self.lastFrameScore==self.score:

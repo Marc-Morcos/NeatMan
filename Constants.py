@@ -49,6 +49,7 @@ wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
+killScore = 20000 #kill pacman if he gets this score (None to disable)
 
 
 # where we load a whole population to continue training
