@@ -156,13 +156,13 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos):
     
         if (ghostObjs):
-            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1,2],maze.maze_array, upNotAllowed)
+            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, upNotAllowed)
             if path != -1: closeGhosts[0,0] = len(path)/5
-            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1,2],maze.maze_array, rightNotAllowed)
+            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, rightNotAllowed)
             if path != -1: closeGhosts[0,1] = len(path)/5
-            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1,2],maze.maze_array, leftNotAllowed)
+            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, leftNotAllowed)
             if path != -1: closeGhosts[1,0] = len(path)/5
-            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1,2],maze.maze_array, downNotAllowed)
+            path = find_path_to_objective([pac_manX, pac_manY], ghostObjs, [1],maze.maze_array, downNotAllowed)
             if path != -1: closeGhosts[1,1] = len(path)/5
                 
 
