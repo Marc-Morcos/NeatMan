@@ -49,7 +49,14 @@ class Pac_Man:
         self.net = None
         if(neatLoadMode): self.net = loadModel(modelCheckpoint)
 
+        #other neat stuff
         self.pelletRatio = 0 #pellets collected/total
+        self.lastghostObjs = None
+        self.lasttruePos = None
+        self.closeGhostsLast = None
+        self.closeBlueGhostsLast = None
+        self.closePowerPelletsLast = None
+        self.closePelletsLast = None
 
     def power_up(self, time):
         self.powered_up = True
