@@ -124,7 +124,7 @@ class Main:
                     self.score += pellet_score*(1+self.collected_pellets*clearMapBonus/251)
 
             for power_pellet in self.power_pellets:
-                if power_pellet.collide(self.player):
+                if power_pellet.collide(self.player) and (not disablePowerPellets or not neatMode):
                     self.score += power_pellet_score*(1+self.collected_pellets*clearMapBonus/251)
                     self.player.power_up(8 * 60)
 
@@ -311,7 +311,7 @@ class Main:
         # initialize
         random.seed()
         pygame.init()
-        pygame.display.set_caption("NEAT-MAN")
+        pygame.display.set_caption(neatHyperparams["modelName"])
         self.display = pygame.display.set_mode((int(self.display_width*scaling_factor), int(self.display_height*scaling_factor)))
         self.display_surf = pygame.Surface([self.display_width, self.display_height])
         pygame.font.init()
