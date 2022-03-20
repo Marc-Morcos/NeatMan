@@ -88,7 +88,7 @@ if(not neatMode):
     clearMapBonus = 0
     turnOffGhosts = False
 if(neatMode):
-    if(forceStuck):antiRacetrack = False
+    if(forceStuck):antiRacetrack = True
     evaluateModelMode = False
     neatLoadMode = False
     fastMode = True
