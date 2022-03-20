@@ -45,6 +45,7 @@ wallBonkPenalty = 0#2/60 #1/60 #penalize model from trying to walk into walls
 oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
+forceStuck = False #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
 disablePowerPellets = False #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
@@ -87,6 +88,7 @@ if(not neatMode):
     clearMapBonus = 0
     turnOffGhosts = False
 if(neatMode):
+    if(forceStuck):antiRacetrack = False
     evaluateModelMode = False
     neatLoadMode = False
     fastMode = True

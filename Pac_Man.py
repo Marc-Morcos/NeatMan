@@ -7,6 +7,7 @@ from NeatHelpers import loadModel
 
 class Pac_Man:
     def __init__(self, x, y, movementFunction):
+
         #lives
         self.lives = 2
         if(neatMode): self.lives = neatLives
@@ -23,6 +24,16 @@ class Pac_Man:
         self.humanInput = DOWN
         self.move_dir = DOWN
         self.try_move_dir = DOWN
+
+        #force stuck
+        if(forceStuck and neatMode):
+            x-=5
+            y=house_y
+            self.move_dir = UP
+            self.look_dir = UP
+            self.try_move_dir = UP
+            self.humanInput = UP
+
 
         # Location in pixels
         self.array_coord = [x, y]
