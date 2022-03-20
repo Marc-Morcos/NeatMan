@@ -49,9 +49,6 @@ clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on th
 disablePowerPellets = True #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
 
-#gen 57: turned off anti racetrack
-#gen 79: ghosts on, power pellets off, killscore from 20000 to none, neatlives from 0 to 1, timeconstraint from 15*60 to 700*60
-#gen 117: set neatlives to 0
 
 
 # where we load a whole population to continue training
