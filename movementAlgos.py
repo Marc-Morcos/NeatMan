@@ -482,6 +482,24 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
                 else:
                     nextMove = pacman.move_dir -1
 
+    elif(len(outputs) == 4):
+        maxOut = max(outputs);
+        maxInd  = []
+        for i in range(4):
+            if(maxOut == outputs[i]):
+                maxInd.append(i)
+
+       
+        nextMove = pacman.move_dir
+        if(maxInd[0] == 1): #turn left
+            nextMove-=1
+
+        elif(maxInd[0] == 2): #turn right
+            nextMove+=1
+
+        elif(maxInd[0] == 3):#turn around 
+            nextMove+=2
+
     nextMove = nextMove%4      
             
     return nextMove,soroundings
