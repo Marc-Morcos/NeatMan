@@ -482,7 +482,7 @@ def betterCanMove(entity, mazeArray, direction):
     
 #human controlled pac_man
 def humanPlayer(pac_man, maze, ghosts, pellets, power_pellets, fruit):
-    rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
+    # rotatingCameraNeatHelper(pac_man, maze, ghosts, pellets, power_pellets, fruit)
 
     x = pac_man.x-block_size/2.0 #get the top left corner
     y = pac_man.y-block_size/2.0
