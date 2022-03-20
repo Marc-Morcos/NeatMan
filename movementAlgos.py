@@ -100,8 +100,8 @@ def multiDest(start, objectiveGroups, blocked, mazeArray, notAllowed = [],ghostM
 def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit):
 
     #get grid position
-    pac_manX = int(round((pacman.x-block_size/2.0)/block_size))%len(maze.maze_array[0]) #get pacman location
-    pac_manY = int(round((pacman.y-block_size/2.0)/block_size))%len(maze.maze_array) 
+    pac_manX = int(((pacman.x-block_size/2.0)/block_size))%len(maze.maze_array[0]) #get pacman location
+    pac_manY = int(((pacman.y-block_size/2.0)/block_size))%len(maze.maze_array) 
     truePos = [pac_manX,pac_manY]
     
     #get pacman true position (not rounded)
@@ -140,7 +140,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             if (not turnOffGhosts) and ghost.mode == "normal" and (not ghost.blue or (ghost.blue_timer + (2) >= pacman.power_time)):
                 x = ghost.x-block_size/2.0
                 y = ghost.y-block_size/2.0
-                testTile = [int(round(x/block_size)),  int(round(y/block_size))]
+                testTile = [int((x/block_size)),  int((y/block_size))]
                 if(testTile == truePos):
                     diffx = x-truePos2[0]
                     diffy = y-truePos2[1]
@@ -168,22 +168,20 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 ghostObjs.append(testTile)  
                 ghostMoveBlocks.append(destTile)
 
-    
-
-    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks):
+    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(pacman.canmoveLast,canmove)):
     
         if (ghostObjs):
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, upNotAllowed,ghostMoveBlocks)
-            if path[0] != -1: closeGhosts[0,0] = len(path[0] )/5
+            if path[0] != -1 and canmove[0,0]: closeGhosts[0,0] = len(path[0] )/5
             ghostApproaching[0,0] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, rightNotAllowed,ghostMoveBlocks)
-            if path[0]  != -1: closeGhosts[0,1] = len(path[0] )/5
+            if path[0]  != -1 and canmove[0,1]: closeGhosts[0,1] = len(path[0] )/5
             ghostApproaching[0,1] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, leftNotAllowed,ghostMoveBlocks)
-            if path[0]  != -1: closeGhosts[1,0] = len(path[0] )/5
+            if path[0]  != -1 and canmove[1,0]: closeGhosts[1,0] = len(path[0] )/5
             ghostApproaching[1,0] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, downNotAllowed,ghostMoveBlocks)
-            if path[0] != -1: closeGhosts[1,1] = len(path[0] )/5
+            if path[0] != -1 and canmove[1,1]: closeGhosts[1,1] = len(path[0] )/5
             ghostApproaching[1,1] = movingTowards
             
             
@@ -192,7 +190,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 if (not turnOffGhosts) and ghost.mode == "normal" and (ghost.blue and not (ghost.blue_timer + (2) >= pacman.power_time)):
                     x = ghost.x-block_size/2.0
                     y = ghost.y-block_size/2.0
-                    testTile = [int(round(x/block_size)),  int(round(y/block_size))]
+                    testTile = [int((x/block_size)),  int((y/block_size))]
                     if(testTile == truePos):
                         diffx = x-truePos2[0]
                         diffy = y-truePos2[1]
@@ -278,16 +276,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[0,0] = len(path)/5
+                if path != -1 and canmove[0,0]: close[0,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[0,1] = len(path)/5
+                if path != -1 and canmove[0,1]: close[0,1] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[1,0] = len(path)/5
+                if path != -1 and canmove[1,0]: close[1,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[1,1] = len(path)/5
+                if path != -1 and canmove[1,1]: close[1,1] = len(path)/5
     else: #use cached data
         closeGhosts = pacman.closeGhostsLast.copy()
         closeBlueGhosts = pacman.closeBlueGhostsLast.copy()
@@ -304,6 +302,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pacman.closePowerPelletsLast = closePowerPellets.copy()
     pacman.closePelletsLast = closePellets.copy()
     pacman.ghostMoveBlocksLast = ghostMoveBlocks.copy()
+    pacman.canmoveLast = canmove.copy()
 
     #rotate camera
     rotateDir = pacman.move_dir
@@ -344,6 +343,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
 
     inputs = np.concatenate(([pacman.pelletRatio],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,canmove,ghostApproaching))
+
     return inputs  
 
 #nead model controller
@@ -426,7 +426,7 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
         FourDirs = [pacman.move_dir,pacman.move_dir+1,pacman.move_dir+3,pacman.move_dir+2]
         nextMove = FourDirs[maxInd]
 
-    nextMove = nextMove%4      
+    nextMove = nextMove%4     
             
     return nextMove
 

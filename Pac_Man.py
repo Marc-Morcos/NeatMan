@@ -70,6 +70,7 @@ class Pac_Man:
         self.closePelletsLast = None
         self.closePelletsLast = None
         self.ghostMoveBlocksLast= None
+        self.canmoveLast = None
 
     def power_up(self, time):
         self.powered_up = True
