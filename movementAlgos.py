@@ -170,20 +170,20 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 ghostObjs.append(testTile)  
                 ghostMoveBlocks.append(destTile)
 
-    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(pacman.canmoveLast,canmove)):
+    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks):
     
         if (ghostObjs):
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, upNotAllowed,ghostMoveBlocks,exceptions)
-            if path[0] != -1 and canmove[0,0]: closeGhosts[0,0] = len(path[0] )/5
+            if path[0] != -1: closeGhosts[0,0] = len(path[0] )/5
             ghostApproaching[0,0] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, rightNotAllowed,ghostMoveBlocks,exceptions)
-            if path[0]  != -1 and canmove[0,1]: closeGhosts[0,1] = len(path[0] )/5
+            if path[0]  != -1: closeGhosts[0,1] = len(path[0] )/5
             ghostApproaching[0,1] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, leftNotAllowed,ghostMoveBlocks,exceptions)
-            if path[0]  != -1 and canmove[1,0]: closeGhosts[1,0] = len(path[0] )/5
+            if path[0]  != -1: closeGhosts[1,0] = len(path[0] )/5
             ghostApproaching[1,0] = movingTowards
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, downNotAllowed,ghostMoveBlocks,exceptions)
-            if path[0] != -1 and canmove[1,1]: closeGhosts[1,1] = len(path[0] )/5
+            if path[0] != -1: closeGhosts[1,1] = len(path[0] )/5
             ghostApproaching[1,1] = movingTowards
             
         exceptions = []
@@ -282,16 +282,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1 and canmove[0,0]: close[0,0] = len(path)/5
+                if path != -1: close[0,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1 and canmove[0,1]: close[0,1] = len(path)/5
+                if path != -1: close[0,1] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1 and canmove[1,0]: close[1,0] = len(path)/5
+                if path != -1: close[1,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1 and canmove[1,1]: close[1,1] = len(path)/5
+                if path != -1: close[1,1] = len(path)/5
     else: #use cached data
         closeGhosts = pacman.closeGhostsLast.copy()
         closeBlueGhosts = pacman.closeBlueGhostsLast.copy()
@@ -308,7 +308,6 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pacman.closePowerPelletsLast = closePowerPellets.copy()
     pacman.closePelletsLast = closePellets.copy()
     pacman.ghostMoveBlocksLast = ghostMoveBlocks.copy()
-    pacman.canmoveLast = canmove.copy()
 
     #rotate camera
     rotateDir = pacman.move_dir
