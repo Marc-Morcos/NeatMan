@@ -343,7 +343,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             ghostApproaching = ghostApproaching.reshape(-1)
 
 
-    inputs = np.concatenate(([pacman.pelletRatio,pacman.framesNotMoving],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,canmove,ghostApproaching))
+    inputs = np.concatenate(([pacman.pelletRatio],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,canmove,ghostApproaching))
     return inputs  
 
 #nead model controller
