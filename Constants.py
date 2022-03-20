@@ -36,17 +36,17 @@ neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be 
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
 scoreTimeConstraint = 700*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
-IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
+IdlePenalty = 0#2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 0 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
-wallBonkPenalty = 2/60 #1/60 #penalize model from trying to walk into walls
+wallBonkPenalty = 0#2/60 #1/60 #penalize model from trying to walk into walls
 oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
-disablePowerPellets = True #disable power pellets
+disablePowerPellets = False #disable power pellets
 killScore = None #kill pacman if he gets this score (None to disable)
 
 
