@@ -280,16 +280,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         objGroups =  [pelletsObjs,powerPelletObjs,blueAndFruitObjs]
         closeGroups =  [closePellets,closePowerPellets,closeBlueGhosts]
         if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1: close[0,0] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1: close[0,1] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1: close[1,0] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1: close[1,1] = len(path)/5
     else: #use cached data
