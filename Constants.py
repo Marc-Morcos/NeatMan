@@ -30,12 +30,12 @@ numberOfTests = 30 #number of games to evaluate on
 neatMode = True #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints" 
-modelCheckpoint = "GhostBusterGen.pkl" 
+modelCheckpoint = "GhostBusterCleanGen.pkl" 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
-turnOffGhosts = True
-scoreTimeConstraint = 15*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+turnOffGhosts = False
+scoreTimeConstraint = 700*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 0 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
@@ -46,16 +46,19 @@ oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
-disablePowerPellets = False #disable power pellets
-killScore = 20000 #kill pacman if he gets this score (None to disable)
+disablePowerPellets = True #disable power pellets
+killScore = None #kill pacman if he gets this score (None to disable)
 
+#gen 57: turned off anti racetrack
+#gen 79: ghosts on, power pellets off, killscore from 20000 to none, neatlives from 0 to 1, timeconstraint from 15*60 to 700*60
+#gen 117: set neatlives to 0
 
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterPopulationGen57" 
-LoadTrainingCheckpointGenerationNum = 57 #if LoadTrainingCheckpointPath is not None, generations starts at this
+# LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterCleanPopulationGen117" 
+LoadTrainingCheckpointGenerationNum = 117 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
@@ -64,8 +67,8 @@ neatHyperparams = {"NeatNumGenerations":99999999,
                   "NumGenB4MapSwitch":5,
                   "NumGenB4Checkpoint":1,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/GhostBusterPopulationGen",
-                  "modelName": "GhostBusterGen"
+                  "PopulationCheckpointName": checkpointFolder+ "/GhostBusterCleanPopulationGen",
+                  "modelName": "GhostBusterCleanGen"
                   }
 
 #movement constants
