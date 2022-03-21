@@ -170,7 +170,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 ghostObjs.append(testTile)  
                 ghostMoveBlocks.append(destTile)
 
-    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks):
+    if(pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(canmove, pacman.canmoveLast)):
     
         if (ghostObjs):
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, upNotAllowed,ghostMoveBlocks,exceptions)
@@ -282,16 +282,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[0,0] = len(path)/5
+                if path != -1 and canmove[0,0]: close[0,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[0,1] = len(path)/5
+                if path != -1 and canmove[0,1]: close[0,1] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[1,0] = len(path)/5
+                if path != -1 and canmove[1,0]: close[1,0] = len(path)/5
             paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
             for path,close in zip(paths,closeGroups):
-                if path != -1: close[1,1] = len(path)/5
+                if path != -1 and canmove[1,1]: close[1,1] = len(path)/5
     else: #use cached data
         closeGhosts = pacman.closeGhostsLast.copy()
         closeBlueGhosts = pacman.closeBlueGhostsLast.copy()
@@ -308,8 +308,103 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pacman.closePowerPelletsLast = closePowerPellets.copy()
     pacman.closePelletsLast = closePellets.copy()
     pacman.ghostMoveBlocksLast = ghostMoveBlocks.copy()
+    pacman.canmoveLast = canmove.copy()
 
-    #rotate camera
+    closeGhosts2 = np.array([[6,6],[6,6]],dtype=float)
+    for ghost in ghosts.values():
+        if(turnOffGhosts or (ghost.blue and not (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
+        x = ghost.x-block_size/2.0
+        y = ghost.y-block_size/2.0
+        testTile = [(x/block_size),  (y/block_size)]
+        distx = testTile[0]-truePos2[0]
+        disty = testTile[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+      
+        if(disty<0 and abs(distx) < 2 and totalDist<closeGhosts2[0,0]):
+            closeGhosts2[0,0] = totalDist
+        if(disty>0 and abs(distx) < 2 and totalDist<closeGhosts2[1,1]):
+            closeGhosts2[1,1] = totalDist
+        if(distx<0 and abs(disty) < 2 and totalDist<closeGhosts2[1,0]):
+            closeGhosts2[1,0] =totalDist
+        if(distx>0 and abs(disty) < 2 and totalDist<closeGhosts2[0,1]):
+            closeGhosts2[0,1] = totalDist
+
+    #sensing
+    closeBlueGhosts2 = np.array([[6,6],[6,6]],dtype=float)
+    for ghost in ghosts.values():
+        if(turnOffGhosts or (not ghost.blue or (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
+        x = ghost.x-block_size/2.0 #get the top left corner
+        y = ghost.y-block_size/2.0
+        testTile = [(x/block_size),  (y/block_size)]
+        distx = testTile[0]-truePos2[0]
+        disty = testTile[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+        
+        if(disty<0 and abs(distx) < 2 and canmove[0,0] and totalDist<closeBlueGhosts2[0,0]):
+            closeBlueGhosts2[0,0] = totalDist
+        if(disty>0 and abs(distx) < 2 and canmove[1,1] and totalDist<closeBlueGhosts2[1,1]):
+            closeBlueGhosts2[1,1] = totalDist
+        if(distx<0 and abs(disty)  < 2 and canmove[1,0] and totalDist<closeBlueGhosts2[1,0]):
+            closeBlueGhosts2[1,0] = totalDist
+        if(distx>0 and abs(disty) < 2 and canmove[0,1] and totalDist<closeBlueGhosts2[0,1]):
+            closeBlueGhosts2[0,1] = totalDist
+
+    #add fruit to blue ghosts
+    if fruit.here:
+        distx = fruit.array_coord[0]-truePos2[0]
+        disty = fruit.array_coord[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+
+        if(disty<0 and abs(distx) < 2 and canmove[0,0] and totalDist<closeBlueGhosts2[0,0]):
+            closeBlueGhosts2[0,0] = totalDist
+        if(disty>0 and abs(distx) < 2 and canmove[1,1] and totalDist<closeBlueGhosts2[1,1]):
+            closeBlueGhosts2[1,1] = totalDist
+        if(distx<0 and abs(disty) < 2 and canmove[1,0] and totalDist<closeBlueGhosts2[1,0]):
+            closeBlueGhosts2[1,0] = totalDist
+        if(distx>0 and abs(disty) < 2 and canmove[0,1] and totalDist<closeBlueGhosts2[0,1]):
+            closeBlueGhosts2[0,1] = totalDist
+
+    closePellets2 = np.array([[6,6],[6,6]],dtype=float)
+    for pellet in pellets:
+        if not pellet.here: continue
+        distx = pellet.array_coord[0]-truePos2[0]
+        disty = pellet.array_coord[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+        
+        if(disty<0 and abs(distx) < 2 and canmove[0,0] and totalDist<closePellets2[0,0]):
+            closePellets2[0,0] =totalDist
+        if(disty>0 and abs(distx) < 2 and canmove[1,1] and totalDist<closePellets2[1,1]):
+            closePellets2[1,1] =totalDist
+        if(distx<0 and abs(disty) < 2 and canmove[1,0] and totalDist<closePellets2[1,0]):
+            closePellets2[1,0] = totalDist
+        if(distx>0 and abs(disty)< 2 and canmove[0,1] and totalDist<closePellets2[0,1]):
+            closePellets2[0,1] = totalDist
+
+    closePowerPellets2 = np.array([[6,6],[6,6]],dtype=float)
+    for powerPellet in power_pellets:
+        if not powerPellet.here: continue
+        distx = powerPellet.array_coord[0]-truePos2[0]
+        disty = powerPellet.array_coord[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+        
+        if(disty<0 and abs(distx) < 2 and canmove[0,0] and totalDist<closePowerPellets2[0,0]):
+            closePowerPellets2[0,0] = totalDist
+        if(disty>0 and abs(distx)< 2 and canmove[1,1] and totalDist<closePowerPellets2[1,1]):
+            closePowerPellets2[1,1] = totalDist
+        if(distx<0 and abs(disty) < 2 and canmove[1,0] and totalDist<closePowerPellets2[1,0]):
+            closePowerPellets2[1,0] = totalDist
+        if(distx>0 and abs(disty)< 2 and canmove[0,1] and totalDist<closePowerPellets2[0,1]):
+            closePowerPellets2[0,1] = totalDist
+
+    pacman.closeGhostsLast = closeGhosts.copy()
+    pacman.closeBlueGhostsLast = closeBlueGhosts.copy()
+    pacman.closePowerPelletsLast = closePowerPellets.copy()
+    pacman.closePelletsLast = closePellets.copy()
     rotateDir = pacman.move_dir
     if (wacky2Output or oneOutput) and (((pacman.look_dir-pacman.move_dir)%4) == 1):
         rotateDir = pacman.look_dir
@@ -320,35 +415,48 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             closeBlueGhosts = np.rot90(closeBlueGhosts, 1).reshape(-1)
             closePellets = np.rot90(closePellets, 1).reshape(-1)
             closePowerPellets = np.rot90(closePowerPellets, 1).reshape(-1)
-            canmove = np.rot90(canmove, 1).reshape(-1)
+            closeGhosts2 = np.rot90(closeGhosts2, 1).reshape(-1)
+            closeBlueGhosts2 = np.rot90(closeBlueGhosts2, 1).reshape(-1)
+            closePellets2 = np.rot90(closePellets2, 1).reshape(-1)
+            closePowerPellets2 = np.rot90(closePowerPellets2, 1).reshape(-1)
             ghostApproaching = np.rot90(ghostApproaching, 1).reshape(-1)
+            canmove = np.rot90(canmove, 1).reshape(-1)
             
         elif rotateDir == DOWN:
             closeGhosts = np.rot90(closeGhosts, 2).reshape(-1)
             closeBlueGhosts = np.rot90(closeBlueGhosts, 2).reshape(-1)
             closePellets = np.rot90(closePellets, 2).reshape(-1)
             closePowerPellets = np.rot90(closePowerPellets, 2).reshape(-1)
-            canmove = np.rot90(canmove, 2).reshape(-1)
+            closeGhosts2 = np.rot90(closeGhosts2, 2).reshape(-1)
+            closeBlueGhosts2 = np.rot90(closeBlueGhosts2, 2).reshape(-1)
+            closePellets2 = np.rot90(closePellets2, 2).reshape(-1)
+            closePowerPellets2 = np.rot90(closePowerPellets2, 2).reshape(-1)
             ghostApproaching = np.rot90(ghostApproaching, 2).reshape(-1)
+            canmove = np.rot90(canmove, 2).reshape(-1)
         elif rotateDir == LEFT:
             closeGhosts = np.rot90(closeGhosts, 3).reshape(-1)
             closeBlueGhosts = np.rot90(closeBlueGhosts, 3).reshape(-1)
             closePellets = np.rot90(closePellets, 3).reshape(-1)
             closePowerPellets = np.rot90(closePowerPellets, 3).reshape(-1)
-            canmove = np.rot90(canmove, 3).reshape(-1)
+            closeGhosts2 = np.rot90(closeGhosts2, 3).reshape(-1)
+            closeBlueGhosts2 = np.rot90(closeBlueGhosts2, 3).reshape(-1)
+            closePellets2 = np.rot90(closePellets2, 3).reshape(-1)
+            closePowerPellets2 = np.rot90(closePowerPellets2, 3).reshape(-1)
             ghostApproaching = np.rot90(ghostApproaching, 3).reshape(-1)
-
+            canmove = np.rot90(canmove, 3).reshape(-1)
         else:
             closeGhosts = closeGhosts.reshape(-1)
             closeBlueGhosts = closeBlueGhosts.reshape(-1)
             closePellets = closePellets.reshape(-1)
             closePowerPellets = closePowerPellets.reshape(-1)
-            canmove = canmove.reshape(-1)
+            closeGhosts2 = closeGhosts2.reshape(-1)
+            closeBlueGhosts2 = closeBlueGhosts2.reshape(-1)
+            closePellets2 = closePellets2.reshape(-1)
+            closePowerPellets2 = closePowerPellets2.reshape(-1)
             ghostApproaching = ghostApproaching.reshape(-1)
-
-
-    inputs = np.concatenate(([pacman.pelletRatio],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,canmove,ghostApproaching))
-
+            canmove = canmove.reshape(-1)
+    
+    inputs = np.concatenate(([pacman.pelletRatio,pacman.framesNotMoving],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,closeGhosts2,closeBlueGhosts2,closePellets2,closePowerPellets2,canmove,ghostApproaching))
     return inputs  
 
 #nead model controller

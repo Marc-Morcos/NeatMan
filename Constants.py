@@ -29,7 +29,7 @@ numberOfTests = 30 #number of games to evaluate on
 neatMode = True #puts the model into a training loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints" 
-modelCheckpoint = "GhostBusterCleanGen.pkl" 
+modelCheckpoint = "GhostBusterFilthyGen.pkl"  #278 does everything right, but his score is so so
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
@@ -46,15 +46,15 @@ wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
-disablePowerPellets = True #disable power pellets
+disablePowerPellets = False #disable power pellets
 killScore = 20000 #kill pacman if he gets this score (None to disable)
 
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterCleanPopulationGen117" 
-LoadTrainingCheckpointGenerationNum = 117 #if LoadTrainingCheckpointPath is not None, generations starts at this
+LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterFilthyPopulationGen82" 
+LoadTrainingCheckpointGenerationNum = 82 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
@@ -63,8 +63,8 @@ neatHyperparams = {"NeatNumGenerations":99999999,
                   "NumGenB4MapSwitch":5,
                   "NumGenB4Checkpoint":1,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/GhostBusterCleanPopulationGen",
-                  "modelName": "GhostBusterCleanGen"
+                  "PopulationCheckpointName": checkpointFolder+ "/GhostBusterFilthyPopulationGen",
+                  "modelName": "GhostBusterFilthyGen"
                   }
 
 #movement constants
