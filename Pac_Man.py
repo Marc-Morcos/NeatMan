@@ -6,11 +6,12 @@ import neat
 from NeatHelpers import loadModel
 
 class Pac_Man:
-    def __init__(self, x, y, movementFunction):
+    def __init__(self, x, y, movementFunction,generation):
 
         #lives
         self.lives = 2
         if(neatMode): self.lives = neatLives
+        if(neatMode and generation%disableGhostsEvery==1): self.lives= 0
         
         # Constants
         self.size = 26
@@ -24,6 +25,7 @@ class Pac_Man:
         self.humanInput = DOWN
         self.move_dir = DOWN
         self.try_move_dir = DOWN
+        self.lastMoveDir = DOWN
 
         #force stuck
         if(forceStuck and neatMode):
@@ -33,6 +35,7 @@ class Pac_Man:
             self.look_dir = UP
             self.try_move_dir = UP
             self.humanInput = UP
+            self.lastMoveDir = UP
 
 
         # Location in pixels
@@ -72,6 +75,11 @@ class Pac_Man:
         self.ghostMoveBlocksLast= None
         self.canmoveLast = None
 
+        #other other neat stuff
+        self.frameMod60 = 0
+        self.framesNotScoring = 0
+        self.allGhostsOut = False
+
     def power_up(self, time):
         self.powered_up = True
         self.power_time = time
@@ -95,6 +103,7 @@ class Pac_Man:
         ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
         self.penalty = 0
         self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        self.lastMoveDir = self.move_dir
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
@@ -108,7 +117,7 @@ class Pac_Man:
                     self.move_dir = self.look_dir
                 else:
                     self.penalty += wallBonkPenalty
-
+                
             if(abs(self.move_dir-originalMoveDir) == 2):
                 self.penalty+=backTrackPenalty
 

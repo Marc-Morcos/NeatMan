@@ -43,6 +43,7 @@ class Main:
         self.score = 0
         self.lastFrameScore = 0
         self.framesUntilOutOfTime = scoreTimeConstraint
+        if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
 
         self.collected_pellets = 0
         self.pellets = []
@@ -84,12 +85,23 @@ class Main:
             self.player.lives = -1
             self.game_state = "lose"
 
+        if(self.ghosts["clyde"].mode == "normal"):
+            self.player.allGhostsOut = True
+
+        if(self.lastFrameScore==self.score):
+            self.player.framesNotScoring +=1
+        else:
+            self.player.framesNotScoring =0
+        
+        self.player.frameMod60 = self.tick_counter%60
+
         #die if you don't score fast enough
         if scoreTimeConstraint != None and (neatMode):
             if self.lastFrameScore==self.score:
                 self.framesUntilOutOfTime-=1
                 if self.framesUntilOutOfTime <=0:
                      self.framesUntilOutOfTime = scoreTimeConstraint
+                     if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
                      if self.player.lives > 0:
                             self.player.target = 0
                             self.game_state = "respawn"
@@ -100,6 +112,7 @@ class Main:
                             self.game_state = "lose"
             else:
                 self.framesUntilOutOfTime = scoreTimeConstraint
+                if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): self.framesUntilOutOfTime= 15*60
         
         self.lastFrameScore =self.score 
         self.player.pelletRatio =  self.collected_pellets/len(self.pellets)
@@ -130,7 +143,7 @@ class Main:
                     self.score += pellet_score*(1+self.collected_pellets*clearMapBonus/251)
 
             for power_pellet in self.power_pellets:
-                if power_pellet.collide(self.player) and (not disablePowerPellets or not neatMode):
+                if power_pellet.collide(self.player):
                     self.score += power_pellet_score*(1+self.collected_pellets*clearMapBonus/251)
                     self.player.power_up(8 * 60)
 
@@ -179,6 +192,19 @@ class Main:
                     self.game_state = "run"
                     self.player.x = spawn_x * block_size + block_size / 2
                     self.player.y = spawn_y * block_size + block_size / 2
+                    self.look_dir = DOWN
+                    self.humanInput = DOWN
+                    self.move_dir = DOWN
+                    self.try_move_dir = DOWN
+                    self.lastMoveDir = DOWN
+                    if(forceStuck and neatMode):
+                        self.player.x=(spawn_x-5)* block_size + block_size / 2
+                        self.player.y=house_y* block_size + block_size / 2
+                        self.player.move_dir = UP
+                        self.player.look_dir = UP
+                        self.player.try_move_dir = UP
+                        self.player.humanInput = UP
+                        self.lastMoveDir = UP
                     for ghost in self.ghosts.values():
                         if(ghost.mode != "house"):
                             ghost.x = house_x* block_size + block_size / 2
@@ -207,6 +233,19 @@ class Main:
                 self.game_state = "run"
                 self.player.x = spawn_x * block_size + block_size / 2
                 self.player.y = spawn_y * block_size + block_size / 2
+                self.look_dir = DOWN
+                self.humanInput = DOWN
+                self.move_dir = DOWN
+                self.try_move_dir = DOWN
+                self.lastMoveDir = DOWN
+                if(forceStuck and neatMode):
+                    self.player.x=(spawn_x-5)* block_size + block_size / 2
+                    self.player.y=house_y* block_size + block_size / 2
+                    self.player.move_dir = UP
+                    self.player.look_dir = UP
+                    self.player.try_move_dir = UP
+                    self.player.humanInput = UP
+                    self.lastMoveDir = UP
                 self.player.draw_while_running(surface, self.display_width, self.maze, self.tick_counter)
                 for ghost in self.ghosts.values():
                             if(ghost.mode != "house"):
@@ -244,6 +283,8 @@ class Main:
         else:
             self.level += 1
 
+        if(neatMode and self.current_generation%disableGhostsEvery ==1 and turnOffGhosts): newlives= 0
+
         self.framesUntilOutOfTime = scoreTimeConstraint
         
         #make a new map
@@ -253,14 +294,14 @@ class Main:
         self.collected_pellets = 0
         self.temp_counter = 0
 
-        self.player = Pac_Man(spawn_x, spawn_y,pacmanController)
+        self.player = Pac_Man(spawn_x, spawn_y,pacmanController,self.current_generation)
         self.player.net = net
         self.player.lives = newlives
 
         # generate all pellets and power pellets
         self.power_pellets = []
         for loc in self.maze.power_pellet_locs:
-            self.power_pellets.append(PowerPellet(loc[0], loc[1]))
+            self.power_pellets.append(PowerPellet(loc[0], loc[1],self.current_generation))
         self.pellets = []
         for loc in self.maze.pellet_locs:
             self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlip)))
@@ -268,10 +309,10 @@ class Main:
         self.ghosts = {}
 
         # spawn ghosts
-        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
-        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
-        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
-        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
+        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow",self.current_generation)
+        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy",self.current_generation)
+        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful",self.current_generation)
+        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey",self.current_generation)
 
         self.ghosts["blinky"].mode = "normal"
         self.ghosts["pinky"].mode = "normal"
@@ -303,7 +344,7 @@ class Main:
             # What to do when we win/lose
             elif self.game_state == "win":
                 self.reset()
-                print("won level, moving on, score:",self.score)
+                if((main.current_generation%disableGhostsEvery != 1 or not turnOffGhosts) and (main.current_generation%disablePowerPelletsEvery != 0 or not disablePowerPellets)) or not neatMode:print("won level, moving on, score:",self.score)
                 self.game_state = "run"
             elif self.game_state == "lose":
                 self.running = False
@@ -324,12 +365,12 @@ class Main:
 
         # spawn maze and player
         self.maze = Maze(self.maze_width, self.maze_height)
-        self.player = Pac_Man(spawn_x, spawn_y, pacmanController)
+        self.player = Pac_Man(spawn_x, spawn_y, pacmanController,self.current_generation)
 
         # generate all pellets and power pellets
         self.power_pellets = []
         for loc in self.maze.power_pellet_locs:
-            self.power_pellets.append(PowerPellet(loc[0], loc[1]))
+            self.power_pellets.append(PowerPellet(loc[0], loc[1],self.current_generation))
         self.pellets = []
         for loc in self.maze.pellet_locs:
             self.pellets.append(Pellet(loc[0], loc[1],(neatMode and sparseMode and self.coinFlip)))
@@ -337,10 +378,10 @@ class Main:
         self.ghosts = {}
 
         # spawn ghosts
-        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow")
-        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy")
-        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful")
-        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey")
+        self.ghosts["blinky"] = Ghost(house_x, house_y-2, (255, 80, 80), [house_x+7, house_y-7], "shadow",self.current_generation)
+        self.ghosts["pinky"] = Ghost(house_x-1, house_y, (255, 100, 150), [house_x-7, house_y-7], "speedy",self.current_generation)
+        self.ghosts["inky"] = Ghost(house_x, house_y, (100, 255, 255), [house_x+7, house_y+9], "bashful",self.current_generation)
+        self.ghosts["clyde"] = Ghost(house_x+1, house_y, (255, 200, 000), [house_x-7, house_y+9], "pokey",self.current_generation)
 
         self.ghosts["blinky"].mode = "normal"
         self.ghosts["pinky"].mode = "normal"

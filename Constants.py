@@ -26,17 +26,17 @@ evaluateModelMode = False #runs the selected model for a select number of games 
 numberOfTests = 30 #number of games to evaluate on
 
 #Quick Toggles
-neatMode = True #puts the model into a training loop
+neatMode = True #puts the model into a t8raining loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
 checkpointFolder = "Checkpoints" 
-modelCheckpoint = "GhostBusterFilthyGen.pkl"  #278 does everything right, but his score is so so
+modelCheckpoint = "OneHitGen.pkl" 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = True
-scoreTimeConstraint = 15*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
-IdlePenalty = 2/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
-neatLives = 0 #number of lives neatMan has while training in neatmode
+scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
+IdlePenalty = 6/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
+neatLives = 1 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
@@ -46,15 +46,17 @@ wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
-disablePowerPellets = False #disable power pellets
+disablePowerPellets = True #disable power pellets
+disablePowerPelletsEvery = 5 #disable Power pellets x generations if disablePowerPellets=True
+disableGhostsEvery = 5 #disable ghosts x generations if disable=True (this also sets neatlives to 0 and scoretimeconstraint to 15*60)
 killScore = 20000 #kill pacman if he gets this score (None to disable)
-
+suicidePenalty = 15 #penalty for jumping into ghosts
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-LoadTrainingCheckpointPath = checkpointFolder + "/GhostBusterFilthyPopulationGen82" 
-LoadTrainingCheckpointGenerationNum = 82 #if LoadTrainingCheckpointPath is not None, generations starts at this
+# LoadTrainingCheckpointPath = checkpointFolder + "/OneHitPopulationGen730" 
+LoadTrainingCheckpointGenerationNum = 730 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
@@ -63,8 +65,8 @@ neatHyperparams = {"NeatNumGenerations":99999999,
                   "NumGenB4MapSwitch":5,
                   "NumGenB4Checkpoint":1,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/GhostBusterFilthyPopulationGen",
-                  "modelName": "GhostBusterFilthyGen"
+                  "PopulationCheckpointName": checkpointFolder+ "/OneHitPopulationGen",
+                  "modelName": "OneHitGen"
                   }
 
 #movement constants
@@ -84,6 +86,7 @@ UP = 3
 if(not neatMode):
     clearMapBonus = 0
     turnOffGhosts = False
+    disablePowerPellets = False
 if(neatMode):
     if(forceStuck):antiRacetrack = True
     evaluateModelMode = False

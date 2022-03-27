@@ -37,7 +37,7 @@ def loadModel(name):
 
 #run a generation of pacmen
 def eval_Pacman(genomes, config, main = None):
-
+    if((main.current_generation%disableGhostsEvery != 1 or not turnOffGhosts) and (main.current_generation%disablePowerPelletsEvery != 0 or not disablePowerPellets)): print("True")
     maxScore = 0
     maxScoreGenes = -1
     for genome_id, genome in genomes:
@@ -59,9 +59,9 @@ def eval_Pacman(genomes, config, main = None):
 
     
     #generate a new map and reset for next generation
-    main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0), coinFlip = True)
     main.current_generation += 1
-
+    main.reset(hard = True, newMap = ((main.current_generation % neatHyperparams["NumGenB4MapSwitch"]) == 0), coinFlip = True)
+    
     return
 
 #initializes neat stuff

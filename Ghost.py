@@ -6,12 +6,13 @@ import math
 from Constants import *
 
 class Ghost:
-    def __init__(self, x, y, color, scatter_coord, personality):
+    def __init__(self, x, y, color, scatter_coord, personality,generation):
 
         #if ghosts are disabled, trap them in box
-        if turnOffGhosts: 
+        if turnOffGhosts and generation%disableGhostsEvery==1: 
             x = house_x
             y = house_y
+        self.generation = generation
 
         # CONSTANTS
         self.offset = block_size * 2

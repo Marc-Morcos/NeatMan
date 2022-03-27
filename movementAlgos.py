@@ -114,12 +114,21 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     else:
         canmove = np.array([[False,False],[False,False]])
 
+    foundBlue = False
+    for ghost in ghosts.values():
+        if(ghost.blue): foundBlue = True
+        break
+
     ghostObjs = []
     blueAndFruitObjs = []
     pelletsObjs = []
     powerPelletObjs = []
     ghostMoveBlocks = []
     exceptions = []
+    if(forceStuck and neatMode and not (turnOffGhosts and ghost.generation%disableGhostsEvery==1 and truePos!=[9,13]) and not foundBlue): #make dead end seem like ghost
+        exceptions = [[9,12]]
+        ghostObjs = [[9,12]]
+        ghostMoveBlocks = [[9,12]]
 
     upNotAllowed =  [((pac_manX+1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
                     ((pac_manX-1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
@@ -133,12 +142,12 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     downNotAllowed= [((pac_manX+1)%len(maze.maze_array[0]),(pac_manY  )%len(maze.maze_array)),
                     ((pac_manX-1)%len(maze.maze_array[0]),(pac_manY)%len(maze.maze_array)),
                     ((pac_manX)%len(maze.maze_array[0]),(pac_manY-1)%len(maze.maze_array))]
-
+    
      #dijkstra distances
     closeGhosts = np.array([[12,12],[12,12]],dtype=float)
     ghostApproaching = np.array([[0,0],[0,0]],dtype=float)
     for ghost in ghosts.values():
-            if (not turnOffGhosts) and ghost.mode == "normal" and (not ghost.blue or (ghost.blue_timer + (2) >= pacman.power_time)):
+            if (not (turnOffGhosts and ghost.generation%disableGhostsEvery==1)) and ghost.mode == "normal" and (not ghost.blue or (ghost.blue_timer + (2) >= pacman.power_time)):
                 x = ghost.x-block_size/2.0
                 y = ghost.y-block_size/2.0
                 testTile = [int((x/block_size)),  int((y/block_size))]
@@ -170,7 +179,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
                 ghostObjs.append(testTile)  
                 ghostMoveBlocks.append(destTile)
 
-    if(neatLoadMode or pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(canmove, pacman.canmoveLast)):
+    if pacman.frameMod60%15==0 or ((abs(pacman.move_dir - pacman.lastMoveDir)!=2) and (pacman.lastghostObjs!=ghostObjs or pacman.lasttruePos!=truePos or pacman.ghostMoveBlocksLast!=ghostMoveBlocks or not np.array_equal(canmove, pacman.canmoveLast))):
     
         if (ghostObjs):
             path,movingTowards = multiDest([pac_manX, pac_manY], [ghostObjs], [1],maze.maze_array, upNotAllowed,ghostMoveBlocks,exceptions)
@@ -189,7 +198,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         exceptions = []
         #dijkstra distances
         for ghost in ghosts.values():
-                if (not turnOffGhosts) and ghost.mode == "normal" and (ghost.blue and not (ghost.blue_timer + (2) >= pacman.power_time)):
+                if (not (turnOffGhosts and ghost.generation%disableGhostsEvery==1)) and ghost.mode == "normal" and (ghost.blue and not (ghost.blue_timer + (2) >= pacman.power_time)):
                     x = ghost.x-block_size/2.0
                     y = ghost.y-block_size/2.0
                     testTile = [int((x/block_size)),  int((y/block_size))]
@@ -280,16 +289,16 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
         objGroups =  [pelletsObjs,powerPelletObjs,blueAndFruitObjs]
         closeGroups =  [closePellets,closePowerPellets,closeBlueGhosts]
         if pelletsObjs or powerPelletObjs or blueAndFruitObjs:
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, upNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1 and canmove[0,0]: close[0,0] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, rightNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1 and canmove[0,1]: close[0,1] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, leftNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1 and canmove[1,0]: close[1,0] = len(path)/5
-            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs+ghostMoveBlocks,None,exceptions)
+            paths = multiDest([pac_manX, pac_manY], objGroups, [1,2],maze.maze_array, downNotAllowed+ghostObjs,None,exceptions)
             for path,close in zip(paths,closeGroups):
                 if path != -1 and canmove[1,1]: close[1,1] = len(path)/5
     else: #use cached data
@@ -312,7 +321,7 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
 
     closeGhosts2 = np.array([[6,6],[6,6]],dtype=float)
     for ghost in ghosts.values():
-        if(turnOffGhosts or (ghost.blue and not (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
+        if((turnOffGhosts and ghost.generation%disableGhostsEvery==1) or (ghost.blue and not (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
         x = ghost.x-block_size/2.0
         y = ghost.y-block_size/2.0
         testTile = [(x/block_size),  (y/block_size)]
@@ -329,11 +338,27 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             closeGhosts2[1,0] =totalDist
         if(distx>0 and abs(disty) < 2 and totalDist<closeGhosts2[0,1]):
             closeGhosts2[0,1] = totalDist
+    
+    if(forceStuck and neatMode and not (turnOffGhosts and ghost.generation%disableGhostsEvery==1 and truePos!=[9,13]) and not foundBlue):
+        testTile = [9,12]
+        distx = testTile[0]-truePos2[0]
+        disty = testTile[1]-truePos2[1]
+        totalDist = abs(distx)+abs(disty)
+        totalDist = totalDist/5
+    
+        if(disty<0 and abs(distx) < 2 and totalDist<closeGhosts2[0,0]):
+            closeGhosts2[0,0] = totalDist
+        if(disty>0 and abs(distx) < 2 and totalDist<closeGhosts2[1,1]):
+            closeGhosts2[1,1] = totalDist
+        if(distx<0 and abs(disty) < 2 and totalDist<closeGhosts2[1,0]):
+            closeGhosts2[1,0] =totalDist
+        if(distx>0 and abs(disty) < 2 and totalDist<closeGhosts2[0,1]):
+            closeGhosts2[0,1] = totalDist
 
     #sensing
     closeBlueGhosts2 = np.array([[6,6],[6,6]],dtype=float)
     for ghost in ghosts.values():
-        if(turnOffGhosts or (not ghost.blue or (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
+        if((turnOffGhosts and ghost.generation%disableGhostsEvery==1) or (not ghost.blue or (ghost.blue_timer + (30) >= pacman.power_time)) or ghost.mode != "normal"): continue
         x = ghost.x-block_size/2.0 #get the top left corner
         y = ghost.y-block_size/2.0
         testTile = [(x/block_size),  (y/block_size)]
@@ -406,6 +431,9 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
     pacman.closePowerPelletsLast = closePowerPellets.copy()
     pacman.closePelletsLast = closePellets.copy()
     rotateDir = pacman.move_dir
+
+    unrotatedCloseghosts2 = closeGhosts2.reshape(-1)
+    unrotatedGhostApproaching = ghostApproaching.reshape(-1)
     if (wacky2Output or oneOutput) and (((pacman.look_dir-pacman.move_dir)%4) == 1):
         rotateDir = pacman.look_dir
 
@@ -456,18 +484,20 @@ def rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit
             ghostApproaching = ghostApproaching.reshape(-1)
             canmove = canmove.reshape(-1)
     
-    inputs = np.concatenate(([pacman.pelletRatio,pacman.framesNotMoving],closeGhosts,closeBlueGhosts,closePellets,closePowerPellets,closeGhosts2,closeBlueGhosts2,closePellets2,closePowerPellets2,canmove,ghostApproaching))
-    return inputs  
+    inputsUP =    [(abs(pacman.move_dir - pacman.lastMoveDir)!=2),pacman.pelletRatio,pacman.framesNotMoving,((pacman.power_time - pacman.timer)/60 if pacman.powered_up else 0),pacman.frameMod60/60,pacman.framesNotScoring/60,pacman.allGhostsOut,closeGhosts[0],closeBlueGhosts[0],closePellets[0],closePowerPellets[0],closeGhosts2[0],closeBlueGhosts2[0],closePellets2[0],closePowerPellets2[0],canmove[0],ghostApproaching[0],1,0,0]
+    inputsRIGHT = [(abs(pacman.move_dir - pacman.lastMoveDir)!=2),pacman.pelletRatio,pacman.framesNotMoving,((pacman.power_time - pacman.timer)/60 if pacman.powered_up else 0),pacman.frameMod60/60,pacman.framesNotScoring/60,pacman.allGhostsOut,closeGhosts[1],closeBlueGhosts[1],closePellets[1],closePowerPellets[1],closeGhosts2[1],closeBlueGhosts2[1],closePellets2[1],closePowerPellets2[1],canmove[1],ghostApproaching[1],0,1,0]
+    inputsLEFT =  [(abs(pacman.move_dir - pacman.lastMoveDir)!=2),pacman.pelletRatio,pacman.framesNotMoving,((pacman.power_time - pacman.timer)/60 if pacman.powered_up else 0),pacman.frameMod60/60,pacman.framesNotScoring/60,pacman.allGhostsOut,closeGhosts[2],closeBlueGhosts[2],closePellets[2],closePowerPellets[2],closeGhosts2[2],closeBlueGhosts2[2],closePellets2[2],closePowerPellets2[2],canmove[2],ghostApproaching[2],0,1,0]
+    inputsDOWN =  [(abs(pacman.move_dir - pacman.lastMoveDir)!=2),pacman.pelletRatio,pacman.framesNotMoving,((pacman.power_time - pacman.timer)/60 if pacman.powered_up else 0),pacman.frameMod60/60,pacman.framesNotScoring/60,pacman.allGhostsOut,closeGhosts[3],closeBlueGhosts[3],closePellets[3],closePowerPellets[3],closeGhosts2[3],closeBlueGhosts2[3],closePellets2[3],closePowerPellets2[3],canmove[3],ghostApproaching[3],0,0,1]
+    return inputsUP,inputsRIGHT,inputsLEFT,inputsDOWN, unrotatedCloseghosts2, unrotatedGhostApproaching
 
 #nead model controller
 def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
     
     #Get the inputs
-    inputs = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
+    inputsUP,inputsRIGHT,inputsLEFT,inputsDOWN,unrotatedCloseghosts2,unrotatedGhostApproaching = rotatingCameraNeatHelper(pacman, maze, ghosts, pellets, power_pellets, fruit)
 
     #pass inputs into the neural network
-    outputs = pacman.net.activate(inputs)
-
+    outputs = [pacman.net.activate(inputsUP)[0],pacman.net.activate(inputsRIGHT)[0],pacman.net.activate(inputsLEFT)[0],pacman.net.activate(inputsDOWN)[0]]
     nextMove = 0
     
     # interpret net output 
@@ -539,7 +569,13 @@ def modelNeat(pacman, maze, ghosts, pellets, power_pellets, fruit):
         FourDirs = [pacman.move_dir,pacman.move_dir+1,pacman.move_dir+3,pacman.move_dir+2]
         nextMove = FourDirs[maxInd]
 
-    nextMove = nextMove%4     
+    nextMove = nextMove%4 
+
+    fourDirs2=[UP,RIGHT,LEFT,DOWN]
+    for Dir, closeghost, approaching in zip(fourDirs2,unrotatedCloseghosts2,unrotatedGhostApproaching):
+        if(nextMove == Dir and approaching and closeghost<2/5): 
+            pacman.penalty+=suicidePenalty
+            break
             
     return nextMove
 

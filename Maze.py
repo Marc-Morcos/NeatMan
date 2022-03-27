@@ -27,7 +27,7 @@ class Maze:
     def can_move(self, entity, dir):
         allowed = [0, 3, 4]
         if isinstance(entity, Ghost.Ghost):
-            if turnOffGhosts: return False #can't move if ghosts are disabled
+            if (turnOffGhosts and entity.generation%disableGhostsEvery==1): return False #can't move if ghosts are disabled
             if (entity.mode == "normal" and house_x <= entity.array_coord[0] <= house_x+2 and house_y-1 <= entity.array_coord[1] <= house_y+2) \
                     or entity.mode == "dead":
                 allowed = [0, 2, 3]
