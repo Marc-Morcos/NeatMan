@@ -33,7 +33,7 @@ modelCheckpoint = "OneHitGen.pkl"
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
-turnOffGhosts = True
+turnOffGhosts = False
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
 IdlePenalty = 6/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
 neatLives = 1 #number of lives neatMan has while training in neatmode
@@ -46,17 +46,17 @@ wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
 forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
-disablePowerPellets = True #disable power pellets
+disablePowerPellets = False #disable power pellets
 disablePowerPelletsEvery = 5 #disable Power pellets x generations if disablePowerPellets=True
 disableGhostsEvery = 5 #disable ghosts x generations if disable=True (this also sets neatlives to 0 and scoretimeconstraint to 15*60)
-killScore = 20000 #kill pacman if he gets this score (None to disable)
+killScore = None #kill pacman if he gets this score (None to disable)
 suicidePenalty = 15 #penalty for jumping into ghosts
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-# LoadTrainingCheckpointPath = checkpointFolder + "/OneHitPopulationGen730" 
-LoadTrainingCheckpointGenerationNum = 730 #if LoadTrainingCheckpointPath is not None, generations starts at this
+# LoadTrainingCheckpointPath = checkpointFolder + "/OneHitPopulationGen5" 
+LoadTrainingCheckpointGenerationNum = 1 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
