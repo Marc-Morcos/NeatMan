@@ -7,6 +7,8 @@ and succulent seafood!
 This and more await you on NEAT-MAN!
 Come relax and let us refresh your body and spirit.
 
+This is a PacMan playing AI made with NEAT. The best model checkpoint is OneHitGen24
+
 ### Repos We Based This Project Off Of: ###
 
 MapGen: 
