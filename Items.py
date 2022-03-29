@@ -31,12 +31,15 @@ class Pellet:
 
 
 class PowerPellet:
-    def __init__(self, x, y):
+    def __init__(self, x, y,generation):
         self.array_coord = [x, y]
         self.x = x * block_size + half_block_size
         self.y = y * block_size + half_block_size
 
-        self.here = True
+        if ((not ((generation%disablePowerPelletsEvery==0) and (disablePowerPellets))) or not neatMode):
+            self.here = True
+        else:
+            self.here = False
 
     def draw(self, display):
         if self.here:

@@ -1,1 +1,0 @@
-This is where we save model checkpoints, don't delete this text file or github will delete the folder

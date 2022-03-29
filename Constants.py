@@ -25,47 +25,48 @@ scaling_factor = 0.7 #factor by which we scale dimensions of game window
 evaluateModelMode = False #runs the selected model for a select number of games and then prints the models statistics 
 numberOfTests = 30 #number of games to evaluate on
 
-
 #Quick Toggles
-neatMode = False #puts the model into a training loop
+neatMode = True #puts the model into a t8raining loop
 neatLoadMode = False #Loads an old neat model (CANT HAVE BOTH THIS AND NEATMODE TRUE)
-checkpointFolder = "Checkpoints"
-modelCheckpoint = "NeatBoi0.pkl"
+checkpointFolder = "Checkpoints" 
+modelCheckpoint = "OneHitGen.pkl" 
 fastMode = False #No longer human playable, increases speed of game to absolute limits
 neatFrameShow = 60*2 #show every x frames when in fastMode, try to have this be a power of 2
 showFPS = False #shows fps, use for testing, prints clutter and slow down program
 turnOffGhosts = False
 scoreTimeConstraint = 100*60 #dies if doesn't score within this many frames, set to None if you want to turn this of, only works in neatmode
-IdlePenalty = 0#1/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
-wrapAroundX = True #whether camera view screen should wrap around in the x axis
-wrapAroundY = False #whether camera view screen should wrap around in the y axis
-neatLives = 2 #number of lives neatMan has while training in neatmode
+IdlePenalty = 6/60 #if in neatmode, decreases score while sitting idle by this ammount every frame
+neatLives = 1 #number of lives neatMan has while training in neatmode
 backTrackPenalty = 0#2/60 #Applies a penalty for turning around (like full 180) in case your model likes to just spam back and forth
 sparseMode = False #if true, 50% of only 1 out of 5 pellets spawning
 rotateCamera = True #rotates the camera so that the 'top' of the camera is the direction pacman is facing 
-wallBonkPenalty = 0 #1/60 #penalize model from trying to walk into walls
-kamikazePenalty = 0 #15 #penalize ghost for running into ghost that is also going towards it (the model should litterally never do this) 
-notDumbReward = 0#10/60 #reward applied when a nonegative (according to cammera) move is picked (lookdir*movedir), multiplied by (the value on camera++0.2)
+wallBonkPenalty = 2/60 #1/60 #penalize model from trying to walk into walls
 oneOutput = False #turn this on if you want to use the 1 output scheme
 wacky2Output = False #a weird 2 output mode
 antiRacetrack = False #add walls to prevent spinning around ghost house
+forceStuck = True #turns on antiracetrack and forces pacman to immediately turn around
 clearMapBonus = 0 #5 everything goes up in value as fewer pellets are left on the field
+disablePowerPellets = False #disable power pellets
+disablePowerPelletsEvery = 5 #disable Power pellets x generations if disablePowerPellets=True
+disableGhostsEvery = 5 #disable ghosts x generations if disable=True (this also sets neatlives to 0 and scoretimeconstraint to 15*60)
+killScore = None #kill pacman if he gets this score (None to disable)
+suicidePenalty = 15 #penalty for jumping into ghosts
 
 # where we load a whole population to continue training
 # set to None to train from scratch
 LoadTrainingCheckpointPath = None 
-#LoadTrainingCheckpointPath = checkpointFolder + "/NeatBoiPopulation15x15Gen299" 
-LoadTrainingCheckpointGenerationNum = 299 #if LoadTrainingCheckpointPath is not None, generations starts at this
+# LoadTrainingCheckpointPath = checkpointFolder + "/OneHitPopulationGen5" 
+LoadTrainingCheckpointGenerationNum = 1 #if LoadTrainingCheckpointPath is not None, generations starts at this
 
 neatConfigPath = "neatConfig.text"
 
 #hyperparameters (more hyperparams in config.text)
 neatHyperparams = {"NeatNumGenerations":99999999, 
                   "NumGenB4MapSwitch":5,
-                  "NumGenB4Checkpoint":10,
+                  "NumGenB4Checkpoint":1,
                   "SecondsB4Checkpoint":3000,
-                  "PopulationCheckpointName": checkpointFolder+ "/NeatBoi15x15PopulationGen",
-                  "modelName": "NeatBoi15x15Gen"
+                  "PopulationCheckpointName": checkpointFolder+ "/OneHitPopulationGen",
+                  "modelName": "OneHitGen"
                   }
 
 #movement constants
@@ -81,11 +82,15 @@ UP = 3
 
 
 
-
 #Don't touch
 if(not neatMode):
     clearMapBonus = 0
+    turnOffGhosts = False
+    disablePowerPellets = False
 if(neatMode):
+    if(forceStuck):antiRacetrack = True
     evaluateModelMode = False
     neatLoadMode = False
     fastMode = True
+
+

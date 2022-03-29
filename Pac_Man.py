@@ -6,10 +6,12 @@ import neat
 from NeatHelpers import loadModel
 
 class Pac_Man:
-    def __init__(self, x, y, movementFunction):
+    def __init__(self, x, y, movementFunction,generation):
+
         #lives
         self.lives = 2
         if(neatMode): self.lives = neatLives
+        if(neatMode and generation%disableGhostsEvery==1): self.lives= 0
         
         # Constants
         self.size = 26
@@ -23,6 +25,18 @@ class Pac_Man:
         self.humanInput = DOWN
         self.move_dir = DOWN
         self.try_move_dir = DOWN
+        self.lastMoveDir = DOWN
+
+        #force stuck
+        if(forceStuck and neatMode):
+            x-=5
+            y=house_y
+            self.move_dir = UP
+            self.look_dir = UP
+            self.try_move_dir = UP
+            self.humanInput = UP
+            self.lastMoveDir = UP
+
 
         # Location in pixels
         self.array_coord = [x, y]
@@ -49,6 +63,23 @@ class Pac_Man:
         self.net = None
         if(neatLoadMode): self.net = loadModel(modelCheckpoint)
 
+        #other neat stuff
+        self.pelletRatio = 0 #pellets collected/total
+        self.lastghostObjs = None
+        self.lasttruePos = None
+        self.closeGhostsLast = None
+        self.closeBlueGhostsLast = None
+        self.closePowerPelletsLast = None
+        self.closePelletsLast = None
+        self.closePelletsLast = None
+        self.ghostMoveBlocksLast= None
+        self.canmoveLast = None
+
+        #other other neat stuff
+        self.frameMod60 = 0
+        self.framesNotScoring = 0
+        self.allGhostsOut = False
+
     def power_up(self, time):
         self.powered_up = True
         self.power_time = time
@@ -71,11 +102,8 @@ class Pac_Man:
     def move(self, maze, display_width, ghosts, pellets, power_pellets, fruit):
         ghostMoveValue = -4 #set in multiple places in the code (avoid changing)
         self.penalty = 0
-        temp = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
-        if(neatMode or neatLoadMode):
-            self.look_dir,soroundings = temp
-        else:
-            self.look_dir = temp
+        self.look_dir = self.movementFunction(self, maze=maze, ghosts=ghosts, pellets=pellets, power_pellets=power_pellets, fruit=fruit)
+        self.lastMoveDir = self.move_dir
         step = self.step_len
         self.array_coord = [int((self.x + block_size / 2) / block_size),
                             int((self.y + block_size / 2) / block_size)]
@@ -89,7 +117,7 @@ class Pac_Man:
                     self.move_dir = self.look_dir
                 else:
                     self.penalty += wallBonkPenalty
-
+                
             if(abs(self.move_dir-originalMoveDir) == 2):
                 self.penalty+=backTrackPenalty
 
@@ -102,25 +130,6 @@ class Pac_Man:
                 self.penalty += IdlePenalty
                 self.framesNotMoving +=1
 
-            # kamikazePenalty 
-            if(neatMode and self.move_dir == RIGHT and soroundings[0] == ghostMoveValue and neatMode):
-                self.penalty+=kamikazePenalty
-            elif(neatMode and self.move_dir == LEFT and soroundings[1] == ghostMoveValue and neatMode):
-                self.penalty+=kamikazePenalty
-            elif(neatMode and self.move_dir == DOWN and soroundings[2] == ghostMoveValue and neatMode):
-                self.penalty+=kamikazePenalty
-            elif(neatMode and self.move_dir == UP and soroundings[3] == ghostMoveValue and neatMode):
-                self.penalty+=kamikazePenalty  
-
-             #not dumb reward
-            if(neatMode and self.look_dir == RIGHT and soroundings[0] >= 0  and neatMode):
-                self.penalty-=notDumbReward*(soroundings[0]+0.2)
-            elif(neatMode and self.look_dir == LEFT and soroundings[1] >= 0 and neatMode):
-                self.penalty-=notDumbReward*(soroundings[0]+0.2)
-            elif(neatMode and self.look_dir == DOWN and soroundings[2] >= 0 and neatMode):
-                self.penalty-=notDumbReward*(soroundings[0]+0.2)
-            elif(neatMode and self.look_dir == UP and soroundings[3] >= 0 and neatMode):
-                self.penalty-=notDumbReward*(soroundings[0]+0.2)
                 
 
         # If outside maze, keep moving forwards until wrapped to the other side of the screen
